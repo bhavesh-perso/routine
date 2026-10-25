@@ -1,0 +1,34 @@
+/* Palette: Ink #11141a (bg) · Slate #1b2029 (surface) · Bone #ece9e2 (text) · Mist #9aa3b5 (muted) · Ember #f0a53a (accent) · Indigo #26305c (night) */
+:root{--ink:#11141a;--slate:#1b2029;--bone:#ece9e2;--mist:#9aa3b5;--ember:#f0a53a;--indigo:#26305c;
+--serif:Georgia,"Iowan Old Style",serif;--sans:system-ui,-apple-system,"Segoe UI",sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ink);color:var(--bone);font:16px/1.45 var(--sans)}
+main{max-width:480px;margin:0 auto;padding:env(safe-area-inset-top) 16px calc(76px + env(safe-area-inset-bottom))}
+h2{font-size:1.05rem;margin:24px 0 8px}
+.hero{margin:12px -4px 0;padding:28px 20px 22px;border-radius:6px}
+.hero h1{font:700 3rem/1 var(--serif);margin:0 0 14px;letter-spacing:-.02em}
+.hero p{margin:2px 0}
+.hero.night{background:var(--indigo)}
+.hero.morning{background:var(--ember);color:var(--ink)}
+.hero.off{background:var(--slate);box-shadow:inset 0 0 0 2px var(--mist)}
+.mark{font-weight:600}
+.note{background:var(--slate);border-left:4px solid var(--ember);padding:12px 14px;margin:14px 0;border-radius:0 6px 6px 0}
+.list{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.item{display:flex;gap:8px}
+.check,.add{min-height:48px;font:inherit;color:var(--bone);background:var(--slate);border:1px solid #2c3441;border-radius:6px;cursor:pointer}
+.check{flex:1;text-align:left;padding:0 14px;position:relative}
+.check[aria-pressed=true]{border-color:var(--ember);background:#2a2518}
+.check[aria-pressed=true]::after{content:"Done";position:absolute;right:14px;color:var(--ember);font-weight:600}
+.add{min-width:56px;padding:0 10px}
+:focus-visible{outline:3px solid var(--ember);outline-offset:2px}
+.bar{height:6px;background:var(--slate);border-radius:3px;margin-top:10px;overflow:hidden}
+.bar b{display:block;height:100%;background:var(--ember)}
+.streaks{color:var(--mist);margin:0 0 10px}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.grid i{aspect-ratio:1;border-radius:3px;background:var(--slate)}
+.grid .c1{background:#3a3220}.grid .c2{background:#8a6120}.grid .c3{background:var(--ember)}
+.plain{font:700 1.6rem var(--serif);margin-top:32px}
+nav{position:fixed;inset:auto 0 0;display:flex;background:var(--slate);border-top:1px solid #2c3441;padding-bottom:env(safe-area-inset-bottom)}
+nav a{flex:1;min-height:56px;display:grid;place-items:center;color:var(--mist);text-decoration:none;font-size:.78rem}
+nav a[aria-current]{color:var(--ember);font-weight:700}
+@media (prefers-reduced-motion:no-preference){.bar b{transition:width .2s}}
