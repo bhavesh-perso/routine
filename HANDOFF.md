@@ -1,4 +1,4 @@
 # Handoff
-Done: step 1 (shift engine + tests), step 2 (storage, Today header, checklist, routine day, streaks, missed-yesterday banner).
-Deferred from step 2 to later steps: Next up card (needs full timeline, step 3+), gym/study/protein parts of Today, gym-day water target (2,500 ml), fonts bundled (step 8), PWA files (step 8).
-Next: step 3 — gym module.
+Done: steps 1-2, step 3 core (planner, session screens, set logging, how-to, cardio ramp, progression tips).
+Deferred from step 3: "Move to…" picker + skip/roll-forward (goes with Week screen), rest timer, per-exercise progress chart, session notes, light-week 80% weight hints beyond the label, work-gym showers setting, equipment checkboxes UI (Settings step; defaults dumbbells+bench).
+Next: finish deferred gym items or step 4 (food).
