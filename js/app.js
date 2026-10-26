@@ -24,7 +24,7 @@ function today() {
   const missed = fu && yest >= fu && ['junk', 'water', 'walk'].some(h => !done(yest, h, s));
   const drowsy = iso !== rd && d.endsNextDay && min >= 420 && min <= 600;
   const pct = Math.min(100, Math.round(log.water / s.waterRest * 100));
-  const item = (h, text, extra = '') => `<li class="item"><button class="check" data-act="${h}" aria-pressed="${!!done(rd, h, s)}">${text}</button>${extra}</li>`;
+  const item = (h, text, extra = '') => `<li class="item"><button type="button" class="check" data-act="${h}" aria-pressed="${!!done(rd, h, s)}">${text}</button>${extra}</li>`;
   const grid = Array.from({ length: 28 }, (_, i) => { const x = prev(rd, 27 - i); const c = ['junk', 'water', 'walk'].filter(h => done(x, h, s)).length; return `<i class="c${c}" title="${x}"></i>`; }).join('');
   return `
   <header class="hero ${d.type === 'off' ? 'off' : d.block}">
@@ -38,7 +38,7 @@ function today() {
   <section aria-labelledby="cl"><h2 id="cl">Today's checklist</h2>
   <ul class="list">
     ${item('junk', 'No junk food today')}
-    ${item('water', `Drink water: ${log.water} / ${s.waterRest} ml`, `<button class="add" data-act="water+" aria-label="Add 250 ml">+250 ml</button><button class="add" data-act="water-" aria-label="Remove 250 ml">−</button>`)}
+    ${item('water', `Drink water: ${log.water} / ${s.waterRest} ml`, `<button type="button" class="add" data-act="water+" aria-label="Add 250 ml">+250 ml</button><button type="button" class="add" data-act="water-" aria-label="Remove 250 ml">−</button>`)}
     ${item('walk', '10-minute walk')}
   </ul><div class="bar" role="progressbar" aria-label="Water" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100"><b style="width:${pct}%"></b></div></section>
   <section aria-labelledby="st"><h2 id="st">Streaks</h2>
@@ -53,13 +53,17 @@ addRoute('today', today);
 const main = document.getElementById('main');
 const rerender = startRouter(main, [...document.querySelectorAll('nav a')]);
 main.addEventListener('click', e => {
-  const act = e.target.closest('[data-act]')?.dataset.act; if (!act) return;
-  const { s, rd } = ctx(), l = getLog(rd);
-  if (act === 'junk' || act === 'walk') setLog(rd, { [act]: !l[act] });
-  if (act === 'water') setLog(rd, { water: l.water >= s.waterRest ? 0 : s.waterRest });
-  if (act === 'water+') setLog(rd, { water: l.water + 250 });
-  if (act === 'water-') setLog(rd, { water: Math.max(0, l.water - 250) });
-  rerender();
+  const act = e.target.closest?.('[data-act]')?.dataset.act; if (!act) return;
+  try {
+    const { s, rd } = ctx(), l = getLog(rd);
+    if (act === 'junk' || act === 'walk') setLog(rd, { [act]: !l[act] });
+    if (act === 'water') setLog(rd, { water: l.water >= s.waterRest ? 0 : s.waterRest });
+    if (act === 'water+') setLog(rd, { water: l.water + 250 });
+    if (act === 'water-') setLog(rd, { water: Math.max(0, l.water - 250) });
+    rerender();
+  } catch (err) {
+    main.insertAdjacentHTML('afterbegin', `<p class="note">Something went wrong: ${err.message}. Send me this message.</p>`);
+  }
 });
 setInterval(() => { if (!location.hash || location.hash === '#/today') rerender(); }, 60000);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) rerender(); });
