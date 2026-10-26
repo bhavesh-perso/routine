@@ -28,6 +28,17 @@ export function nutrition(ing) {
   for (const [key, qty] of ing || []) { const f = FOODS[key]; if (!f) continue; const g = grams(key, qty); k += f.k * g / 100; p += f.p * g / 100; }
   return { k, p };
 }
+// ---------- cost: estimated rupees from foods.json shop.rs (per kg, litre or piece) ----------
+// qty is in shop units: grams or ml, or pieces for pcs foods (the same numbers recipes use).
+export const priceOf = (key, qty) => { const sh = FOODS[key]?.shop; return sh?.rs ? (sh.unit === 'pcs' ? qty * sh.rs : qty / 1000 * sh.rs) : 0; };
+export const recipeCost = r => (r.ing || []).reduce((t, [k, q]) => t + priceOf(k, q), 0) / (r.portions || 1);
+export const listCost = items => Math.round(items.reduce((t, i) => t + (i.rs || 0), 0));
+// What a calendar month of the plan costs: what you eat, not the packs you buy (a 5 kg rice bag lasts beyond one month).
+export function monthCost(iso, s, swaps = {}) {
+  const [a, b] = monthRange(iso);
+  return listCost(groceryFor(a, b, 'fresh', s, swaps)) + listCost(groceryFor(a, b, 'staple', s, swaps));
+}
+
 export function perServing(r) {
   const n = nutrition(r.ing), d = r.portions || 1;
   return { k: Math.round(n.k / d), p: Math.round(n.p / d) };
@@ -36,8 +47,14 @@ export const portionNutrition = pt => { const f = FOODS[pt.f]; return { k: Math.
 
 // ---------- batch rotation ----------
 export const EPOCH = '2026-10-26';
-// Order matters: neighbours in this list end up on the same prep day, so they are mixed on purpose.
-export const POOL = ['chicken-curry', 'dhal-rice-eggs', 'mine-frit', 'tuna-tomato-pasta', 'chicken-potato-traybake', 'chicken-rougaille', 'chicken-lentil-soup', 'chicken-fried-rice'];
+// Order matters: neighbours in this list end up on the same prep day, so proteins and prices are mixed on purpose
+// (no two chicken dishes side by side, pricier fish/prawn/goat/paneer next to cheap beans/soya/eggs). Wraps around.
+// The cheapest dishes appear twice (at least 4 places apart) to keep a month near the Rs 5,000 budget.
+export const POOL = ['chicken-curry', 'dhal-rice-eggs', 'fish-curry', 'soya-curry', 'mine-frit', 'red-bean-curry', 'chicken-lentil-soup',
+  'chickpea-soya-curry', 'egg-curry', 'chicken-briyani', 'soya-noodles', 'prawn-rougaille', 'dhal-rice-eggs', 'tuna-potato-curry',
+  'chilli-sin-carne', 'paneer-peas-curry', 'soya-curry', 'chicken-rougaille', 'lentil-bolognese', 'sardine-rougaille', 'egg-curry',
+  'bol-renverse', 'chickpea-soya-curry', 'goat-curry', 'soya-noodles', 'tuna-egg-fried-rice', 'chicken-potato-traybake',
+  'chilli-sin-carne', 'fish-potato-bake', 'chicken-fried-rice', 'tuna-tomato-pasta'];
 const mod = (a, n) => ((a % n) + n) % n;
 const pool = () => POOL.filter(id => BATCH.some(r => r.id === id)).concat(BATCH.map(r => r.id).filter(id => !POOL.includes(id)));
 
@@ -52,8 +69,9 @@ export function prepOrdinal(iso, s) {
   c.set(iso, n); return n;
 }
 export function dishesFor(iso, s) {
+  // Prep day i cooks the next two dishes in the pool, so every dish comes round once per cycle of n/2 prep days.
   const p = pool(), i = prepOrdinal(iso, s), n = p.length;
-  return [p[mod(3 * i, n)], p[mod(3 * i + 1, n)]].map(id => BATCH.find(r => r.id === id));
+  return [p[mod(2 * i, n)], p[mod(2 * i + 1, n)]].map(id => BATCH.find(r => r.id === id));
 }
 
 export function prepFor(iso, s) {
@@ -166,23 +184,32 @@ function planDay(iso, s, swaps, avoid) {
     return { slot, list: list.map((_, i) => list[(st + i) % list.length]) };
   });
   const prevQ = avoid ? quickIds(avoid) : [], prevSig = avoid ? sig(avoid) : '';
-  let best = null, strict = null;
+  // Budget: the day's share of the monthly budget, minus the boxes it eats, is what quick meals and top-ups may cost.
+  const boxRs = SLOTS.reduce((t, sl) => t + (fixed[sl]?.batch ? recipeCost(findRecipe(fixed[sl].recipe)) : 0), 0);
+  const cap = (s.budget || 5000) / 30.4 - boxRs;
+  let best = null, strict = null, cheap = null, tries = 0;
   const walk = (i, pick) => {
-    if (strict) return;
+    if (strict || tries > 3000) return;
     if (i === free.length) {
+      tries++;
       const meals = { ...fixed }, u = uses.slice();
-      pick.forEach((r, j) => { meals[free[j].slot] = mealOf(r); addUses({ ...r }); u.push(...r.ing.map(x => [...x]), ...(r.basics || []).map(b => [b, 0])); });
+      pick.forEach((r, j) => { meals[free[j].slot] = mealOf(r); u.push(...r.ing.map(x => [...x]), ...(r.basics || []).map(b => [b, 0])); });
       const f = withTopups(meals, u, iso, s), t = sumOf(f.meals), differs = sig(f.meals) !== prevSig;
       const fresh = free.every((fr, j) => prevQ[SLOTS.indexOf(fr.slot)] !== pick[j].id);
       const cand = { ...f, score: miss(t) + (differs ? 0 : 1000) + (fresh ? 0 : 20) };
-      if (inBand(t) && differs && fresh) { strict = cand; return; }
+      if (inBand(t) && differs && fresh) {
+        cand.rs = f.uses.reduce((a, [k, q]) => a + priceOf(k, q), 0);
+        if (cand.rs <= cap) { strict = cand; return; } // first in rotation order that fits the budget keeps variety
+        if (!cheap || cand.rs < cheap.rs) cheap = cand;
+        return;
+      }
       if (!best || cand.score < best.score) best = cand;
       return;
     }
     for (const r of free[i].list) { if (pick.some(x => x.id === r.id)) continue; walk(i + 1, [...pick, r]); if (strict) return; }
   };
   walk(0, []);
-  const chosen = strict || best || { ...withTopups(fixed, uses, iso, s) };
+  const chosen = strict || cheap || best || { ...withTopups(fixed, uses, iso, s) };
   const prep = isPrepDay(iso, s) ? dishesFor(iso, s) : null;
   if (prep) for (const r of prep) { chosen.uses.push(...r.ing.map(i => [...i])); r.basics?.forEach(b => chosen.uses.push([b, 0])); }
   return { meals: chosen.meals, uses: chosen.uses, cook: prep, fallback, kind };
@@ -234,7 +261,7 @@ export function groceryFor(from, to, cat, s, swaps = {}) {
     const unit = sh.unit, size = n => unit === 'pcs' ? '' : fmtG(n, unit);
     const buy = packs.map(p => unit === 'pcs' ? `${p.n * p.size}` : `${p.n} × ${size(p.size)}`).join(' + ');
     const needTxt = qty > 0 ? (unit === 'pcs' ? `${Math.ceil(qty - 1e-9)}` : fmtG(qty, unit)) : 'a little';
-    items.push({ key, name: f.name, label: sh.label, unit, qty, need: needTxt, packs, buy, bought: packTotal(packs) });
+    items.push({ key, name: f.name, label: sh.label, unit, qty, need: needTxt, packs, buy, bought: packTotal(packs), rs: priceOf(key, qty) });
   }
   const ex = (EXTRAS[cat] || []).map(e => ({ key: e.key, name: e.name, qty: 0, need: e.qty, extra: true, buy: e.qty, packs: [] }));
   return items.sort((a, b) => a.name.localeCompare(b.name)).concat(ex);

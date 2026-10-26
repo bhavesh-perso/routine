@@ -115,6 +115,239 @@
         "Pour into 4 boxes (it thickens as it cools). Pack 3 slices of bread with each box."
       ],
       "batch": "Freezes for 2 months. Reheat 3–4 minutes, stirring halfway, until steaming."
+    },
+    {
+      "id": "fish-curry", "name": "Fish curry with rice", "tag": "pack-for-work", "hiddenVeg": true, "active": 25, "total": 45, "portions": 4,
+      "ing": [["fish", 700], ["onion", 150], ["garlic", 15], ["curry_powder", 20], ["tomatoes_tin", 1], ["mixed_veg", 250], ["oil", 30], ["rice_raw", 400]],
+      "basics": ["salt", "water"],
+      "steps": [
+        "Rinse the rice in a bowl of water until the water runs almost clear. Put it in the rice cooker with 800 ml water and switch it on.",
+        "Thaw the fish in the fridge the night before, or in its bag in a bowl of cold water for 1 hour. Cut it into pieces the size of a matchbox. Chop the onion and garlic small.",
+        "Heat the oil in a big pot on medium heat: a piece of onion should sizzle gently, not burn. Cook the onion for 5 minutes, stirring, until soft.",
+        "Add the garlic and the curry powder and stir for 1 minute, until it smells strong. Add the tin of tomatoes, the frozen veg, 1 teaspoon of salt and 150 ml water. Simmer with the lid on for 10 minutes.",
+        "Mash the veg into the sauce with the back of your spoon so they disappear. Lay the fish pieces in the sauce, spoon sauce over them, lid on, low heat for 8 minutes. Don't stir hard or the fish breaks up.",
+        "The fish is done when it is white all the way through and flakes apart easily with a fork. Split into 4 boxes. Let them cool with the lids off for up to 1 hour, then close them: 2 in the fridge, 2 in the freezer."
+      ],
+      "batch": "Keeps 2 days in the fridge, 1 month in the freezer. Reheat in the microwave 3–4 minutes, stirring halfway, until steaming hot all the way through."
+    },
+    {
+      "id": "soya-curry", "name": "Soya chunk curry with peas and rice", "tag": "pack-for-work", "hiddenVeg": false, "active": 20, "total": 40, "portions": 4,
+      "ing": [["soya_chunks", 200], ["peas", 300], ["potato", 400], ["onion", 150], ["garlic", 15], ["curry_powder", 25], ["oil", 30], ["rice_raw", 360]],
+      "basics": ["salt", "water"],
+      "steps": [
+        "Rinse the rice in a bowl of water until the water runs almost clear. Put it in the rice cooker with 720 ml water and switch it on.",
+        "Put the soya chunks in a bowl, cover with boiling water from the kettle and leave 10 minutes. Drain, let them cool a little, then squeeze out the water with your hands.",
+        "Peel the potatoes and cut them into 2 cm cubes. Chop the onion and garlic small.",
+        "Heat the oil in a big pot on medium heat: a piece of onion should sizzle gently, not burn. Cook the onion for 5 minutes, stirring, until soft.",
+        "Add the garlic and curry powder and stir 1 minute. Add the soya, the potatoes, 1 teaspoon of salt and 400 ml water. Lid on, low heat for 15 minutes.",
+        "Add the frozen peas and cook 5 more minutes. The potatoes are done when a fork goes in easily. Split into 4 boxes. Let them cool with the lids off for up to 1 hour, then close them: 2 in the fridge, 2 in the freezer."
+      ],
+      "batch": "Keeps 3 days in the fridge, 2 months in the freezer. Reheat in the microwave 3–4 minutes, stirring halfway, until steaming hot all the way through.",
+      "note": "Soya chunks are the cheapest protein in the shop: about Rs 45 for the whole pot."
+    },
+    {
+      "id": "red-bean-curry", "name": "Red bean curry with rice and eggs", "tag": "pack-for-work", "hiddenVeg": false, "active": 20, "total": 40, "portions": 4,
+      "ing": [["red_beans", 3], ["egg", 8], ["onion", 150], ["garlic", 10], ["curry_powder", 15], ["tomatoes_tin", 1], ["oil", 25], ["rice_raw", 320]],
+      "basics": ["salt", "water"],
+      "steps": [
+        "Rinse the rice in a bowl of water until the water runs almost clear. Put it in the rice cooker with 640 ml water and switch it on.",
+        "Put the eggs in a pot of cold water, bring to the boil and boil 9 minutes. Move them into cold water, then peel.",
+        "Chop the onion and garlic small. Open the bean tins, tip them into a sieve and rinse under the tap.",
+        "Heat the oil in a big pot on medium heat: a piece of onion should sizzle gently, not burn. Cook the onion for 5 minutes, stirring, until soft.",
+        "Add the garlic and curry powder and stir 1 minute. Add the beans, the tin of tomatoes, 1 teaspoon of salt and 200 ml water. Simmer 15 minutes with the lid half on, stirring now and then, until thick.",
+        "Mash a few spoons of beans against the side of the pot to thicken the sauce. Cut the eggs in half. Split into 4 boxes. Let them cool with the lids off for up to 1 hour, then close them: 2 in the fridge, 2 in the freezer. Put 2 eggs in each box."
+      ],
+      "batch": "Keeps 3 days in the fridge, 2 months in the freezer. Reheat in the microwave 3–4 minutes, stirring halfway, until steaming hot all the way through."
+    },
+    {
+      "id": "prawn-rougaille", "name": "Prawn rougaille with rice", "tag": "pack-for-work", "hiddenVeg": true, "active": 20, "total": 40, "portions": 4,
+      "ing": [["prawns", 500], ["onion", 150], ["garlic", 15], ["tomatoes_tin", 2], ["thyme", 2], ["mixed_veg", 250], ["oil", 30], ["rice_raw", 400]],
+      "basics": ["salt", "water"],
+      "steps": [
+        "Rinse the rice in a bowl of water until the water runs almost clear. Put it in the rice cooker with 800 ml water and switch it on.",
+        "Thaw the prawns in the fridge the night before. Rinse and pat them dry. Chop the onion and garlic small.",
+        "Heat the oil in a big pot on medium heat: a piece of onion should sizzle gently, not burn. Cook the onion for 5 minutes, stirring, until soft.",
+        "Add the garlic and thyme and stir 1 minute. Add both tins of tomatoes, the frozen veg, 1 teaspoon of salt and 100 ml water. Simmer 15 minutes with the lid off, until thick.",
+        "Mash the veg into the sauce with the back of your spoon so they disappear. Add the prawns and cook 4–5 minutes, stirring. They are done when they turn pink and curl up. Don't cook them longer or they go rubbery.",
+        "Split into 4 boxes. Let them cool with the lids off for up to 1 hour, then close them: 2 in the fridge, 2 in the freezer."
+      ],
+      "batch": "Keeps 2 days in the fridge, 1 month in the freezer. Reheat in the microwave 3–4 minutes, stirring halfway, until steaming hot all the way through.",
+      "note": "The treat dish: prawns cost more, so it comes round about once a month."
+    },
+    {
+      "id": "egg-curry", "name": "Egg curry with peas and rice", "tag": "pack-for-work", "hiddenVeg": false, "active": 20, "total": 35, "portions": 4,
+      "ing": [["egg", 12], ["peas", 300], ["onion", 150], ["garlic", 10], ["curry_powder", 20], ["tomatoes_tin", 1], ["oil", 25], ["rice_raw", 360]],
+      "basics": ["salt", "water"],
+      "steps": [
+        "Rinse the rice in a bowl of water until the water runs almost clear. Put it in the rice cooker with 720 ml water and switch it on.",
+        "Put the eggs in a pot of cold water, bring to the boil and boil 9 minutes. Move them into cold water, then peel. Make 3 small cuts in each egg so the sauce gets in.",
+        "Chop the onion and garlic small.",
+        "Heat the oil in a big pot on medium heat: a piece of onion should sizzle gently, not burn. Cook the onion for 5 minutes, stirring, until soft.",
+        "Add the garlic and curry powder and stir 1 minute. Add the tin of tomatoes, 1 teaspoon of salt and 200 ml water. Simmer 10 minutes with the lid on.",
+        "Add the frozen peas and the eggs. Simmer 5 more minutes, turning the eggs in the sauce. Split into 4 boxes. Let them cool with the lids off for up to 1 hour, then close them: 2 in the fridge, 2 in the freezer. Put 3 eggs in each box."
+      ],
+      "batch": "Keeps 3 days in the fridge, 2 months in the freezer. Reheat in the microwave 3–4 minutes, stirring halfway, until steaming hot all the way through."
+    },
+    {
+      "id": "chicken-briyani", "name": "One-pot chicken briyani", "tag": "pack-for-work", "hiddenVeg": false, "active": 30, "total": 60, "portions": 4,
+      "ing": [["chicken_breast", 600], ["rice_raw", 400], ["potato", 400], ["onion", 200], ["yoghurt", 200], ["curry_powder", 25], ["garlic", 15], ["oil", 40]],
+      "basics": ["salt", "water"],
+      "steps": [
+        "Cut the chicken into chunks. Mix it in a bowl with the yoghurt, the curry powder, the chopped garlic and 1 teaspoon of salt. Leave it 15 minutes (or overnight in the fridge).",
+        "Rinse the rice until the water runs almost clear. Peel the potatoes and cut them into quarters. Slice the onions thin.",
+        "Heat the oil in a big pot with a lid on medium heat. Fry the onions 8–10 minutes, stirring, until golden brown. Take half out and keep them for the top.",
+        "Add the chicken with all its yoghurt and the potatoes. Stir 5 minutes. Add the rice on top in an even layer, then pour in 750 ml water and 1 teaspoon of salt. Don't stir.",
+        "When it bubbles, put the lid on tight, turn the heat to the lowest and cook 25 minutes. Don't lift the lid.",
+        "Turn off the heat and leave 5 minutes. Cut a piece of chicken open: no pink inside. Scatter the kept onions on top. Split into 4 boxes. Let them cool with the lids off for up to 1 hour, then close them: 2 in the fridge, 2 in the freezer."
+      ],
+      "batch": "Keeps 3 days in the fridge, 2 months in the freezer. Reheat in the microwave 3–4 minutes, stirring halfway, until steaming hot all the way through."
+    },
+    {
+      "id": "tuna-potato-curry", "name": "Tuna and potato curry with rice", "tag": "pack-for-work", "hiddenVeg": false, "active": 15, "total": 35, "portions": 4,
+      "ing": [["tuna", 3], ["potato", 600], ["onion", 150], ["garlic", 10], ["curry_powder", 20], ["tomatoes_tin", 1], ["oil", 25], ["rice_raw", 320]],
+      "basics": ["salt", "water"],
+      "steps": [
+        "Rinse the rice in a bowl of water until the water runs almost clear. Put it in the rice cooker with 640 ml water and switch it on.",
+        "Peel the potatoes and cut them into 2 cm cubes. Chop the onion and garlic small. Drain the tuna.",
+        "Heat the oil in a big pot on medium heat: a piece of onion should sizzle gently, not burn. Cook the onion for 5 minutes, stirring, until soft.",
+        "Add the garlic and curry powder and stir 1 minute. Add the potatoes, the tin of tomatoes, 1 teaspoon of salt and 300 ml water. Lid on, low heat for 15 minutes, until a fork goes into the potatoes easily.",
+        "Stir in the tuna in big flakes and heat 3 minutes. Split into 4 boxes. Let them cool with the lids off for up to 1 hour, then close them: 2 in the fridge, 2 in the freezer."
+      ],
+      "batch": "Keeps 3 days in the fridge, 2 months in the freezer. Reheat in the microwave 3–4 minutes, stirring halfway, until steaming hot all the way through."
+    },
+    {
+      "id": "paneer-peas-curry", "name": "Paneer and pea curry with rice", "tag": "pack-for-work", "hiddenVeg": false, "active": 15, "total": 35, "portions": 4,
+      "ing": [["paneer", 400], ["peas", 400], ["onion", 150], ["garlic", 10], ["curry_powder", 20], ["tomatoes_tin", 1], ["oil", 20], ["rice_raw", 360]],
+      "basics": ["salt", "water"],
+      "steps": [
+        "Rinse the rice in a bowl of water until the water runs almost clear. Put it in the rice cooker with 720 ml water and switch it on.",
+        "Cut the paneer into 2 cm cubes. Chop the onion and garlic small.",
+        "Heat the oil in a big pot on medium heat: a piece of onion should sizzle gently, not burn. Cook the onion for 5 minutes, stirring, until soft.",
+        "Add the garlic and curry powder and stir 1 minute. Add the tin of tomatoes, 1 teaspoon of salt and 200 ml water. Simmer 10 minutes with the lid on.",
+        "Add the frozen peas and the paneer. Simmer 5 more minutes, stirring gently so the paneer keeps its shape. Split into 4 boxes. Let them cool with the lids off for up to 1 hour, then close them: 2 in the fridge, 2 in the freezer."
+      ],
+      "batch": "Keeps 3 days in the fridge, 2 months in the freezer. Reheat in the microwave 3–4 minutes, stirring halfway, until steaming hot all the way through."
+    },
+    {
+      "id": "chilli-sin-carne", "name": "Bean and soya chilli with rice", "tag": "pack-for-work", "hiddenVeg": false, "active": 20, "total": 40, "portions": 4,
+      "ing": [["red_beans", 2], ["soya_chunks", 120], ["tomatoes_tin", 2], ["onion", 150], ["garlic", 10], ["chilli_powder", 10], ["oil", 25], ["rice_raw", 360]],
+      "basics": ["salt", "water"],
+      "steps": [
+        "Rinse the rice in a bowl of water until the water runs almost clear. Put it in the rice cooker with 720 ml water and switch it on.",
+        "Cover the soya chunks with boiling water from the kettle and leave 10 minutes. Drain, squeeze out the water, then chop them small so they look like mince.",
+        "Chop the onion and garlic small. Rinse the beans in a sieve.",
+        "Heat the oil in a big pot on medium heat: a piece of onion should sizzle gently, not burn. Cook the onion for 5 minutes, stirring, until soft.",
+        "Add the garlic and chilli powder (start with half if you don't like it hot) and stir 1 minute. Add the soya, beans, both tins of tomatoes, 1 teaspoon of salt and 200 ml water.",
+        "Simmer 15 minutes with the lid half on, stirring now and then, until thick. Split into 4 boxes. Let them cool with the lids off for up to 1 hour, then close them: 2 in the fridge, 2 in the freezer."
+      ],
+      "batch": "Keeps 3 days in the fridge, 2 months in the freezer. Reheat in the microwave 3–4 minutes, stirring halfway, until steaming hot all the way through."
+    },
+    {
+      "id": "lentil-bolognese", "name": "Lentil bolognese pasta with cheese", "tag": "pack-for-work", "hiddenVeg": true, "active": 20, "total": 35, "portions": 4,
+      "ing": [["lentils_red", 200], ["pasta", 400], ["tomatoes_tin", 2], ["onion", 150], ["garlic", 10], ["mixed_veg", 250], ["cheese", 100], ["oil", 20]],
+      "basics": ["salt", "water"],
+      "steps": [
+        "Chop the onion and garlic small. Rinse the lentils in a sieve until the water runs clear.",
+        "Heat the oil in a big pot on medium heat: a piece of onion should sizzle gently, not burn. Cook the onion for 5 minutes, stirring, until soft.",
+        "Add the garlic and stir 1 minute. Add the lentils, both tins of tomatoes, the frozen veg, 1 teaspoon of salt and 500 ml water. Simmer 20 minutes with the lid half on, stirring often, until the lentils are soft and the sauce is thick.",
+        "Meanwhile boil the pasta in a big pot of salted water for the time on the pack. Drain.",
+        "Mash the veg into the sauce with the back of your spoon so they disappear. Mix the pasta into the sauce. Grate the cheese. Split into 4 boxes. Let them cool with the lids off for up to 1 hour, then close them: 2 in the fridge, 2 in the freezer. Put the cheese on top; it melts when you reheat."
+      ],
+      "batch": "Keeps 3 days in the fridge, 2 months in the freezer. Reheat in the microwave 3–4 minutes, stirring halfway, until steaming hot all the way through."
+    },
+    {
+      "id": "sardine-rougaille", "name": "Sardine rougaille with rice", "tag": "pack-for-work", "hiddenVeg": true, "active": 15, "total": 35, "portions": 4,
+      "ing": [["sardines", 4], ["onion", 150], ["garlic", 10], ["tomatoes_tin", 2], ["thyme", 2], ["mixed_veg", 250], ["oil", 20], ["rice_raw", 400]],
+      "basics": ["salt", "water"],
+      "steps": [
+        "Rinse the rice in a bowl of water until the water runs almost clear. Put it in the rice cooker with 800 ml water and switch it on.",
+        "Chop the onion and garlic small.",
+        "Heat the oil in a big pot on medium heat: a piece of onion should sizzle gently, not burn. Cook the onion for 5 minutes, stirring, until soft.",
+        "Add the garlic and thyme and stir 1 minute. Add both tins of tomatoes, the frozen veg and 1/2 teaspoon of salt. Simmer 15 minutes with the lid off, until thick.",
+        "Mash the veg into the sauce with the back of your spoon so they disappear. Add the sardines with their sauce in big pieces. Heat 3 minutes without stirring hard, so they stay in chunks.",
+        "Split into 4 boxes. Let them cool with the lids off for up to 1 hour, then close them: 2 in the fridge, 2 in the freezer."
+      ],
+      "batch": "Keeps 2 days in the fridge, 1 month in the freezer. Reheat in the microwave 3–4 minutes, stirring halfway, until steaming hot all the way through."
+    },
+    {
+      "id": "bol-renverse", "name": "Bol renversé (chicken and veg on rice)", "tag": "pack-for-work", "hiddenVeg": false, "active": 25, "total": 40, "portions": 4,
+      "ing": [["chicken_breast", 500], ["rice_raw", 400], ["mixed_veg", 400], ["egg", 4], ["onion", 150], ["soy_sauce", 50], ["garlic", 15], ["oil", 30]],
+      "basics": ["salt", "water"],
+      "steps": [
+        "Rinse the rice in a bowl of water until the water runs almost clear. Put it in the rice cooker with 800 ml water and switch it on.",
+        "Slice the chicken into thin strips. Slice the onion. Chop the garlic small.",
+        "Beat the eggs with a pinch of salt. Heat 1 teaspoon of the oil in a big pan on medium heat, pour in the eggs and tilt the pan so they spread thin. Cook 2 minutes until set, slide out and cut into strips.",
+        "Heat the rest of the oil on high. Stir-fry the chicken 5 minutes until no pink is left inside. Add the onion and garlic and stir 2 minutes.",
+        "Add the frozen veg, the soy sauce and 100 ml water. Stir-fry 5 minutes until the veg is hot and the sauce coats everything.",
+        "Put rice in each box, the chicken and veg on top and the egg strips over it. Let them cool with the lids off for up to 1 hour, then close them: 2 in the fridge, 2 in the freezer."
+      ],
+      "batch": "Keeps 3 days in the fridge, 2 months in the freezer. Reheat in the microwave 3–4 minutes, stirring halfway, until steaming hot all the way through."
+    },
+    {
+      "id": "chickpea-soya-curry", "name": "Chickpea and soya curry with rice", "tag": "pack-for-work", "hiddenVeg": false, "active": 15, "total": 35, "portions": 4,
+      "ing": [["chickpeas", 2], ["soya_chunks", 120], ["onion", 150], ["garlic", 10], ["curry_powder", 20], ["tomatoes_tin", 1], ["oil", 25], ["rice_raw", 360]],
+      "basics": ["salt", "water"],
+      "steps": [
+        "Rinse the rice in a bowl of water until the water runs almost clear. Put it in the rice cooker with 720 ml water and switch it on.",
+        "Cover the soya chunks with boiling water from the kettle and leave 10 minutes. Drain and squeeze out the water. Rinse the chickpeas in a sieve. Chop the onion and garlic small.",
+        "Heat the oil in a big pot on medium heat: a piece of onion should sizzle gently, not burn. Cook the onion for 5 minutes, stirring, until soft.",
+        "Add the garlic and curry powder and stir 1 minute. Add the soya, chickpeas, tin of tomatoes, 1 teaspoon of salt and 300 ml water.",
+        "Simmer 15 minutes with the lid half on, stirring now and then. Mash a few chickpeas against the side of the pot to thicken the sauce. Split into 4 boxes. Let them cool with the lids off for up to 1 hour, then close them: 2 in the fridge, 2 in the freezer."
+      ],
+      "batch": "Keeps 3 days in the fridge, 2 months in the freezer. Reheat in the microwave 3–4 minutes, stirring halfway, until steaming hot all the way through."
+    },
+    {
+      "id": "goat-curry", "name": "Goat curry (cari cabri) with rice", "tag": "pack-for-work", "hiddenVeg": false, "active": 25, "total": 105, "portions": 4,
+      "ing": [["goat", 800], ["potato", 400], ["onion", 150], ["garlic", 15], ["ginger", 10], ["curry_powder", 25], ["oil", 30], ["rice_raw", 360]],
+      "basics": ["salt", "water"],
+      "steps": [
+        "Chop the onion, garlic and ginger small. Rinse the goat pieces.",
+        "Heat the oil in a big pot on medium heat: a piece of onion should sizzle gently, not burn. Cook the onion for 5 minutes, stirring, until soft.",
+        "Add the garlic, ginger and curry powder and stir 1 minute. Add the goat and stir 5 minutes so every piece is coated. Add 1 teaspoon of salt and 700 ml water.",
+        "Bring it to a bubble, lid on, lowest heat for 1 hour. Check once or twice and add a little water if it gets dry. (A pressure cooker does this in 25 minutes.)",
+        "Peel the potatoes, cut them into quarters and add them. Cook 20 more minutes. Start the rice now: rinse the rice in a bowl of water until the water runs almost clear. put it in the rice cooker with 720 ml water and switch it on.",
+        "The goat is done when a piece comes apart easily with a fork. Split into 4 boxes. Let them cool with the lids off for up to 1 hour, then close them: 2 in the fridge, 2 in the freezer."
+      ],
+      "batch": "Keeps 3 days in the fridge, 2 months in the freezer. Reheat in the microwave 3–4 minutes, stirring halfway, until steaming hot all the way through.",
+      "note": "Goat costs more, so it comes round about once a month. Bones are normal in cabri; eat around them."
+    },
+    {
+      "id": "tuna-egg-fried-rice", "name": "Tuna and egg fried rice", "tag": "pack-for-work", "hiddenVeg": true, "active": 25, "total": 50, "portions": 4,
+      "ing": [["rice_raw", 400], ["tuna", 2], ["egg", 6], ["mixed_veg", 300], ["soy_sauce", 50], ["garlic", 15], ["oil", 40]],
+      "basics": ["salt", "water"],
+      "steps": [
+        "Cook the rice in the rice cooker with 800 ml water, then spread it on a big plate to cool for at least 30 minutes (or use rice cooked the day before).",
+        "Beat the eggs with a pinch of salt. Chop the garlic small. Drain the tuna.",
+        "Heat 1 tablespoon of the oil in a big pan on medium-high. Pour in the eggs, stir until just set, then move them to a plate.",
+        "Heat the rest of the oil on high. Fry the garlic 30 seconds, add the frozen veg and stir 4 minutes.",
+        "Add the rice and stir-fry 5 minutes, breaking up lumps. Add the tuna, the eggs and the soy sauce and stir 2 more minutes until everything is hot. Split into 4 boxes. Let them cool with the lids off for up to 1 hour, then close them: 2 in the fridge, 2 in the freezer."
+      ],
+      "batch": "Keeps 3 days in the fridge, 2 months in the freezer. Reheat in the microwave 3–4 minutes, stirring halfway, until steaming hot all the way through."
+    },
+    {
+      "id": "soya-noodles", "name": "Soya mine frit (fried noodles)", "tag": "pack-for-work", "hiddenVeg": true, "active": 25, "total": 35, "portions": 4,
+      "ing": [["noodles_egg", 400], ["soya_chunks", 120], ["mixed_veg", 300], ["egg", 4], ["soy_sauce", 60], ["garlic", 15], ["oil", 40]],
+      "basics": ["salt", "water"],
+      "steps": [
+        "Cover the soya chunks with boiling water from the kettle and leave 10 minutes. Drain, squeeze out the water and cut them in half.",
+        "Boil the noodles 4 minutes (or as the pack says), drain, rinse under cold water and toss with 1 teaspoon of the oil so they don't stick.",
+        "Beat the eggs with a pinch of salt. Heat 1 teaspoon of oil in a big pan, scramble the eggs until just set, move them to a plate.",
+        "Heat the rest of the oil on high. Fry the garlic 30 seconds, add the soya and stir 3 minutes until browned at the edges. Add the frozen veg and stir 4 minutes.",
+        "Add the noodles, the eggs and the soy sauce. Toss with two spoons for 3 minutes until hot. Split into 4 boxes. Let them cool with the lids off for up to 1 hour, then close them: 2 in the fridge, 2 in the freezer."
+      ],
+      "batch": "Keeps 3 days in the fridge, 2 months in the freezer. Reheat in the microwave 3–4 minutes, stirring halfway, until steaming hot all the way through."
+    },
+    {
+      "id": "fish-potato-bake", "name": "Oven-baked fish with potatoes and veg", "tag": "pack-for-work", "hiddenVeg": false, "active": 15, "total": 50, "portions": 4,
+      "ing": [["fish", 700], ["potato", 1200], ["mixed_veg", 300], ["oil", 40], ["garlic", 15], ["thyme", 3]],
+      "basics": ["salt", "water"],
+      "steps": [
+        "Heat the oven to 200 °C. Thaw the fish in the fridge the night before.",
+        "Cut the potatoes into 3 cm chunks (no need to peel). Toss them on a big tray with most of the oil, the chopped garlic, thyme and 1 teaspoon of salt. Roast 25 minutes.",
+        "Take the tray out, turn the potatoes, add the frozen veg and lay the fish on top. Brush the fish with the rest of the oil and sprinkle with salt.",
+        "Roast 15 more minutes. The fish is done when it is white all the way through and flakes apart easily with a fork. Split into 4 boxes. Let them cool with the lids off for up to 1 hour, then close them: 2 in the fridge, 2 in the freezer."
+      ],
+      "batch": "Keeps 2 days in the fridge, 1 month in the freezer. Reheat in the microwave 3–4 minutes, stirring halfway, until steaming hot all the way through."
     }
   ],
   "quick": [
@@ -165,7 +398,44 @@
       "ing": [["fish", 150], ["potato", 250], ["mixed_veg", 80], ["oil", 10], ["garlic", 5]],
       "basics": ["salt", "pepper", "water"],
       "steps": ["Cut the potatoes into 2 cm cubes and boil them in salted water for 12 minutes, until a fork goes in easily. Drain.", "Pat the fish dry with kitchen paper and sprinkle with salt and pepper.", "Heat the oil in a pan on medium-high. Cook the fish 3–4 minutes per side; it's done when it turns white and flakes apart easily with a fork.", "Microwave the frozen veg for 3 minutes with the chopped garlic and a little salt. Serve together."],
-      "note": "This one is a proper cook. Swap it in on an off day when you feel like trying something new." }
+      "note": "This one is a proper cook. Swap it in on an off day when you feel like trying something new." },
+    { "id": "cheese-omelette-toast", "name": "Cheese omelette on toast", "slots": ["breakfast", "home"], "tag": "eat-at-home", "active": 8, "total": 8,
+      "ing": [["egg", 3], ["cheese", 30], ["bread", 60], ["oil", 5]],
+      "basics": ["salt"],
+      "steps": ["Beat the eggs with a pinch of salt. Grate or chop the cheese. Put the bread in the toaster.", "Heat the oil in a pan on medium. Pour in the eggs, tilt the pan to spread them, cook 2 minutes. Scatter the cheese over, fold in half and cook 1 more minute."] },
+    { "id": "banana-oat-pancakes", "name": "Banana oat pancakes with peanut butter", "slots": ["breakfast"], "tag": "eat-at-home", "active": 10, "total": 10,
+      "ing": [["oats", 50], ["egg", 2], ["banana", 1], ["milk", 50], ["peanut_butter", 16], ["oil", 5]],
+      "steps": ["Mash the banana in a bowl with a fork. Mix in the eggs, oats and milk.", "Heat the oil in a pan on medium. Drop in 4 spoonfuls of batter, cook 2 minutes until bubbles show, flip, 1–2 minutes more. Spread with peanut butter."] },
+    { "id": "egg-mayo-sandwich", "name": "Egg mayo sandwich", "slots": ["snack", "light"], "tag": "pack-for-work", "active": 10, "total": 10,
+      "ing": [["egg", 2], ["mayo", 15], ["bread", 60]],
+      "basics": ["salt", "pepper", "water"],
+      "steps": ["Boil the eggs 9 minutes, cool them in cold water and peel (or boil a batch on prep day).", "Mash the eggs with the mayo and a pinch of salt and pepper. Spread between the bread and wrap it."] },
+    { "id": "cheese-tomato-sandwich", "name": "Cheese and tomato sandwich", "slots": ["snack", "light"], "tag": "pack-for-work", "active": 3, "total": 3,
+      "ing": [["bread", 60], ["cheese", 40], ["tomato", 60]],
+      "basics": ["pepper"],
+      "steps": ["Slice the cheese and tomato. Put them between the bread with a pinch of pepper. Wrap it."] },
+    { "id": "sardine-wrap", "name": "Sardine and tomato wrap", "slots": ["snack", "home"], "tag": "pack-for-work", "active": 3, "total": 3,
+      "ing": [["wrap", 1], ["sardines", 1], ["tomato", 50]],
+      "steps": ["Mash the sardines in their sauce with a fork. Spread on the wrap, add sliced tomato, roll it up tight and wrap in foil."] },
+    { "id": "chickpea-tuna-salad", "name": "Chickpea and tuna salad", "slots": ["home", "light"], "tag": "pack-for-work", "active": 5, "total": 5,
+      "ing": [["chickpeas", 1], ["tuna", 1], ["tomato", 100], ["onion", 30], ["oil", 10]],
+      "basics": ["salt", "pepper"],
+      "steps": ["Rinse the chickpeas in a sieve. Drain the tuna. Chop the tomato and a little onion.", "Mix everything in a box with the oil, a pinch of salt and pepper. Eat cold."] },
+    { "id": "egg-noodle-soup", "name": "Egg noodle soup", "slots": ["home"], "tag": "eat-at-home", "active": 10, "total": 10,
+      "ing": [["noodles_egg", 80], ["egg", 2], ["mixed_veg", 80], ["soy_sauce", 15]],
+      "basics": ["water"],
+      "steps": ["Bring 500 ml water to the boil in a pot. Add the noodles and frozen veg and cook 4 minutes.", "Crack in the eggs, don't stir, cook 3 minutes until the whites are set. Add the soy sauce."] },
+    { "id": "paneer-bhurji-wrap", "name": "Paneer scramble wraps", "slots": ["home", "breakfast"], "tag": "eat-at-home", "active": 10, "total": 10,
+      "ing": [["paneer", 100], ["egg", 1], ["onion", 40], ["turmeric", 1], ["oil", 5], ["wrap", 2]],
+      "basics": ["salt"],
+      "steps": ["Chop the onion small. Crumble the paneer with your fingers.", "Heat the oil in a pan on medium, cook the onion 3 minutes. Add the paneer, turmeric, a pinch of salt and the egg and stir 3 minutes. Fill the two wraps."] },
+    { "id": "beans-cheese-toast", "name": "Baked beans and cheese on toast", "slots": ["breakfast", "home"], "tag": "eat-at-home", "active": 5, "total": 5,
+      "ing": [["beans", 0.5], ["cheese", 30], ["bread", 60]],
+      "steps": ["Heat half the tin of beans in a bowl in the microwave for 1–2 minutes. Toast the bread.", "Pour the beans on the toast and grate the cheese over the top."] },
+    { "id": "masala-omelette-wrap", "name": "Masala omelette wrap", "slots": ["breakfast", "home"], "tag": "pack-for-work", "active": 8, "total": 8,
+      "ing": [["egg", 3], ["onion", 40], ["tomato", 50], ["turmeric", 1], ["oil", 5], ["wrap", 1]],
+      "basics": ["salt"],
+      "steps": ["Chop the onion and tomato small. Beat them with the eggs, the turmeric and a pinch of salt.", "Heat the oil in a pan on medium, pour in the eggs and cook 2–3 minutes until set, flip for 1 minute. Roll it in the wrap. Eats well cold too."] }
   ],
   "topups": [
     { "id": "top-milk", "name": "a glass of milk", "ing": [["milk", 250]] },

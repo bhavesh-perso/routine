@@ -239,6 +239,7 @@ function foodSection(s) {
   ${input('Daily kcal target', 'kcal', s.kcal, 'int', { min: 1200, max: 5000, step: 50 })}
   ${input('Daily protein target (g)', 'protein', s.protein, 'int', { min: 50, max: 250, hint: 'Aim for somewhere in 110–140 g.' })}
   ${pair(input('Water, rest day (ml)', 'water.rest', s.water.rest, 'int', { min: 500, max: 6000, step: 250 }), input('Water, gym day (ml)', 'water.gym', s.water.gym, 'int', { min: 500, max: 6000, step: 250 }))}
+  ${input('Monthly food budget (Rs)', 'budget', s.budget, 'int', { min: 1000, max: 50000, step: 100, hint: 'The shopping list compares the plan against this.' })}
   ${toggle('I use whey protein', 'whey', s.whey, 'Adds 25 g protein per scoop. Start with half a scoop.')}`;
 }
 

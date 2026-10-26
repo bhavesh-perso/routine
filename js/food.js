@@ -69,6 +69,7 @@ const basicsText = r => (r.basics || []).map(b => BASIC[b] || b).join(', ');
 const youtube = name => `https://www.youtube.com/results?search_query=${encodeURIComponent('how to make ' + name)}`;
 const TAG = { 'pack-for-work': 'Pack for work', 'eat-at-home': 'Eat at home' };
 const slotLine = r => `${P.perServing(r).k} kcal · ${P.perServing(r).p} g protein`;
+export const rs = n => 'Rs ' + Math.round(n).toLocaleString('en');
 
 // ---------- navigation ----------
 const NAV = [['', 'Today'], ['week', 'Week'], ['shop', 'Shop'], ['recipes', 'Recipes'], ['skills', 'Skills']];
@@ -216,12 +217,20 @@ function shopList(items, bucket, scope) {
   return `<p class="muted">${left} of ${items.length} still to buy</p><ul class="list">${items.map(i => `<li class="item"><button type="button" class="check food-shopitem" aria-pressed="${!!ticks[i.key]}" data-act="food-tick" data-bucket="${bucket}" data-scope="${scope}" data-key="${esc(i.key)}">
     <span class="grow">${esc(i.name)}<br><span class="muted">${i.extra ? esc(i.need) : `Need ${esc(i.need)} · buy ${esc(i.buy)}${i.label ? ' ' + esc(i.label) : ''}`}</span></span></button></li>`).join('')}</ul>`;
 }
+function budgetBlock(s, mon, sw, fresh) {
+  const month = P.monthCost(mon, s, sw), budget = s.budget || 5000, pct = Math.min(100, Math.round(month / budget * 100));
+  return `<section class="tile food-budget" aria-label="Budget"><p class="muted">${esc(monthLabel(mon))}, estimated</p>
+    <p class="food-big"><span class="num">${rs(month)}</span> <small>of ${rs(budget)} a month</small></p>
+    <div class="bar" role="progressbar" aria-label="Budget used" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100"><b style="width:${pct}%"></b></div>
+    <p class="muted">This week's fresh list is about ${rs(P.listCost(fresh))}. ${month > budget ? 'Over budget: swap a goat, prawn or paneer dish for a soya, bean or egg one to bring it down.' : 'Prices are estimates from Mauritius supermarkets; your shop may differ a little.'}</p></section>`;
+}
 function shopView(ctx, arg) {
   const s = ctx.s, mon = /^\d{4}-\d{2}-\d{2}$/.test(arg) ? mondayOf(arg) : mondayOf(ctx.rd), sw = swapsOf();
   const [wf, wt] = [mon, addDays(mon, 6)], [mf, mt] = P.monthRange(mon), ym = mon.slice(0, 7);
   const fresh = P.groceryFor(wf, wt, 'fresh', s, sw), staples = P.groceryFor(mf, mt, 'staple', s, sw);
   return `<h1 class="page-title">Shopping</h1>${nav('shop')}
-  <p class="muted">Metric quantities, no prices. Pack sizes are the cheapest common ones; swap brands as you like.</p>
+  ${budgetBlock(s, mon, sw, fresh)}
+  <p class="muted">Metric quantities. Pack sizes are the cheapest common ones; swap brands as you like.</p>
   <div class="row weeknav"><a class="btn small" href="#/food/shop/${addDays(mon, -7)}">Previous</a><a class="btn small grow" href="#/food/shop/${mondayOf(ctx.rd)}">This week</a><a class="btn small" href="#/food/shop/${addDays(mon, 7)}">Next</a></div>
   <section aria-labelledby="sf"><h2 id="sf">Weekly fresh: ${esc(dayLabel(wf))} to ${esc(dayLabel(wt))}</h2>${shopList(fresh, 'shop', mon)}</section>
   <section aria-labelledby="ss"><h2 id="ss">Monthly staples: ${esc(monthLabel(mon))}</h2><p class="muted">Covers the whole month, including oil, spices, salt and the boxes for batch cooking.</p>${shopList(staples, 'staples', ym)}</section>`;
@@ -229,7 +238,7 @@ function shopView(ctx, arg) {
 
 // ---------- recipes ----------
 function recipesView() {
-  const row = r => `<li><a class="food-rlink" href="#/food/recipe/${esc(r.id)}"><b>${esc(r.name)}</b><span class="muted">${slotLine(r)} · ${r.total} min${r.hiddenVeg ? ' · hidden veg' : ''}</span></a></li>`;
+  const row = r => `<li><a class="food-rlink" href="#/food/recipe/${esc(r.id)}"><b>${esc(r.name)}</b><span class="muted">${slotLine(r)} · ${r.total} min · ${rs(P.recipeCost(r))}${r.hiddenVeg ? ' · hidden veg' : ''}</span></a></li>`;
   return `<h1 class="page-title">Recipes</h1>${nav('recipes')}${P.dataReady() ? '' : notReady()}
   <h2>Batch cook</h2><p class="muted">Cooked on batch-cook days and boxed. Four boxes each.</p><ul class="list">${P.batchRecipes().map(row).join('')}</ul>
   <h2>Quick meals</h2><p class="muted">No cooking, or 10 minutes at most.</p><ul class="list">${P.quickRecipes().map(row).join('')}</ul>`;
@@ -240,7 +249,7 @@ function recipeView(id) {
   const cooked = area().cooked || {}, n = P.perServing(r);
   return `<a class="back" href="#/food/recipes">Recipes</a><h1 class="page-title">${esc(r.name)}</h1>
   <p class="muted"><span class="tag">${esc(TAG[r.tag] || r.tag)}</span>${r.hiddenVeg ? '<span class="tag">Hidden veg</span>' : ''}${r.portions ? `<span class="tag">Makes ${r.portions} boxes</span>` : ''}</p>
-  <p class="num">${n.k} kcal · ${n.p} g protein per ${r.portions ? 'box' : 'serving'} · ${r.active} min active · ${r.total} min in all</p>
+  <p class="num">${n.k} kcal · ${n.p} g protein · about ${rs(P.recipeCost(r))} per ${r.portions ? 'box' : 'serving'} · ${r.active} min active · ${r.total} min in all</p>
   <h2>You need</h2><ul class="rules">${r.ing.map(([k, q]) => `<li>${esc(ingText(k, q))}</li>`).join('')}${basicsText(r) ? `<li class="muted">${esc(basicsText(r))}</li>` : ''}</ul>
   <h2>Steps</h2><ol class="food-steps">${r.steps.map(x => `<li>${esc(x)}</li>`).join('')}</ol>
   ${r.batch ? `<p class="note calm">${esc(r.batch)}</p>` : ''}${r.note ? `<p class="note calm">${esc(r.note)}</p>` : ''}

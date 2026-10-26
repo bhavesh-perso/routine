@@ -56,7 +56,7 @@ export const DEFAULT_SETTINGS = {
   dumbbells: { home: [2, 4, 6, 8, 10, 12, 14, 16, 18, 20], work: [2, 4, 6, 8, 10, 12, 14, 16, 18, 20] },
   workShowers: 'unknown',
   restSound: true,
-  kcal: 2500, protein: 120, whey: false,
+  kcal: 2500, protein: 120, whey: false, budget: 5000, // budget = Rs per month for food
   water: { rest: 2000, gym: 2500 },
   exam: '2026-12-21', studyStart: '2026-10-26',
   aws: { work: 20, off: 90 }, mandarinMin: 15,

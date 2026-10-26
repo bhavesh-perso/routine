@@ -41,3 +41,9 @@ Durable "why" behind the app. Newest last. The full brief is the build prompt pl
 - Top bar with back button, compact title on scroll and a Settings gear (`js/shell.js`); Settings left the tab bar, which now has 5 tabs.
 - Screen transitions follow direction (deeper = from the right, back = from the left, tabs fade). Swipe from the left edge goes back, only in the installed app because Safari has its own edge swipe.
 - Lists are grouped cards with tappable rows; the gym "Coming up" rows open the day screen, which holds Move/Skip.
+
+## 2026-10-27 — More recipes, monthly budget
+- Feedback: too much chicken curry; wants many more easy recipes and a food budget of about Rs 5,000 a month. Fish/seafood, beans/lentils/soya, goat/lamb and paneer/cheese are all fine (still no pork, beef, alcohol).
+- 17 new batch dishes (25 in all, 7 with chicken) and 10 new quick meals; same rules (≤ 8 ingredients, ≤ 30 min active, 4 boxes of 450–850 kcal / 30–65 g).
+- Prices added per food; Settings → Food has the monthly budget. With real 2026 prices the plan comes to about Rs 5,400–6,300 a month at 2,500 kcal / 120 g; the planner leans on cheap dishes (twice in the rotation) and cheap quick meals but does not drop variety or targets to force 5,000.
+- Fixed: rejected meal combinations were being added to the shopping list.

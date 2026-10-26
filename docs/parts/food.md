@@ -11,12 +11,18 @@
 | `/skills` | One-new-recipe-a-week checklist, cooked map |
 
 ## How the plan works
-- Cooking happens only on prep days (`isPrepDay`: first off day of each off stretch). Each prep day cooks 2 batch dishes x 4 boxes. Dishes come from `POOL` in `food-plan.js` by prep-day ordinal counted from 2026-10-26 (`pool[3i]`, `pool[3i+1]`), so consecutive prep days never share a dish and all 8 dishes rotate.
+- Cooking happens only on prep days (`isPrepDay`: first off day of each off stretch). Each prep day cooks 2 batch dishes x 4 boxes. Dishes come from `POOL` in `food-plan.js` by prep-day ordinal counted from 2026-10-26 (`pool[2i]`, `pool[2i+1]`): 25 dishes, the cheapest listed twice (31 entries, at least 4 apart), so consecutive prep days never share a dish and every dish comes round once per ~16 prep days.
 - Boxes are eaten from the prep day until the next prep day: work days use 2 boxes (night: Meal 1 + packed Meal 2; morning: packed Meal 2 + Meal 3), off days and prep days use 1 (Meal 2; the prep day's is fresh). Dishes alternate; on two-box days the order flips on odd day numbers. Worst case is 8 boxes between prep days, which is what a prep day cooks. `batchFor`, `boxesNeeded`, `whereBoxesGo` expose this.
 - Every other slot is a quick item (`recipes.json` `quick`, filtered by `slots`; pack-for-work only on work days) picked by search: rotated by day number, the first combination that puts the day in 2,400–2,650 kcal and 115–135 g protein and differs from yesterday. `topups` (milk, banana, peanuts...) are added when a day is still under target. Plans chain from 2026-10-26 and are memoised per settings object.
 - `extra: true` quick recipes (fish and potatoes) are never planned; they show up in the swap list.
 - Nutrition is always computed from `foods.json` (per 100 g; `pcs` foods use `shop.each`). No fixed kcal/protein numbers live in recipes.
 - Swaps: `food.swaps[iso][slot] = recipeId`. A swap replaces that meal only; the box it replaced stays in the fridge or freezer and later days do not move.
+
+## Budget (Rs per month, `s.budget`, default 5,000)
+- Every shop food has `rs` in `foods.json` (estimated Mauritius price per kg, litre or piece, 2026; eggs, milk, chicken and rice checked against Numbeo/blog prices Oct 2026). `priceOf`, `recipeCost` (per box/serving), `listCost`, `monthCost` in `food-plan.js`.
+- `monthCost` prices what the month's plan eats (fresh + staples), not the packs bought.
+- Quick-meal picks: among combinations in the kcal/protein band that differ from yesterday, the first (rotation order) whose quick meals + top-ups fit `budget / 30.4 - boxes eaten` wins; otherwise the cheapest such combination.
+- Shop screen shows the month estimate vs budget and the week's fresh cost; recipes show Rs per box.
 
 ## Data
 - `food = { log:{[rd]:[{ n,k,p,meal,t,src?,qty? }]}, recent:[ 'r:<recipeId>' | portionId ], shop:{[mondayIso]:{key:true}}, staples:{['YYYY-MM']:{key:true}}, cooked:{recipeId:iso}, swaps:{[iso]:{slot:id}} }`
