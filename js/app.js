@@ -43,7 +43,7 @@ function today() {
   </ul><div class="bar" role="progressbar" aria-label="Water" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100"><b style="width:${pct}%"></b></div></section>
   <section aria-labelledby="st"><h2 id="st">Streaks</h2>
   <p class="streaks">No junk ${streak(rd, 'junk', s)} · Water ${streak(rd, 'water', s)} · Walk ${streak(rd, 'walk', s)} days</p>
-  <div class="grid" aria-label="Last 28 days, darker means more habits done">${grid}</div></section>`;
+  <div class="grid" aria-label="Last 28 days, darker means more habits done">${grid}</div></section><p class="streaks">Build 2.2</p>`;
 }
 
 const later = n => () => `<section><h1 class="plain">Coming in step ${n}</h1><p class="note">Nothing to do here yet. Use Today for now.</p></section>`;
@@ -62,7 +62,7 @@ main.addEventListener('click', e => {
     if (act === 'water-') setLog(rd, { water: Math.max(0, l.water - 250) });
     rerender();
   } catch (err) {
-    main.insertAdjacentHTML('afterbegin', `<p class="note">Something went wrong: ${err.message}. Send me this message.</p>`);
+    alert('Tap failed: ' + err.message);
   }
 });
 setInterval(() => { if (!location.hash || location.hash === '#/today') rerender(); }, 60000);
