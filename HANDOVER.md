@@ -12,7 +12,7 @@ Owner: Bhavesh Gajadhar (Mauritius, Panama 12h shifts). Personal laptop, GitHub 
 
 ## Status
 DONE + tested: util, storage v2, plan, chart, router, today, week, app, base/core css, index.html, tests (plan, storage), PWA (sw.js, manifest, pwa.js, fonts, icons), progress, settings + ics, study (+aws-plan.json), gym.js/gym-session.js/exercises.json (smoke-tested), recipes.json (new format), foods.json.
-IN PROGRESS (background agents started 22:12 on 26 Oct):
+ALL MODULES DONE and pushed (food + gym finished by agents, 10 test files green). Remaining: optional polish only.
 - Food agent: rewrite `js/food.js` (+ optional `js/food-plan.js`), add `fish` to foods.json, `styles/food.css`, `tests/food.test.js`, `docs/parts/food.md`.
 - Gym agent: `styles/gym.css`, `tests/gym.test.js`, `docs/parts/gym.md`, ics-with-gym test.
 If agents are gone/incomplete: check which of those files exist and finish them yourself.

@@ -1,0 +1,177 @@
+{
+  "_about": "ing = [foodKey from foods.json, grams or ml (pcs foods: number of pieces)] for the whole recipe; basics (salt, pepper, water) are not counted in the 8-ingredient limit. Nutrition per serving is calculated from foods.json. batch = cooked on prep days and portioned into boxes; quick = no cooking or 10 minutes or less.",
+  "batch": [
+    {
+      "id": "chicken-curry", "name": "Chicken curry with rice", "tag": "pack-for-work", "hiddenVeg": true, "active": 25, "total": 45, "portions": 4,
+      "ing": [["chicken_breast", 600], ["onion", 150], ["garlic", 15], ["curry_powder", 25], ["tomatoes_tin", 1], ["mixed_veg", 250], ["oil", 30], ["rice_raw", 400]],
+      "basics": ["salt", "water"],
+      "steps": [
+        "Rinse the rice in a bowl of water until the water runs almost clear. Put it in the rice cooker with 800 ml water and switch it on.",
+        "Chop the onion and the garlic small. Cut the chicken into chunks about the size of a matchbox.",
+        "Heat the oil in a big pot on medium heat: the oil should shimmer and a piece of onion should sizzle gently, not burn. Cook the onion for 5 minutes, stirring, until soft.",
+        "Add the garlic and the curry powder and stir for 1 minute, until it smells strong. Add 2 tablespoons of water if it sticks.",
+        "Add the chicken and stir for 3 minutes so every piece is coated. Add the tin of tomatoes, the frozen veg straight from the bag, 1 teaspoon of salt and 200 ml water.",
+        "Bring it to a bubble, put the lid on, turn the heat to low and cook for 15 minutes, stirring once or twice.",
+        "Mash the veg into the sauce with the back of your spoon so they disappear. Cut the biggest piece of chicken open: it's cooked when it is white all the way through with no pink and the juice runs clear.",
+        "Split the rice and curry into 4 boxes. Let them cool with the lids off for up to 1 hour, then close them: 2 in the fridge, 2 in the freezer."
+      ],
+      "batch": "Keeps 3 days in the fridge, 2 months in the freezer. Reheat in the microwave 3–4 minutes, stirring halfway, until steaming hot all the way through."
+    },
+    {
+      "id": "chicken-rougaille", "name": "Chicken rougaille with rice", "tag": "pack-for-work", "hiddenVeg": true, "active": 20, "total": 45, "portions": 4,
+      "ing": [["chicken_breast", 600], ["onion", 150], ["garlic", 15], ["tomatoes_tin", 2], ["thyme", 2], ["mixed_veg", 250], ["oil", 30], ["rice_raw", 400]],
+      "basics": ["salt", "pepper", "water"],
+      "steps": [
+        "Start the rice: rinse it, then rice cooker with 800 ml water.",
+        "Chop the onion and garlic small. Cut the chicken into bite-size pieces and sprinkle with 1 teaspoon of salt and a pinch of pepper.",
+        "Heat the oil in a big pan or pot on medium-high heat. Brown the chicken for 4–5 minutes, turning, then lift it out onto a plate (it finishes cooking later).",
+        "Turn the heat to medium. Cook the onion in the same pan for 5 minutes until soft, then the garlic and thyme for 1 minute.",
+        "Add both tins of tomatoes and the frozen veg. Simmer (small bubbles) for 10 minutes and mash the veg into the sauce until you can't see them.",
+        "Put the chicken back with its juices, cover and cook 8 more minutes on low. Check a big piece: white all the way through, no pink.",
+        "Portion into 4 boxes with the rice. Cool up to 1 hour, then fridge 2 and freeze 2."
+      ],
+      "batch": "A Mauritian classic that tastes better on day 2. Fridge 3 days, freezer 2 months. Reheat 3–4 minutes until steaming."
+    },
+    {
+      "id": "dhal-rice-eggs", "name": "Dhal with rice and boiled eggs", "tag": "pack-for-work", "hiddenVeg": true, "active": 15, "total": 40, "portions": 4,
+      "ing": [["lentils_red", 240], ["mixed_veg", 250], ["onion", 120], ["garlic", 10], ["turmeric", 4], ["oil", 20], ["rice_raw", 280], ["egg", 8]],
+      "basics": ["salt", "water"],
+      "steps": [
+        "Start the rice in the rice cooker with 560 ml water.",
+        "Put the eggs in a small pot, cover with cold water, bring to the boil, then boil 9 minutes. Move them to cold water for 5 minutes and peel them.",
+        "Meanwhile chop the onion and garlic. Heat the oil in a pot on medium heat and cook them for 5 minutes until soft. Stir in the turmeric for 30 seconds.",
+        "Rinse the lentils in a sieve. Add them with the frozen veg and 900 ml water. Bring to a bubble, then simmer uncovered for 20 minutes, stirring now and then so nothing sticks.",
+        "When the lentils have fallen apart, mash everything well (or blend it) so the veg disappear. Add about 1 teaspoon of salt, taste, add more if it's flat.",
+        "Box it: rice, dhal and 2 eggs per box. Cool, then fridge 2 and freeze 2 (freeze the eggs separately or eat those boxes first: frozen boiled egg whites go rubbery)."
+      ],
+      "batch": "Dhal freezes very well. Add a splash of water before reheating; it thickens in the fridge."
+    },
+    {
+      "id": "mine-frit", "name": "Chicken mine frit (fried noodles)", "tag": "pack-for-work", "hiddenVeg": true, "active": 25, "total": 30, "portions": 4,
+      "ing": [["noodles_egg", 400], ["chicken_breast", 450], ["mixed_veg", 300], ["egg", 4], ["soy_sauce", 60], ["garlic", 15], ["oil", 40]],
+      "basics": ["salt", "water"],
+      "steps": [
+        "Boil a big pot of water. Cook the noodles for the time on the pack (usually 3–4 minutes), drain them, rinse under cold water and toss with 1 teaspoon of the oil so they don't stick.",
+        "Cut the chicken into thin strips and chop the garlic.",
+        "Heat 2 tablespoons of oil in your biggest pan on high heat. Fry the chicken for 5–6 minutes, stirring, until white all through and lightly browned. Add the garlic for the last minute.",
+        "Add the frozen veg and stir-fry 4 minutes until hot.",
+        "Push everything to one side, add the rest of the oil, crack in the eggs and stir until set, like scrambled eggs.",
+        "Add the noodles and soy sauce and toss for 2–3 minutes with two spoons until everything is mixed and hot.",
+        "Divide into 4 boxes. Cool, then fridge 2 and freeze 2."
+      ],
+      "batch": "Reheat with 1 tablespoon of water sprinkled on top, covered, 3 minutes. Keeps 3 days in the fridge."
+    },
+    {
+      "id": "chicken-fried-rice", "name": "Chicken and egg fried rice", "tag": "pack-for-work", "hiddenVeg": true, "active": 20, "total": 40, "portions": 4,
+      "ing": [["rice_raw", 400], ["chicken_breast", 450], ["egg", 6], ["mixed_veg", 300], ["soy_sauce", 60], ["garlic", 15], ["oil", 40]],
+      "basics": ["salt", "water"],
+      "steps": [
+        "Cook the rice in the rice cooker with 800 ml water, then spread it on a plate to cool for 15 minutes (hot fresh rice turns mushy when fried).",
+        "Cut the chicken into small cubes and chop the garlic.",
+        "Heat 2 tablespoons of oil in a big pan on high heat. Fry the chicken 6–7 minutes until white all the way through (cut one piece to check).",
+        "Add the garlic and frozen veg; stir-fry 4 minutes. Chop the veg small with your spatula so they hide in the rice.",
+        "Push everything aside, add the rest of the oil, crack in the eggs and scramble them until set.",
+        "Add the rice and soy sauce. Stir and toss for 3 minutes until every grain is coated and hot.",
+        "Divide into 4 boxes, cool up to 1 hour, then fridge 2 and freeze 2."
+      ],
+      "batch": "Cool rice quickly and refrigerate within 1 hour. Reheat until steaming hot, 3 minutes with a splash of water."
+    },
+    {
+      "id": "tuna-tomato-pasta", "name": "Tuna tomato pasta", "tag": "pack-for-work", "hiddenVeg": true, "active": 15, "total": 25, "portions": 4,
+      "ing": [["pasta", 440], ["tuna", 2], ["tomatoes_tin", 2], ["onion", 120], ["garlic", 10], ["mixed_veg", 250], ["oil", 20]],
+      "basics": ["salt", "pepper", "water"],
+      "steps": [
+        "Boil a big pot of water with 1 teaspoon of salt. Cook the pasta for the time on the pack, stirring once so it doesn't stick. Drain.",
+        "While it cooks: chop the onion and garlic and cook them in the oil in a pan on medium heat for 5 minutes until soft.",
+        "Add the tomatoes and frozen veg, simmer 10 minutes, then mash or blend the sauce until smooth so the veg disappear.",
+        "Drain the tuna and stir it in for 2 minutes. Season with salt and pepper.",
+        "Mix the sauce with the pasta and divide into 4 boxes. Cool, then fridge 2 and freeze 2."
+      ],
+      "batch": "Pasta reheats well with a splash of water, 3 minutes. Fridge 3 days."
+    },
+    {
+      "id": "chicken-potato-traybake", "name": "Chicken and potato tray bake", "tag": "pack-for-work", "hiddenVeg": false, "active": 15, "total": 50, "portions": 4,
+      "ing": [["chicken_breast", 600], ["potato", 1200], ["mixed_veg", 300], ["oil", 50], ["garlic", 15], ["thyme", 3]],
+      "basics": ["salt", "pepper"],
+      "steps": [
+        "Turn the oven on to 200 °C so it heats up.",
+        "Wash the potatoes (no need to peel) and cut them into 3 cm cubes. Cut the chicken into large chunks. Chop the garlic.",
+        "Put potatoes, chicken, garlic, thyme, the oil, 1½ teaspoons of salt and some pepper on a large oven tray. Mix with your hands so everything is coated, and spread it out in one layer.",
+        "Bake 25 minutes. Take the tray out (use a cloth, it's hot), scatter the frozen veg on top, stir, and bake 15 more minutes.",
+        "Done when the potatoes are soft when you push a fork in and the chicken is white all the way through.",
+        "Divide into 4 boxes. Cool, then fridge 2 and freeze 2."
+      ],
+      "batch": "Freeze without the potatoes going soggy by cooling fully first. Reheat 3 minutes, or eat cold in a wrap."
+    },
+    {
+      "id": "chicken-lentil-soup", "name": "Chicken and lentil soup with bread", "tag": "pack-for-work", "hiddenVeg": true, "active": 15, "total": 40, "portions": 4,
+      "ing": [["lentils_red", 200], ["chicken_breast", 400], ["mixed_veg", 300], ["onion", 120], ["garlic", 10], ["cumin", 4], ["oil", 20], ["bread", 360]],
+      "basics": ["salt", "water"],
+      "steps": [
+        "Chop the onion and garlic. Cut the chicken into small pieces.",
+        "Heat the oil in a big pot on medium heat and cook the onion 5 minutes. Add the garlic and cumin for 1 minute.",
+        "Add the chicken and stir 3 minutes. Add the rinsed lentils, the frozen veg and 1.2 litres of water. Bring to a boil, then simmer 25 minutes with the lid half on.",
+        "Lift out the chicken pieces with a spoon. Mash or blend the soup so the veg disappear, then put the chicken back. Add salt to taste (about 1½ teaspoons).",
+        "Pour into 4 boxes (it thickens as it cools). Pack 3 slices of bread with each box."
+      ],
+      "batch": "Freezes for 2 months. Reheat 3–4 minutes, stirring halfway, until steaming."
+    }
+  ],
+  "quick": [
+    { "id": "pb-banana-oats", "name": "Peanut-butter banana oats", "slots": ["breakfast"], "tag": "eat-at-home", "active": 7, "total": 7,
+      "ing": [["oats", 60], ["milk", 250], ["banana", 1], ["peanut_butter", 16]],
+      "steps": ["Put oats and milk in a bowl and microwave 2 minutes (or stir in a pot on medium-low for 4 minutes).", "Stir, mash in half the banana and the peanut butter, slice the rest on top."] },
+    { "id": "overnight-oats", "name": "Overnight oats with yoghurt and banana", "slots": ["breakfast", "snack"], "tag": "pack-for-work", "active": 3, "total": 3,
+      "ing": [["oats", 60], ["milk", 200], ["yoghurt", 100], ["banana", 1]],
+      "steps": ["The night before, mix oats, milk and yoghurt in a box and leave it in the fridge.", "In the morning slice the banana on top. Eat cold."] },
+    { "id": "eggs-on-toast", "name": "Scrambled eggs on toast", "slots": ["breakfast", "home"], "tag": "eat-at-home", "active": 8, "total": 8,
+      "ing": [["egg", 3], ["bread", 60], ["oil", 5]],
+      "basics": ["salt", "pepper"],
+      "steps": ["Beat the eggs in a bowl with a pinch of salt and pepper. Toast the bread.", "Heat the oil in a pan on medium-low. Pour in the eggs and stir slowly with a spatula for 2–3 minutes until just set and no longer runny. Serve on the toast."] },
+    { "id": "farata-eggs", "name": "Farata with fried eggs", "slots": ["breakfast", "home"], "tag": "eat-at-home", "active": 8, "total": 8,
+      "ing": [["farata", 2], ["egg", 2], ["oil", 5]],
+      "basics": ["salt"],
+      "steps": ["Warm the farata in a dry pan on medium heat, 1 minute each side.", "Add the oil and fry the eggs 3 minutes until the whites are fully set. Eat them rolled in the farata."] },
+    { "id": "pb-toast-milk", "name": "Peanut-butter toast and a glass of milk", "slots": ["breakfast", "light"], "tag": "eat-at-home", "active": 3, "total": 3,
+      "ing": [["bread", 60], ["peanut_butter", 32], ["milk", 250]],
+      "steps": ["Toast the bread and spread the peanut butter.", "Pour a glass of milk."] },
+    { "id": "yoghurt-bowl", "name": "Yoghurt, banana and peanuts", "slots": ["breakfast", "snack", "light"], "tag": "pack-for-work", "active": 3, "total": 3,
+      "ing": [["yoghurt", 250], ["banana", 1], ["peanuts", 30]],
+      "steps": ["Spoon the yoghurt into a box, slice the banana on top.", "Pack the peanuts separately so they stay crunchy."] },
+    { "id": "boiled-eggs-banana", "name": "2 boiled eggs and a banana", "slots": ["snack", "light"], "tag": "pack-for-work", "active": 1, "total": 1,
+      "ing": [["egg", 2], ["banana", 1]],
+      "steps": ["Take 2 eggs from your boiled batch (peel at work) and a banana."], "note": "Boil 6–8 eggs on prep day: 9 minutes in boiling water, cool in cold water, keep them in the shell in the fridge up to 5 days." },
+    { "id": "pb-banana-sandwich", "name": "Peanut-butter banana sandwich", "slots": ["snack"], "tag": "pack-for-work", "active": 3, "total": 3,
+      "ing": [["bread", 60], ["peanut_butter", 32], ["banana", 1]],
+      "steps": ["Spread the peanut butter on both slices, add the sliced banana, close and cut in half. Wrap it in foil."] },
+    { "id": "tuna-mayo-wrap", "name": "Tuna mayo wrap", "slots": ["snack", "home"], "tag": "pack-for-work", "active": 5, "total": 5,
+      "ing": [["wrap", 1], ["tuna", 1], ["mayo", 15]],
+      "basics": ["pepper"],
+      "steps": ["Drain the tin of tuna and mix it with the mayonnaise and a pinch of pepper.", "Spread it on the wrap, fold the sides in and roll it up tight. Wrap in foil."] },
+    { "id": "sardines-toast", "name": "Sardines in tomato sauce on toast", "slots": ["snack", "home"], "tag": "eat-at-home", "active": 4, "total": 4,
+      "ing": [["sardines", 1], ["bread", 60]],
+      "steps": ["Toast the bread. Warm the sardines and their sauce in a small pan (2 minutes) or in the microwave (1 minute, covered).", "Spoon them onto the toast."] },
+    { "id": "milk-banana-peanuts", "name": "Milk, banana and a handful of peanuts", "slots": ["snack", "light"], "tag": "pack-for-work", "active": 1, "total": 1,
+      "ing": [["milk", 250], ["banana", 1], ["peanuts", 30]],
+      "steps": ["Pack a small carton or bottle of milk, a banana and 30 g of peanuts."] },
+    { "id": "tuna-omelette", "name": "Tuna omelette with toast", "slots": ["home"], "tag": "eat-at-home", "active": 10, "total": 10,
+      "ing": [["egg", 3], ["tuna", 0.5], ["bread", 60], ["oil", 5]],
+      "basics": ["salt", "pepper"],
+      "steps": ["Beat the eggs with a pinch of salt and pepper. Drain half a tin of tuna (keep the rest in the fridge, covered, for tomorrow's wrap).", "Heat the oil in a pan on medium. Pour in the eggs; when the edges set (about 1 minute), spread the tuna on one half.", "Cook 2 more minutes until the top is no longer runny, fold in half and serve with toast."] },
+    { "id": "beans-eggs-toast", "name": "Baked beans and eggs on toast", "slots": ["home"], "tag": "eat-at-home", "active": 8, "total": 8,
+      "ing": [["beans", 0.5], ["egg", 2], ["bread", 60], ["oil", 5]],
+      "steps": ["Warm half a tin of beans in a small pot (3 minutes) or the microwave (1½ minutes, covered).", "Fry the eggs in the oil on medium for 3 minutes until the whites are set. Serve both on toast."] },
+    { "id": "fish-potatoes", "name": "Pan-fried fish with potatoes and veg", "slots": ["home"], "tag": "eat-at-home", "active": 15, "total": 25, "extra": true,
+      "ing": [["fish", 150], ["potato", 250], ["mixed_veg", 80], ["oil", 10], ["garlic", 5]],
+      "basics": ["salt", "pepper", "water"],
+      "steps": ["Cut the potatoes into 2 cm cubes and boil them in salted water for 12 minutes, until a fork goes in easily. Drain.", "Pat the fish dry with kitchen paper and sprinkle with salt and pepper.", "Heat the oil in a pan on medium-high. Cook the fish 3–4 minutes per side; it's done when it turns white and flakes apart easily with a fork.", "Microwave the frozen veg for 3 minutes with the chopped garlic and a little salt. Serve together."],
+      "note": "This one is a proper cook. Swap it in on an off day when you feel like trying something new." }
+  ],
+  "topups": [
+    { "id": "top-milk", "name": "a glass of milk", "ing": [["milk", 250]] },
+    { "id": "top-banana", "name": "a banana", "ing": [["banana", 1]] },
+    { "id": "top-peanuts", "name": "a handful of peanuts", "ing": [["peanuts", 30]] },
+    { "id": "top-pb-toast", "name": "a slice of peanut-butter toast", "ing": [["bread", 30], ["peanut_butter", 16]] },
+    { "id": "top-yoghurt", "name": "a pot of yoghurt", "ing": [["yoghurt", 125]] }
+  ]
+}

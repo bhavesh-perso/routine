@@ -7,7 +7,7 @@
    - non-GET and cross-origin requests: not touched (YouTube, Mandarin app links)
    The new worker waits until the page posts {type:'SKIP_WAITING'}, so the app can
    show an "Update available — reload" banner instead of swapping files mid-use. */
-const VERSION = 'routine-2026-10-26-2';
+const VERSION = 'routine-2026-10-26-3';
 
 // Every app file, relative to this file. tests/pwa.test.js checks this list
 // against the repo, so a new js/*.js, data/*.json, font or icon must be added here.
@@ -28,12 +28,15 @@ const ASSETS = [
   'js/gym.js',
   'js/gym-session.js',
   'js/food.js',
+  'js/food-plan.js',
   'js/study.js',
   'js/progress.js',
   'js/settings.js',
   'js/ics.js',
   'js/pwa.js',
   'data/exercises.json',
+  'data/recipes.json',
+  'data/foods.json',
   'data/aws-plan.json',
   'fonts/fraunces-600.woff2',
   'fonts/fraunces-700.woff2',

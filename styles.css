@@ -327,3 +327,29 @@ nav.tabs a[aria-current]{color:var(--ember);font-weight:700}
 .gym-sum dd.num{text-transform:none}
 
 @media (prefers-reduced-motion:no-preference){.gym-rest{transition:background .2s,border-color .2s}}
+/* Food module */
+.food-totals{display:grid;gap:14px}
+.food-big{margin:0;font-size:1.05rem}
+.food-big .num{font:700 1.9rem/1 var(--display)}
+.food-big small{font-size:.94rem;color:var(--mist)}
+.food-meal{padding:14px 0}
+.food-meal.done .food-name{color:var(--mist)}
+.food-slot{margin:0}
+.food-name{margin:2px 0;font-size:1.1rem;font-weight:700}
+.food-meal .row{margin-top:8px}
+.food-swap{margin:10px 0 0}
+.food-chip{min-height:48px;flex-direction:column;align-items:flex-start;gap:0;padding:6px 12px;text-align:left;height:auto}
+.food-chip .muted{font-size:.85rem}
+.food-entry{padding-left:48px}
+.food-next{margin:10px 0 8px}
+.food-day{background:var(--slate);border-radius:6px;padding:12px 14px;border-left:6px solid var(--line)}
+.food-day.now{outline:2px solid var(--bone)}
+.food-day p{margin:2px 0}
+.food-mini{list-style:none;margin:6px 0;padding:0;display:grid;gap:2px}
+.food-mini .muted{display:inline-block;min-width:4.2rem}
+.food-steps{padding-left:22px;display:grid;gap:10px;margin:8px 0}
+.food-steps li{padding-left:2px}
+.food-rlink{display:grid;gap:2px;min-height:48px;padding:10px 14px;background:var(--slate);border:1px solid var(--line);border-radius:6px;color:var(--bone);text-decoration:none}
+.food-shopitem{height:auto;min-height:56px;padding-top:8px;padding-bottom:8px}
+.food-shopitem[aria-pressed=true]{color:var(--mist)}
+.food-shopitem[aria-pressed=true] .grow{text-decoration:line-through}
