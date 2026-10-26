@@ -2,6 +2,7 @@ import { getDay, describeShift, routineDay, dayNum, isoOf } from './schedule.js'
 import { getSettings, getLog, setLog, getFirstUse } from './storage.js';
 import { sleepWindow, fmt } from './plan.js';
 import { gymView, gymClick, gymInput, loadGymData, sessionFor } from './gym.js';
+import { weekView, weekClick } from './week.js';
 import { addRoute, startRouter } from './router.js';
 
 function nowLocal() { // Mauritius calendar date + minutes since midnight
@@ -48,13 +49,14 @@ function today() {
   <section><h2>Gym</h2><p>${gs ? `${gs.kind} · ${gs.loc} gym · ${gs.time}` : 'Rest day'}</p></section>
   <section aria-labelledby="st"><h2 id="st">Streaks</h2>
   <p class="streaks">No junk ${streak(rd, 'junk', s)} · Water ${streak(rd, 'water', s)} · Walk ${streak(rd, 'walk', s)} days</p>
-  <div class="grid" aria-label="Last 28 days, darker means more habits done">${grid}</div></section><p class="streaks">Build 3.0</p>`;
+  <div class="grid" aria-label="Last 28 days, darker means more habits done">${grid}</div></section><p class="streaks">Build 3.1</p>`;
 }
 
 const later = n => () => `<section><h1 class="plain">Coming in step ${n}</h1><p class="note">Nothing to do here yet. Use Today for now.</p></section>`;
 addRoute('today', today);
 addRoute('gym', () => gymView(ctx().rd));
-['week:2', 'food:4', 'progress:6', 'settings:7'].forEach(x => { const [k, n] = x.split(':'); addRoute(k, later(n)); });
+addRoute('week', () => weekView(ctx().rd));
+['food:4', 'progress:6', 'settings:7'].forEach(x => { const [k, n] = x.split(':'); addRoute(k, later(n)); });
 
 await loadGymData();
 const main = document.getElementById('main');
@@ -63,6 +65,7 @@ main.addEventListener('change', e => { try { gymInput(e.target); } catch (err) {
 main.addEventListener('click', e => {
   const act = e.target.closest?.('[data-act]')?.dataset.act; if (!act) return;
   try {
+    if (weekClick(act)) { rerender(); return; }
     if (gymClick(act, e.target.closest('[data-act]'))) { rerender(); return; }
     const { s, rd } = ctx(), l = getLog(rd);
     const name = { junk: 'No junk food today', walk: '10-minute walk' };
