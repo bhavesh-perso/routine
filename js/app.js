@@ -24,7 +24,9 @@ function today() {
   const missed = fu && yest >= fu && ['junk', 'water', 'walk'].some(h => !done(yest, h, s));
   const drowsy = iso !== rd && d.endsNextDay && min >= 420 && min <= 600;
   const pct = Math.min(100, Math.round(log.water / s.waterRest * 100));
-  const item = (h, text, extra = '') => `<li class="item"><button type="button" class="check" data-act="${h}" aria-pressed="${!!done(rd, h, s)}">${text}</button>${extra}</li>`;
+  const item = (h, text, extra = '') => h === 'water'
+    ? `<li class="item"><div class="check" data-done="${!!done(rd, h, s)}">${text}</div>${extra}</li>`
+    : `<li class="item"><button type="button" class="check" data-act="${h}" aria-pressed="${!!done(rd, h, s)}">${text}</button>${done(rd, h, s) ? `<button type="button" class="add" data-act="undo-${h}">Undo</button>` : ''}</li>`;
   const grid = Array.from({ length: 28 }, (_, i) => { const x = prev(rd, 27 - i); const c = ['junk', 'water', 'walk'].filter(h => done(x, h, s)).length; return `<i class="c${c}" title="${x}"></i>`; }).join('');
   return `
   <header class="hero ${d.type === 'off' ? 'off' : d.block}">
@@ -43,7 +45,7 @@ function today() {
   </ul><div class="bar" role="progressbar" aria-label="Water" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100"><b style="width:${pct}%"></b></div></section>
   <section aria-labelledby="st"><h2 id="st">Streaks</h2>
   <p class="streaks">No junk ${streak(rd, 'junk', s)} · Water ${streak(rd, 'water', s)} · Walk ${streak(rd, 'walk', s)} days</p>
-  <div class="grid" aria-label="Last 28 days, darker means more habits done">${grid}</div></section><p class="streaks">Build 2.2</p>`;
+  <div class="grid" aria-label="Last 28 days, darker means more habits done">${grid}</div></section><p class="streaks">Build 2.4</p>`;
 }
 
 const later = n => () => `<section><h1 class="plain">Coming in step ${n}</h1><p class="note">Nothing to do here yet. Use Today for now.</p></section>`;
@@ -56,7 +58,9 @@ main.addEventListener('click', e => {
   const act = e.target.closest?.('[data-act]')?.dataset.act; if (!act) return;
   try {
     const { s, rd } = ctx(), l = getLog(rd);
-    if (act === 'junk' || act === 'walk') setLog(rd, { [act]: !l[act] });
+    const name = { junk: 'No junk food today', walk: '10-minute walk' };
+    if ((act === 'junk' || act === 'walk') && !l[act] && confirm(`Mark "${name[act]}" as done?`)) setLog(rd, { [act]: true });
+    if (act.startsWith('undo-') && confirm('Undo this item?')) setLog(rd, { [act.slice(5)]: false });
     if (act === 'water') setLog(rd, { water: l.water >= s.waterRest ? 0 : s.waterRest });
     if (act === 'water+') setLog(rd, { water: l.water + 250 });
     if (act === 'water-') setLog(rd, { water: Math.max(0, l.water - 250) });
