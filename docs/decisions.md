@@ -47,3 +47,4 @@ Durable "why" behind the app. Newest last. The full brief is the build prompt pl
 - 17 new batch dishes (25 in all, 7 with chicken) and 10 new quick meals; same rules (≤ 8 ingredients, ≤ 30 min active, 4 boxes of 450–850 kcal / 30–65 g).
 - Prices added per food; Settings → Food has the monthly budget. With real 2026 prices the plan comes to about Rs 5,400–6,300 a month at 2,500 kcal / 120 g; the planner leans on cheap dishes (twice in the rotation) and cheap quick meals but does not drop variety or targets to force 5,000.
 - Fixed: rejected meal combinations were being added to the shopping list.
+- Follow-up: kept as is (no dishes dropped, targets unchanged). Budget card simply shows the plan runs over; raise the budget in Settings if wanted.
