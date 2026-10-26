@@ -1,0 +1,23 @@
+/* App-style home: tiles, sub-screens, quick add, tab icons, screen transition. */
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0 12px}
+.app-tile{display:flex;flex-direction:column;gap:2px;min-height:132px;padding:14px;border-radius:14px;background:var(--slate);border:1px solid var(--line);color:var(--bone);text-decoration:none}
+.app-tile .ti{color:var(--ember);margin-bottom:6px}
+.app-tile .tt{font-size:.9rem;color:var(--mist)}
+.app-tile .tb{font:700 1.45rem/1.15 var(--display)}
+.app-tile .ts{font-size:.88rem;color:var(--mist);margin-top:auto;padding-top:6px}
+.app-tile.done{border-color:var(--ember);box-shadow:inset 0 0 0 1px var(--ember)}
+.app-tile:active,.app-wide:active{transform:scale(.98)}
+.app-wide{display:flex;align-items:center;gap:14px;min-height:64px;padding:12px 14px;border-radius:14px;background:var(--slate);border:1px solid var(--line);color:var(--bone);text-decoration:none}
+.app-wide .ti{color:var(--ember)}
+.back{display:inline-flex;align-items:center;min-height:44px;margin-top:6px;text-decoration:none;font-size:1.05rem}
+main{padding-bottom:140px}
+nav.tabs a{gap:2px;align-content:center;font-size:.72rem}
+nav.tabs a svg{display:block;margin:0 auto}
+nav.tabs a span{display:block}
+.qa{position:fixed;right:16px;bottom:calc(72px + env(safe-area-inset-bottom));z-index:6;display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+.qa-btn{width:56px;height:56px;border-radius:50%;border:0;background:var(--ember);color:var(--ink);font:700 2rem/1 var(--text);box-shadow:0 4px 14px rgba(0,0,0,.5);cursor:pointer}
+.qa-sheet{display:flex;flex-direction:column;gap:8px;padding:12px;background:var(--slate);border:1px solid var(--line);border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.55)}
+.qa-sheet .btn{justify-content:flex-start;min-width:240px}
+@keyframes slidein{from{opacity:0;transform:translateX(22px)}to{opacity:1;transform:none}}
+main.slide{animation:slidein .22s ease-out}
+@media (prefers-reduced-motion:reduce){main.slide{animation:none}.app-tile:active,.app-wide:active{transform:none}}

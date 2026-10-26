@@ -4,7 +4,7 @@ import { routineDayAt, setProviders } from './plan.js';
 import { nowLocal, esc, addDays } from './util.js';
 import { startRouter } from './router.js';
 import { initPwa } from './pwa.js';
-import today, { waterTarget } from './today.js';
+import today, { waterTarget, fab } from './today.js';
 import week from './week.js';
 import gym, * as G from './gym.js';
 import food from './food.js';
@@ -47,10 +47,12 @@ function render(changed = false) {
   let html;
   try { html = mod.view(c, arg); }
   catch (e) { html = `<h1 class="page-title">Something went wrong</h1><p class="note alert">${esc(e.message)}</p><p><a href="#/today">Back to Today</a></p>`; console.error(e); }
-  main.innerHTML = bannerHtml() + html;
+  const showFab = !(r.name === 'gym' && /^session/.test(r.arg));
+  main.innerHTML = bannerHtml() + html + (showFab ? fab() : '');
   const tab = name === 'study' ? 'today' : name;
   tabs.forEach(a => a.toggleAttribute('aria-current', a.dataset.tab === tab));
   if (changed) {
+    main.classList.remove('slide'); void main.offsetWidth; main.classList.add('slide');
     scrollTo(0, 0);
     const h1 = main.querySelector('h1'); if (h1) { h1.setAttribute('tabindex', '-1'); h1.focus({ preventScroll: true }); }
     document.title = (h1?.textContent?.trim() || 'Routine') + ' · Routine';
