@@ -40,3 +40,7 @@ nav a[aria-current]{color:var(--ember);font-weight:700}
 .ex p{margin:6px 0}.set{display:flex;gap:8px;align-items:center;margin:6px 0}.set span{width:52px;color:var(--mist)}
 .set input{flex:1;min-width:0;min-height:48px;font:inherit;color:var(--bone);background:var(--ink);border:1px solid #2c3441;border-radius:6px;padding:0 10px}
 .link{display:inline-flex;align-items:center;text-decoration:none;margin:8px 0 14px}.wide{width:100%;margin-top:8px}
+
+.day{display:grid;gap:2px;padding:12px 14px;background:var(--slate);border-radius:6px;border-left:6px solid var(--mist)}
+.day.night{border-left-color:#5a6bc4}.day.morning{border-left-color:var(--ember)}.day.now{outline:2px solid var(--bone)}
+.day span{color:var(--mist);font-size:.92rem}
