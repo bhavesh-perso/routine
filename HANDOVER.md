@@ -16,7 +16,6 @@ Owner: Bhavesh Gajadhar (Mauritius, 12h shifts). App "Routine" = static ES-modul
 ## Open / next
 - Budget: DONE 2026-10-27, user chose keep as is (logged in decisions.md). Do not re-ask.
 - User declined: launch screen, undo-toast checklist, swipe between tabs, caffeine/light plans, quiz, hours tracker, journal, badges etc. Don't re-pitch.
-- `HANDOFF.md` is stale (old gym step notes); can delete.
 
 ## Testing
 - Browser check: scratchpad `pw/e2e.mjs` (puppeteer-core + local Chrome, 390x844), serve with `python -m http.server 8765` from repo. Checks hscroll, small targets, console errors, screenshots.
