@@ -6,6 +6,7 @@ import { gymSlotKey, wakeFor, bedFor, sleepFor, routineDayAt } from './plan.js';
 import { toMin, fmt, addDays, esc, dayLabel, dayNum, isoOf, nowLocal, mondayOf } from './util.js';
 import { lineChart } from './chart.js';
 import * as S from './gym-session.js';
+import { ask } from './sheet.js';
 
 const ISO = /^\d{4}-\d{2}-\d{2}$/;
 const fin = v => typeof v === 'number' && Number.isFinite(v);
@@ -514,8 +515,9 @@ function overview(ctx) {
   ${main}
   ${missed.length ? `<p class="note calm">Missed: ${missed.map(x => esc(dayLabel(x.iso))).join(', ')}. The order waits for you, so the next session is the same workout.</p>` : ''}
   <section aria-labelledby="gy-up"><h2 id="gy-up">Coming up</h2>
-  ${up.length ? `<ul class="rules gym-up">${up.map(x => `<li><div class="row"><a class="grow" href="#/gym/day/${x.iso}"><b>${esc(dayLabel(x.iso))}</b> · ${esc(x.kind)}</a><span class="muted num">${x.time}</span></div>
-    <p class="muted">${locName(x.loc)}${x.light ? ' · light week' : ''}${x.cardio ? ` · ${x.cardio} min cardio` : ''}${x.tight ? ' · tight day' : ''}${x.movedFrom ? ` · moved from ${esc(dayLabel(x.movedFrom))}` : ''}</p>${actions(x, s)}</li>`).join('')}</ul>` : '<p class="muted">Nothing planned yet.</p>'}
+  ${up.length ? `<ul class="rules gym-up">${up.map(x => `<li><a class="go" href="#/gym/day/${x.iso}"><span class="grow"><b>${esc(dayLabel(x.iso))}</b> · ${esc(x.kind)}
+    <span class="muted">${locName(x.loc)}${x.light ? ' · light week' : ''}${x.cardio ? ` · ${x.cardio} min cardio` : ''}${x.tight ? ' · tight day' : ''}${x.movedFrom ? ` · moved from ${esc(dayLabel(x.movedFrom))}` : ''}</span></span><span class="muted num">${x.time}</span></a></li>`).join('')}</ul>
+    <p class="muted">Tap a session to preview, move or skip it.</p>` : '<p class="muted">Nothing planned yet.</p>'}
   ${skipped.length ? `<h3>Skipped</h3><ul class="rules">${skipped.map(d => `<li class="row"><span class="grow">${esc(dayLabel(d))}</span><button type="button" class="btn small ghost" data-act="gym-restore" data-iso="${d}">Restore</button></li>`).join('')}</ul>` : ''}
   </section>
   <section><h2>More</h2><div class="row"><a class="btn" href="#/gym/ex">Exercises and how-to</a><a class="btn" href="#/gym/history">Past sessions</a></div></section>
@@ -553,7 +555,7 @@ export function preview(ctx, iso, withStart = false) {
 function dayView(ctx, iso) {
   if (!ISO.test(iso)) return `<h1 class="page-title">Gym</h1><p class="note">That date isn't valid. <a href="#/gym">Back to gym</a></p>`;
   const x = sessionFor(iso, ctx.s);
-  return `<p><a href="#/gym">Back to gym</a></p><h1 class="page-title">${esc(x ? x.kind : 'Rest day')}</h1><p class="muted">${esc(dayLabel(iso))}${x?.done ? ' · done' : x?.missed ? ' · missed' : ''}</p>
+  return `<a class="back" href="#/gym">Gym</a><h1 class="page-title">${esc(x ? x.kind : 'Rest day')}</h1><p class="muted">${esc(dayLabel(iso))}${x?.done ? ' · done' : x?.missed ? ' · missed' : ''}</p>
   ${preview(ctx, iso, !!x && iso === ctx.rd && !x.done && !activeSession())}
   ${x && iso > ctx.rd && !x.done ? actions(x, ctx.s) : ''}`;
 }
@@ -562,7 +564,7 @@ function exIndex() {
   const used = new Set(Object.values(DATA?.templates || {}).flat());
   const row = id => `<li><a href="#/gym/ex/${esc(id)}">${esc(exerciseName(id))}</a></li>`;
   const ids = allExerciseIds().sort((a, b) => exerciseName(a).localeCompare(exerciseName(b)));
-  return `<p><a href="#/gym">Back to gym</a></p><h1 class="page-title">Exercises</h1>
+  return `<a class="back" href="#/gym">Gym</a><h1 class="page-title">Exercises</h1>
   <h2>In your plan</h2><ul class="rules">${ids.filter(i => used.has(i)).map(row).join('')}</ul>
   <h2>Alternatives</h2><p class="muted">Used when equipment isn't ticked for a gym, or when you swap mid-session.</p><ul class="rules">${ids.filter(i => !used.has(i)).map(row).join('')}</ul>`;
 }
@@ -576,7 +578,7 @@ export function howTo(id) {
 function exView(ctx, id) {
   if (!id) return exIndex();
   const e = EX(id);
-  if (!e) return `<p><a href="#/gym/ex">All exercises</a></p><h1 class="page-title">Not found</h1><p class="note">There's no exercise called "${esc(id)}".</p>`;
+  if (!e) return `<a class="back" href="#/gym/ex">Exercises</a><h1 class="page-title">Not found</h1><p class="note">There's no exercise called "${esc(id)}".</p>`;
   const s = ctx.s, hist = historyFor(id), pr = prs()[id], p = prefsFor(id), loc = nextSession(ctx.rd, s)?.loc || 'home';
   const unitTxt = e.unit === 'time' ? 'Timed hold, logged in seconds.' : e.unit === 'bw' ? 'Bodyweight, logged in reps.' : usesDumbbells(id) ? 'Logged in kg per dumbbell (the weight of one dumbbell).' : 'Logged in kg.';
   const rng = e.unit === 'time' ? `${e.range[0]}–${e.range[1]} s` : `${e.range[0]}–${e.range[1]} reps${e.oneSided ? ' each side' : e.perSide ? ' per side' : ''}`;
@@ -594,7 +596,7 @@ function exView(ctx, id) {
     <div class="chips" role="group" aria-label="Increment">${[1, 1.25, 2, 2.5, 5].map(v => `<button type="button" class="btn small" data-act="gym-pref-inc" data-id="${esc(id)}" data-v="${v}" aria-pressed="${+p.inc === v}">+${v} kg</button>`).join('')}</div>
     <label class="toggle"><input type="checkbox" data-act="gym-pref-round" data-id="${esc(id)}" ${p.round ? 'checked' : ''}> Round up to the next dumbbell that exists</label></section>`;
   const alts = (e.alts || []).filter(a => EX(a));
-  return `<p><a href="#/gym/ex">All exercises</a></p><h1 class="page-title">${esc(e.name)}</h1>
+  return `<a class="back" href="#/gym/ex">Exercises</a><h1 class="page-title">${esc(e.name)}</h1>
   <p class="muted">${esc(rng)}. ${esc(unitTxt)}</p>
   <p>${esc(suggestText(id, suggest(id, loc, s)))}</p>
   ${howTo(id)}
@@ -607,7 +609,7 @@ function exView(ctx, id) {
 
 function historyView() {
   const list = doneSessions().slice().reverse();
-  return `<p><a href="#/gym">Back to gym</a></p><h1 class="page-title">Past sessions</h1>
+  return `<a class="back" href="#/gym">Gym</a><h1 class="page-title">Past sessions</h1>
   ${list.length ? `<ul class="rules">${list.map(x => {
     const t = S.sessionTotals(x);
     return `<li><a href="#/gym/summary/${esc(x.id)}"><b>${esc(dayLabel(x.rd))}</b> · ${esc(x.kind || 'Session')}</a>${x.light ? ' <span class="tag">light</span>' : ''}${x.short ? ' <span class="tag">short</span>' : ''}
@@ -631,11 +633,11 @@ export default {
     if (page === 'history') return historyView();
     return overview(ctx);
   },
-  click(act, el, ctx) {
+  async click(act, el, ctx) {
     const d = el.dataset;
     if (act === 'gym-move-open') { moving = moving === d.iso ? null : d.iso; return true; }
     if (act === 'gym-move-to') { moveSession(d.from, d.to); moving = null; ctx.notify(`Moved to ${dayLabel(d.to)}`); return true; }
-    if (act === 'gym-skip') { if (confirm('Skip this session? It keeps its place in the order and rolls to the next valid day.')) { skipSession(d.iso); ctx.notify('Skipped'); } return true; }
+    if (act === 'gym-skip') { if (await ask('It keeps its place in the order and rolls to the next valid day.', { title: 'Skip this session?', ok: 'Skip' })) { skipSession(d.iso); ctx.notify('Skipped'); } return true; }
     if (act === 'gym-restore') { restoreSession(d.iso); ctx.notify('Restored'); return true; }
     if (act === 'gym-pref-inc') { saveGym(g => { g.prefs[d.id] = { ...prefsFor(d.id), inc: +d.v }; }); return true; }
     return S.sessionClick(act, el, ctx);

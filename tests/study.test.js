@@ -119,19 +119,19 @@ reset();
 
 // ---------- logging per routine day ----------
 const c = ctxFor('2026-10-28', { iso: '2026-10-29', min: 120 }); // 02:00 on 29 Oct, still routine day 28 Oct
-study.click('study-done', { dataset: {} }, c);
+await study.click('study-done', { dataset: {} }, c);
 ok('AWS done logs against ctx.rd, not the calendar date', st.get('study').log['2026-10-28']?.aws?.done === true && !st.get('study').log['2026-10-29']);
 ok('ticking done fills planned minutes', S.logOf('2026-10-28').aws.min === 20);
 study.change('study-min', { value: '35', dataset: { subj: 'aws' } }, c);
 ok('AWS minutes input saves', S.logOf('2026-10-28').aws.min === 35);
 study.change('study-min', { value: '12', dataset: { subj: 'mandarin' } }, c);
 ok('Mandarin minutes input saves', S.logOf('2026-10-28').mandarin.min === 12);
-study.click('study-man-done', { dataset: {} }, c);
+await study.click('study-man-done', { dataset: {} }, c);
 ok('Mandarin done fills to plan', S.logOf('2026-10-28').mandarin.min === 15);
 study.change('study-min', { value: '-4', dataset: { subj: 'aws' } }, c);
 ok('negative minutes clamp to 0', S.logOf('2026-10-28').aws.min === 0);
 ok('log shape', JSON.stringify(st.get('study').log['2026-10-28']) === JSON.stringify({ aws: { done: true, min: 0 }, mandarin: { min: 15 } }));
-study.click('study-done', { dataset: { iso: '2026-11-01' } }, c);
+await study.click('study-done', { dataset: { iso: '2026-11-01' } }, c);
 ok('plan-page tick logs that day', S.logOf('2026-11-01').aws.done === true);
 
 // ---------- weekly view ----------
@@ -147,14 +147,14 @@ ok('examDays exam day → 0', S.examDays(ctxFor('2026-12-21')) === 0);
 ok('exam day says today', /exam is today/.test(S.todayCard(ctxFor('2026-12-21'))));
 ok('after exam: neutral note', /has passed/.test(study.view(ctxFor('2026-12-23'), '')));
 ok('Pearson VUE task shows until booked', /Book your exam on Pearson VUE/.test(S.todayCard(ctxFor('2026-10-28'))));
-study.click('study-book', { dataset: {} }, ctxFor('2026-10-28'));
+await study.click('study-book', { dataset: {} }, ctxFor('2026-10-28'));
 ok('booked hides the task', st.get('study').booked === true && !/Book your exam/.test(S.todayCard(ctxFor('2026-10-28'))));
 
 // ---------- views render ----------
 const v = ctxFor('2026-10-28');
 const html = [study.view(v, ''), study.view(v, 'plan'), study.view(v, 'week'), study.view(v, 'week/2026-11-02'), S.todayCard(v)];
 ok('views render', html.every(h => typeof h === 'string' && h.length > 100));
-ok('Back to Today link at the top', html.slice(0, 3).every(h => h.trimStart().startsWith('<p class="study-back"><a href="#/today">Back to Today</a>')));
+ok('Back to Today link at the top', html.slice(0, 3).every(h => h.trimStart().startsWith('<a class="back" href="#/today">Today</a>')));
 ok('Mandarin button opens a new tab safely', /href="https:\/\/bhavesh-perso\.github\.io\/Mandarin-app\/" target="_blank" rel="noopener">Open Mandarin app/.test(html[0]) && /Open Mandarin app/.test(html[4]));
 ok('plan page lists all 56 days', (html[1].match(/class="study-day/g) || []).length === 56);
 st.setSetting('mandarinUrl', 'javascript:alert(1)');

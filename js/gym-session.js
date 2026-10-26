@@ -2,6 +2,7 @@
 // rest-end sound, finish and summary. Every tap saves gym.active + sessions[id].
 import * as G from './gym.js';
 import { esc, dayLabel, fmt, nowLocal } from './util.js';
+import { ask } from './sheet.js';
 
 const fin = v => typeof v === 'number' && Number.isFinite(v);
 const ui = { mode: 'guided', rpe: null, flash: '', swapFor: null, edit: null, feel: null };
@@ -265,9 +266,9 @@ export function sessionView(ctx) {
   const s = ctx.s, x = G.activeSession();
   if (!x) {
     const today = G.sessionFor(ctx.rd, s);
-    if (today && !today.done) return `<p><a href="#/gym">Back to gym</a></p><h1 class="page-title">${esc(today.kind)}</h1><p class="muted">${esc(dayLabel(ctx.rd))}</p>${G.preview(ctx, ctx.rd, true)}`;
+    if (today && !today.done) return `<a class="back" href="#/gym">Gym</a><h1 class="page-title">${esc(today.kind)}</h1><p class="muted">${esc(dayLabel(ctx.rd))}</p>${G.preview(ctx, ctx.rd, true)}`;
     const nx = G.nextSession(ctx.rd, s, false);
-    return `<p><a href="#/gym">Back to gym</a></p><h1 class="page-title">No session today</h1>
+    return `<a class="back" href="#/gym">Gym</a><h1 class="page-title">No session today</h1>
     <p>${today?.done ? "Today's session is done." : 'Today is a rest day.'}${nx ? ` Next: ${esc(nx.kind)} on ${esc(dayLabel(nx.iso))} at <span class="num">${nx.time}</span>.` : ''}</p><p><a class="btn" href="#/gym">Go to the gym overview</a></p>`;
   }
   const slot = G.sessionFor(x.planIso, s), n = x.ex.reduce((a, e) => a + e.sets.length, 0), d = x.ex.reduce((a, e) => a + e.sets.filter(st => st.done || st.skip).length, 0);
@@ -288,9 +289,9 @@ export function sessionView(ctx) {
 
 export function summaryView(ctx, id) {
   const x = G.gymData().sessions?.[id];
-  if (!x) return `<p><a href="#/gym/history">Past sessions</a></p><h1 class="page-title">Not found</h1><p class="note">That session isn't saved on this phone.</p>`;
+  if (!x) return `<a class="back" href="#/gym/history">Past sessions</a><h1 class="page-title">Not found</h1><p class="note">That session isn't saved on this phone.</p>`;
   const t = sessionTotals(x), prs = x.endedAt ? newPRs(x) : [];
-  return `<p><a href="#/gym/history">Past sessions</a></p><h1 class="page-title">${esc(x.kind || 'Session')}</h1>
+  return `<a class="back" href="#/gym/history">Past sessions</a><h1 class="page-title">${esc(x.kind || 'Session')}</h1>
   <p class="muted">${esc(dayLabel(x.rd))} · ${G.locName(x.loc)}${x.light ? ' · light week' : ''}${x.short ? ' · shorter version' : ''}</p>
   <dl class="gym-sum"><div><dt>Time</dt><dd class="num">${t.min ? `${t.min} min` : '–'}</dd></div><div><dt>Working sets</dt><dd class="num">${t.sets}</dd></div><div><dt>Volume</dt><dd class="num">${t.kg} kg</dd></div>${x.feel ? `<div><dt>Felt</dt><dd>${esc(x.feel)}</dd></div>` : ''}</dl>
   ${t.min && fin(x.startedAt) && x.startedAt > 1e9 ? `<p class="muted">${fmt(nowLocal(x.startedAt).min)}–${fmt(nowLocal(x.endedAt).min)}</p>` : ''}
@@ -317,7 +318,7 @@ function afterLog(prs, ctx) {
   if (prs.length) ctx.notify('New PR');
 }
 
-export function sessionClick(act, el, ctx) {
+export async function sessionClick(act, el, ctx) {
   const d = el.dataset, s = ctx.s;
   if (act === 'gym-start') {
     unlockAudio();
@@ -365,7 +366,7 @@ export function sessionClick(act, el, ctx) {
   if (act === 'gym-feel') { ui.feel = d.v; G.saveGym(g => { g.sessions[x.id].feel = d.v; }); return true; }
   if (act === 'gym-finish') {
     const notes = document.getElementById('gym-notes')?.value ?? x.notes;
-    if (nextSet(x) && !confirm('Some sets are not logged yet. Finish anyway?')) return false;
+    if (nextSet(x) && !(await ask('Some sets are not logged yet.', { title: 'Finish anyway?', ok: 'Finish' }))) return false;
     const id = finishSession(ctx.ms ?? Date.now(), ui.feel ?? x.feel, notes);
     Object.assign(ui, { mode: 'guided', rpe: null, flash: '', swapFor: null, edit: null, feel: null });
     keepAwake(false);
@@ -373,7 +374,7 @@ export function sessionClick(act, el, ctx) {
     return true;
   }
   if (act === 'gym-discard') {
-    if (!confirm('Discard this session and everything logged in it?')) return false;
+    if (!(await ask('Everything logged in it goes.', { title: 'Discard this session?', ok: 'Discard', danger: true }))) return false;
     G.saveGym(g => { delete g.sessions[x.id]; g.active = null; g.rest = null; }, true);
     keepAwake(false); ctx.notify('Session discarded'); ctx.go('#/gym');
     return true;

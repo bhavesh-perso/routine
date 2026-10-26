@@ -241,7 +241,7 @@ S.swapExercise(1, 'pushup', s);
 ok('swap replaces the remaining sets with the alternative', (() => { const e = G.activeSession().ex[1]; return e.id === 'pushup' && e.from === before && e.sets.every(x => x.type === 'work' && !x.done); })());
 // log everything else, skipping one set
 act = G.activeSession();
-S.sessionClick('gym-skip-set', { dataset: { ei: '2', si: '1' } }, { s, notify() {}, go() {} });
+await S.sessionClick('gym-skip-set', { dataset: { ei: '2', si: '1' } }, { s, notify() {}, go() {} });
 act = G.activeSession();
 ok('skipping a set marks it skipped and nextSet passes over it', act.ex[2].sets[1].skip === true && (() => { const p = S.nextSet(act); return !(p.ei === 2 && p.si === 1); })());
 for (let guard = 0; guard < 80; guard++) {

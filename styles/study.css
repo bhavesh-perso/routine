@@ -1,6 +1,4 @@
 /* Study (#/study, #/study/plan, #/study/week) and the study card on Today */
-.study-back{margin:12px 0 0}
-.study-back a{display:inline-flex;align-items:center;min-height:44px;font-weight:600}
 .study-count{font-size:1.05rem;margin:10px 0}
 .study-count b{font:700 1.6rem/1 var(--display);color:var(--ember);margin-right:2px}
 .study-book{margin:10px 0}

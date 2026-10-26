@@ -5,6 +5,7 @@ import { getDay, dayNum, isoOf } from './schedule.js';
 import { get, update } from './storage.js';
 import { studyMinutes } from './plan.js';
 import { addDays, esc, dayLabel, mondayOf } from './util.js';
+import { ask } from './sheet.js';
 
 const BOOK_URL = 'https://home.pearsonvue.com/aws';
 const GUIDE_URL = 'https://aws.amazon.com/certification/certified-developer-associate/';
@@ -223,7 +224,7 @@ const PHASE = { content: 'Course content', practice: 'Practice exams', review: '
 
 function head(ctx, page) {
   const tab = (p, href, text) => `<a href="${href}"${p === page ? ' aria-current="page"' : ''}>${text}</a>`;
-  return `<p class="study-back"><a href="#/today">Back to Today</a></p><h1 class="page-title">Study</h1>
+  return `<a class="back" href="#/today">Today</a><h1 class="page-title">Study</h1>
   <nav class="seg" aria-label="Study pages">${tab('today', '#/study', 'Today')}${tab('plan', '#/study/plan', 'Full plan')}${tab('week', '#/study/week', 'Week')}</nav>`;
 }
 
@@ -343,7 +344,7 @@ export default {
     if (page === 'week') return weekView(ctx, sub);
     return todayView(ctx);
   },
-  click(act, el, ctx) {
+  async click(act, el, ctx) {
     const iso = ISO.test(el?.dataset?.iso || '') ? el.dataset.iso : ctx.rd, s = ctx.s;
     if (act === 'study-done') {
       const ok = setLog(iso, l => { l.aws.done = !l.aws.done; if (l.aws.done && !l.aws.min) l.aws.min = studyMinutes(iso, s).aws; });
@@ -352,7 +353,7 @@ export default {
     }
     if (act === 'study-man-done') {
       const plan = s.mandarinMin, l0 = logOf(iso);
-      if (plan > 0 && l0.mandarin.min >= plan) { if (!confirm("Clear this day's Mandarin minutes?")) return false; setLog(iso, l => { l.mandarin.min = 0; }); }
+      if (plan > 0 && l0.mandarin.min >= plan) { if (!(await ask("Clear this day's Mandarin minutes?", { ok: 'Clear' }))) return false; setLog(iso, l => { l.mandarin.min = 0; }); }
       else { setLog(iso, l => { l.mandarin.min = Math.max(l.mandarin.min, plan); }); ctx.notify?.('Mandarin logged'); }
       return true;
     }

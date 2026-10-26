@@ -4,6 +4,7 @@
 import { get, update, getDayLog, getMeta } from './storage.js';
 import { esc, addDays, dow, mondayOf, dayLabel, monthLabel, dayNum, round1 } from './util.js';
 import { lineChart } from './chart.js';
+import { ask } from './sheet.js';
 
 const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const MAX_MEASURES = 8;
@@ -239,7 +240,7 @@ function weighForm(ctx, iso) {
   const w = weighinOn(iso), ms = measures(), extra = w ? Object.keys(w.m || {}).filter(n => !ms.includes(n)) : [];
   const v = x => fin(x) ? String(x) : '';
   const num = (id, label, val, attrs = '') => `<label class="field" for="${id}"><span>${label}</span><input id="${id}" type="text" inputmode="decimal" autocomplete="off" value="${esc(val)}"${attrs}></label>`;
-  return `<h1 class="page-title">${w ? 'Edit weigh-in' : 'Weigh-in'}</h1>
+  return `<a class="back" href="#/progress">Progress</a><h1 class="page-title">${w ? 'Edit weigh-in' : 'Weigh-in'}</h1>
   <p class="muted">Weigh yourself after you wake up, before eating or drinking. Usual day: ${DAY_NAMES[s.weighDay] || 'Sunday'}.</p>
   <div class="prog-form" data-form="weigh">
     <label class="field" for="prog-date"><span>Date</span><input id="prog-date" type="date" value="${iso}" max="${maxIso}" data-act="prog-weigh-date"></label>
@@ -374,7 +375,7 @@ function reviewView(ctx) {
     ['Checklist days (all three)', `${r.checklist} of ${r.elapsed}`],
     ['Weigh-in', weigh],
   ];
-  return `<h1 class="page-title">Your week</h1>
+  return `<a class="back" href="#/progress">Progress</a><h1 class="page-title">Your week</h1>
   <p class="muted">${dayLabel(r.monday)} – ${dayLabel(r.sunday)}${part}</p>
   <ul class="rules prog-review">${rows.map(([t, v]) => `<li><span class="muted">${t}</span><p class="num">${v}</p></li>`).join('')}</ul>
   ${r.food.days ? `<p class="muted">Food averages count only the ${plural(r.food.days, 'day')} with entries.</p>` : ''}
@@ -430,7 +431,7 @@ export default {
       return `${head('')}<p class="note alert">This page couldn't load: ${esc(e.message)}. Your data is safe; export a backup from Settings.</p>`;
     }
   },
-  click(act, el, ctx) {
+  async click(act, el, ctx) {
     if (act === 'prog-save') {
       const f = readForm(el);
       if (f.bad.length) { ctx.notify(`Check ${f.bad.join(', ')}: use a number like 68.4.`); return false; }
@@ -441,7 +442,7 @@ export default {
     }
     if (act === 'prog-delete') {
       const iso = el.dataset.iso;
-      if (!isIso(iso) || !confirm(`Delete the weigh-in of ${dayLabel(iso)}?`)) return false;
+      if (!isIso(iso) || !(await ask(`Delete the weigh-in of ${dayLabel(iso)}?`, { ok: 'Delete', danger: true }))) return false;
       deleteWeighin(iso); weighIso = null; ctx.notify('Weigh-in deleted'); ctx.go('#/progress'); return false;
     }
     if (act === 'prog-add-measure') {
@@ -452,7 +453,7 @@ export default {
     }
     if (act === 'prog-remove-measure') {
       const n = el.dataset.name;
-      if (!n || !confirm(`Remove ${n} from the form? Values you already saved stay in your data.`)) return false;
+      if (!n || !(await ask('Values you already saved stay in your data.', { title: `Remove ${n} from the form?`, ok: 'Remove' }))) return false;
       removeMeasure(n); return true;
     }
     return false;

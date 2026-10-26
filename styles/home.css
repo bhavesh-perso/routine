@@ -18,6 +18,4 @@ nav.tabs a span{display:block}
 .qa-btn{width:56px;height:56px;border-radius:50%;border:0;background:var(--ember);color:var(--ink);font:700 2rem/1 var(--text);box-shadow:0 4px 14px rgba(0,0,0,.5);cursor:pointer}
 .qa-sheet{display:flex;flex-direction:column;gap:8px;padding:12px;background:var(--slate);border:1px solid var(--line);border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.55)}
 .qa-sheet .btn{justify-content:flex-start;min-width:240px}
-@keyframes slidein{from{opacity:0;transform:translateX(22px)}to{opacity:1;transform:none}}
-main.slide{animation:slidein .22s ease-out}
-@media (prefers-reduced-motion:reduce){main.slide{animation:none}.app-tile:active,.app-wide:active{transform:none}}
+@media (prefers-reduced-motion:reduce){.app-tile:active,.app-wide:active{transform:none}}

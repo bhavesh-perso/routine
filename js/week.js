@@ -7,6 +7,7 @@ import * as gym from './gym.js';
 import * as food from './food.js';
 import * as study from './study.js';
 import { dayLabelOf } from './today.js';
+import { ask } from './sheet.js';
 
 const opt = (fn, ...a) => { try { return fn(...a); } catch { return null; } };
 const OV = { off: 'Leave / off', sick: 'Sick', work: 'Swapped to work', custom: 'Custom shift' };
@@ -50,7 +51,7 @@ function dayView(ctx, iso) {
   const gymPart = g ? `<section aria-labelledby="dg"><h2 id="dg">Gym session</h2><p>${esc(g.kind)} · ${esc(g.loc)} gym · ${esc(g.time || g.start + '–' + g.end)}${g.done ? ' · done' : ''}</p>
     ${g.done ? '' : `<div class="row"><a class="btn small" href="#/gym/day/${iso}">Preview</a><button type="button" class="btn small" data-act="week-move" data-iso="${iso}" aria-expanded="${moving === iso}">Move to…</button><button type="button" class="btn small ghost" data-act="week-skip" data-iso="${iso}">Skip</button></div>`}
     ${moving === iso ? movePicker(iso, s) : ''}</section>` : '';
-  return `<p><a href="#/week/${iso}">Back to week</a></p>
+  return `<a class="back" href="#/week/${iso}">Week</a>
   <h1 class="page-title">${esc(dayLabel(iso))}</h1><p class="muted">${dayLabelOf(d)} · ${esc(describeShift(iso, s))}${ov ? ' · ' + esc(OV[ov.kind] || 'Changed') : ''}</p>
   <section aria-labelledby="dt"><h2 id="dt">Timeline</h2><ol class="timeline">${blocks.map(line).join('')}</ol></section>
   ${gymPart}
@@ -81,11 +82,11 @@ export default {
     if (arg.startsWith('day/')) return dayView(ctx, arg.slice(4));
     return weekView(ctx, arg);
   },
-  click(act, el, ctx) {
+  async click(act, el, ctx) {
     const iso = el.dataset.iso;
     if (act === 'week-move') { moving = moving === iso ? null : iso; return true; }
     if (act === 'week-move-to') { gym.moveSession(el.dataset.from, el.dataset.to); moving = null; ctx.notify(`Moved to ${dayLabel(el.dataset.to)}`); return true; }
-    if (act === 'week-skip') { if (confirm('Skip this session? It rolls to the next valid day.')) { gym.skipSession(iso); ctx.notify('Skipped'); } return true; }
+    if (act === 'week-skip') { if (await ask('It rolls to the next valid day.', { title: 'Skip this session?', ok: 'Skip' })) { gym.skipSession(iso); ctx.notify('Skipped'); } return true; }
     if (act === 'week-ov-clear') { setSetting('overrides.' + iso, undefined); ctx.notify('Back to the usual pattern'); return true; }
     if (act === 'week-ov') {
       const k = el.dataset.kind;

@@ -58,14 +58,14 @@ ok('delete weigh-in', P.deleteWeighin('2026-11-15') && !P.weighinOn('2026-11-15'
   const el = { dataset: { iso: '2026-11-01' }, closest: () => form };
   let went = null, msg = null;
   const c = ctxFor('2026-11-01', { go: h => { went = h; }, notify: m => { msg = m; } });
-  prog.click('prog-save', el, c);
+  await prog.click('prog-save', el, c);
   const w = P.weighinOn('2026-11-01');
   ok('click save stores form values', w && w.kg === 67.8 && w.belly === 85 && w.m.Arm === 29 && went === '#/progress' && msg === 'Weigh-in saved');
   ok('notes escaped in overview', prog.view(c, '').includes('&lt;b&gt;hi&lt;/b&gt;') && !prog.view(c, '').includes('<b>hi</b>'));
   inputs['prog-date'] = '2026-11-05';
-  prog.click('prog-save', el, c);
+  await prog.click('prog-save', el, c);
   ok('future date refused', !P.weighinOn('2026-11-05'));
-  prog.click('prog-delete', { dataset: { iso: '2026-11-01' } }, c);
+  await prog.click('prog-delete', { dataset: { iso: '2026-11-01' } }, c);
   ok('click delete with confirm', !P.weighinOn('2026-11-01'));
 }
 

@@ -4,6 +4,7 @@ import { validateSettings, dayNum, isoOf } from './schedule.js';
 import { getSettings, setSetting, exportAll, parseImport, replaceAll, resetAll, sizeBytes, markBackup, getMeta } from './storage.js';
 import { esc, toMin, fmt, dayLabel, nowLocal } from './util.js';
 import { buildIcs } from './ics.js';
+import { ask } from './sheet.js';
 
 export const EQUIPMENT = ['barbell', 'rack', 'machines', 'dumbbells', 'cables', 'bands', 'bench', 'treadmill', 'bike', 'rower'];
 const EQUIP_LABEL = { barbell: 'Barbell', rack: 'Squat rack', machines: 'Machines', dumbbells: 'Dumbbells', cables: 'Cables', bands: 'Bands', bench: 'Bench', treadmill: 'Treadmill', bike: 'Exercise bike', rower: 'Rower' };
@@ -116,7 +117,7 @@ async function importBackup(el, ctx) {
   const r = parseImport(obj, ctx.iso);
   if (!r.ok) { ui.importMsg = r.error; return true; }
   const at = Date.parse(obj.exportedAt), when = Number.isFinite(at) ? ` from ${dayLabel(localDate(at))} ${localDate(at).slice(0, 4)}` : '';
-  const ok = confirm(`This backup${when} contains:\n\n${backupSummary(r.data).join('\n')}\n\nReplace everything on this phone with it?`);
+  const ok = await ask(`This backup${when} contains:\n\n${backupSummary(r.data).join('\n')}`, { title: 'Replace everything on this phone?', ok: 'Replace', danger: true });
   if (!ok) { ui.importMsg = 'Import cancelled. Nothing changed.'; return true; }
   if (!replaceAll(r.data)) { ui.importMsg = "Couldn't save the backup on this phone."; return true; }
   ui.importMsg = ''; ui.errors = {}; ui.drafts = {};
@@ -365,7 +366,7 @@ export default {
     }));
     if (ui.scrollTo) { doc.getElementById('set-' + ui.scrollTo)?.scrollIntoView({ block: 'start' }); ui.scrollTo = null; }
   },
-  click(act, el, ctx) {
+  async click(act, el, ctx) {
     if (act === 'set-export') return exportBackup(ctx);
     if (act === 'set-ics') return exportCalendar(ctx);
     if (act === 'set-ov-clear') { clearOverride(el.dataset.iso); ctx.notify('Back to the usual pattern'); return true; }
@@ -376,8 +377,8 @@ export default {
       delete ui.errors.ov; ctx.notify('Saved for that day'); return true;
     }
     if (act === 'set-reset') {
-      if (!confirm('Delete all Routine data on this phone? Every log and setting goes. Export a backup first if you might want it back.')) return false;
-      if (!confirm('Are you sure? This cannot be undone.')) return false;
+      if (!(await ask('Every log and setting goes. Export a backup first if you might want it back.', { title: 'Delete all Routine data on this phone?', ok: 'Delete all', danger: true }))) return false;
+      if (!(await ask('This cannot be undone.', { title: 'Are you sure?', ok: 'Yes, delete everything', danger: true }))) return false;
       resetAll(); ui.errors = {}; ui.drafts = {}; ui.importMsg = '';
       ctx.notify('All data deleted');
       return true;

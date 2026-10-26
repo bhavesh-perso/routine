@@ -34,3 +34,10 @@ Durable "why" behind the app. Newest last. The full brief is the build prompt pl
 - "Pack shift food and gym bag" shows before leaving on night work days and before bed on any day that is followed by a work day.
 - The 26–27 Oct off days fall in a (backwards-extended) morning block, so they show the mornings → nights sleep switch ahead of the first night shift on 28 Oct, which matches shifting sleep later before nights.
 - A routine day runs from wake to the next wake; minutes in a day plan are relative to that date's midnight (a night shift ending 07:00 next day is 1860).
+
+## 2026-10-27 — Feel like an app, not a webpage
+- Stays a PWA on GitHub Pages: a native iOS app would need a Mac, Xcode and a paid Apple developer account; an Android wrapper doesn't help on an iPhone.
+- Browser `confirm()`/`alert()` boxes replaced by bottom sheets (`js/sheet.js`); click handlers that ask are async. Checklist still confirms before done (see 2026-10-26).
+- Top bar with back button, compact title on scroll and a Settings gear (`js/shell.js`); Settings left the tab bar, which now has 5 tabs.
+- Screen transitions follow direction (deeper = from the right, back = from the left, tabs fade). Swipe from the left edge goes back, only in the installed app because Safari has its own edge swipe.
+- Lists are grouped cards with tappable rows; the gym "Coming up" rows open the day screen, which holds Move/Skip.

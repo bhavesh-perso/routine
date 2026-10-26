@@ -8,6 +8,7 @@ import * as food from './food.js';
 import * as study from './study.js';
 import * as progress from './progress.js';
 import { backupBanner } from './settings.js';
+import { ask } from './sheet.js';
 
 const HABITS = ['junk', 'water', 'walk'];
 const safe = (fn, ...a) => { try { return fn(...a) || ''; } catch (e) { return `<p class="note alert">This card failed to load: ${esc(e.message)}</p>`; } };
@@ -132,7 +133,7 @@ function tiles(rd, ctx) {
   <a class="app-wide" href="#/today/streaks"><span class="ti">${ico('streak')}</span><span class="grow"><b>Streaks and progress</b><br><span class="muted">No junk food ${streak(rd, 'junk', s)} · Water ${streak(rd, 'water', s)} · Walk ${streak(rd, 'walk', s)} days</span></span></a>`;
 }
 
-const back = t => `<a class="back" href="#/today">‹ Today</a><h1 class="page-title">${t}</h1>`;
+const back = t => `<a class="back" href="#/today">Today</a><h1 class="page-title">${t}</h1>`;
 const SECTIONS = {
   checklist: (rd, ctx) => back('Checklist') + checklist(rd, ctx),
   gym: (rd, ctx) => back('Gym') + safe(gym.todayCard, ctx) + '<p><a class="btn ghost" href="#/gym">Open gym</a></p>',
@@ -158,23 +159,23 @@ export default {
     if (SECTIONS[arg]) return SECTIONS[arg](rd, ctx);
     return header(rd, ctx, blocks) + banners(rd, ctx, blocks) + nextUp(rd, ctx, blocks) + tiles(rd, ctx);
   },
-  click(act, el, ctx) {
+  async click(act, el, ctx) {
     const rd = ctx.rd, l = getDayLog(rd);
     const names = { junk: 'No junk food today', walk: '10-minute walk' };
     if (act === 'today-qa') { qaOpen = !qaOpen; return true; }
     if (act.startsWith('today-qa-')) {
       qaOpen = false;
       if (act === 'today-qa-water') { setDayLog(rd, { water: l.water + 250 }); ctx.notify('Added 250 ml'); return true; }
-      if (act === 'today-qa-walk') { if (!l.walk && confirm('Mark "10-minute walk" as done?')) setDayLog(rd, { walk: true }); return true; }
+      if (act === 'today-qa-walk') { if (!l.walk && await ask('Mark "10-minute walk" as done?', { ok: 'Mark done' })) setDayLog(rd, { walk: true }); return true; }
       if (act === 'today-qa-meal') { ctx.go('#/food'); return true; }
       if (act === 'today-qa-weigh') { ctx.go('#/progress'); return true; }
     }
     if (act === 'today-junk' || act === 'today-walk') {
       const h = act.slice(6);
-      if (!l[h] && confirm(`Mark "${names[h]}" as done?`)) setDayLog(rd, { [h]: true });
+      if (!l[h] && await ask(`Mark "${names[h]}" as done?`, { ok: 'Mark done' })) setDayLog(rd, { [h]: true });
       return true;
     }
-    if (act === 'today-undo' && confirm('Undo this item?')) { setDayLog(rd, { [el.dataset.h]: false }); return true; }
+    if (act === 'today-undo' && await ask('Undo this item?', { ok: 'Undo' })) { setDayLog(rd, { [el.dataset.h]: false }); return true; }
     if (act === 'today-water') { setDayLog(rd, { water: Math.max(0, l.water + +el.dataset.ml) }); return true; }
     return false;
   },

@@ -59,7 +59,7 @@ ok('add override: swap to morning work', settings.addOverride('2026-10-30', 'wor
 ok('add override: custom times', settings.addOverride('2026-10-31', 'custom', '10:00', '16:00').ok && getDay('2026-10-31', st.getSettings()).shiftEnd === '16:00');
 ok('custom override without times is rejected', !settings.addOverride('2026-11-01', 'custom', '', '').ok);
 ok('override list shows on the screen', mod.view(ctx(), 'overrides').includes('Sick') && mod.view(ctx(), 'overrides').includes('Custom shift 10:00–16:00'));
-mod.click('set-ov-clear', { dataset: { iso: '2026-10-28' } }, ctx());
+await mod.click('set-ov-clear', { dataset: { iso: '2026-10-28' } }, ctx());
 ok('clear override restores the pattern', getDay('2026-10-28', st.getSettings()).type === 'work' && !getDay('2026-10-28', st.getSettings()).override);
 
 // ---- backup round trip ----
@@ -104,10 +104,10 @@ ok('banner hidden with no data at all', settings.backupBanner(ctx()) === '');
 // ---- reset needs two confirmations ----
 let asked = 0; globalThis.confirm = () => (++asked === 1);
 st.setSetting('kcal', 2700);
-mod.click('set-reset', {}, ctx());
+await mod.click('set-reset', {}, ctx());
 ok('reset stops if the second confirm is declined', asked === 2 && st.getSettings().kcal === 2700);
 globalThis.confirm = () => true;
-mod.click('set-reset', {}, ctx());
+await mod.click('set-reset', {}, ctx());
 ok('reset runs after two confirms', st.getSettings().kcal === 2500);
 
 // ---- views render ----

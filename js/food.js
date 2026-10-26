@@ -190,7 +190,7 @@ function prepView(ctx, iso) {
   const prep = prepFor(iso, s);
   if (!prep) {
     let n = null; for (let k = 1; k <= 14 && !n; k++) if (isPrepDay(addDays(iso, k), s)) n = addDays(iso, k);
-    return `<p><a href="#/food/week">Back to the food week</a></p><h1 class="page-title">Batch cook</h1><p class="note calm">${esc(dayLabel(iso))} is not a batch-cook day. Every meal today is a box from the fridge or freezer, or a quick item.</p>${n ? `<a class="btn" href="#/food/prep/${n}">Next batch-cook day: ${esc(dayLabel(n))}</a>` : ''}`;
+    return `<a class="back" href="#/food/week">Food week</a><h1 class="page-title">Batch cook</h1><p class="note calm">${esc(dayLabel(iso))} is not a batch-cook day. Every meal today is a box from the fridge or freezer, or a quick item.</p>${n ? `<a class="btn" href="#/food/prep/${n}">Next batch-cook day: ${esc(dayLabel(n))}</a>` : ''}`;
   }
   const dishes = P.dishesFor(iso, s), cooked = area().cooked || {}, go = P.whereBoxesGo(iso, s);
   const dish = r => `<section aria-labelledby="d-${r.id}"><h2 id="d-${r.id}">${esc(r.name)}</h2>
@@ -200,7 +200,7 @@ function prepView(ctx, iso) {
     <p class="muted">${esc(r.batch)}</p>
     <div class="row"><a class="btn small ghost" target="_blank" rel="noopener" href="${youtube(r.name)}">Watch how</a>
     <button type="button" class="btn small" data-act="food-cooked" data-id="${esc(r.id)}" data-iso="${iso}">${cooked[r.id] ? 'Cooked ' + esc(dayLabel(cooked[r.id])) : 'Mark as cooked'}</button></div></section>`;
-  return `<p><a href="#/food/week">Back to the food week</a></p><h1 class="page-title">Batch cook</h1><p class="muted">${esc(dayLabel(iso))}</p>
+  return `<a class="back" href="#/food/week">Food week</a><h1 class="page-title">Batch cook</h1><p class="muted">${esc(dayLabel(iso))}</p>
   <p class="note">${esc(prep.note)}</p>
   <p class="muted">Order: put both rice cookers or pots on first, then do the chopping while they cook. Wash up as you go.</p>
   ${dishes.map(dish).join('')}
@@ -236,9 +236,9 @@ function recipesView() {
 }
 function recipeView(id) {
   const r = P.findRecipe(id);
-  if (!r) return `<p><a href="#/food/recipes">Back to recipes</a></p><h1 class="page-title">Recipe not found</h1>`;
+  if (!r) return `<a class="back" href="#/food/recipes">Recipes</a><h1 class="page-title">Recipe not found</h1>`;
   const cooked = area().cooked || {}, n = P.perServing(r);
-  return `<p><a href="#/food/recipes">Back to recipes</a></p><h1 class="page-title">${esc(r.name)}</h1>
+  return `<a class="back" href="#/food/recipes">Recipes</a><h1 class="page-title">${esc(r.name)}</h1>
   <p class="muted"><span class="tag">${esc(TAG[r.tag] || r.tag)}</span>${r.hiddenVeg ? '<span class="tag">Hidden veg</span>' : ''}${r.portions ? `<span class="tag">Makes ${r.portions} boxes</span>` : ''}</p>
   <p class="num">${n.k} kcal · ${n.p} g protein per ${r.portions ? 'box' : 'serving'} · ${r.active} min active · ${r.total} min in all</p>
   <h2>You need</h2><ul class="rules">${r.ing.map(([k, q]) => `<li>${esc(ingText(k, q))}</li>`).join('')}${basicsText(r) ? `<li class="muted">${esc(basicsText(r))}</li>` : ''}</ul>
