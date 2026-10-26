@@ -1,87 +1,95 @@
-import { getDay, describeShift, routineDay, dayNum, isoOf } from './schedule.js';
-import { getSettings, getLog, setLog, getFirstUse } from './storage.js';
-import { sleepWindow, fmt } from './plan.js';
-import { gymView, gymClick, gymInput, loadGymData, sessionFor } from './gym.js';
-import { weekView, weekClick } from './week.js';
-import { foodView, foodClick, foodSummary, loadFoodData } from './food.js';
-import { addRoute, startRouter } from './router.js';
+// App shell: builds the context, routes, dispatches taps to modules, shows banners.
+import { getSettings, setErrorHandler, runMigrations, askPersist } from './storage.js';
+import { routineDayAt, setProviders } from './plan.js';
+import { nowLocal, esc, addDays } from './util.js';
+import { startRouter } from './router.js';
+import { initPwa } from './pwa.js';
+import today, { waterTarget } from './today.js';
+import week from './week.js';
+import gym, * as G from './gym.js';
+import food from './food.js';
+import study, * as St from './study.js';
+import progress from './progress.js';
+import settings from './settings.js';
 
-function nowLocal() { // Mauritius calendar date + minutes since midnight
-  const p = Object.fromEntries(new Intl.DateTimeFormat('en-CA', { timeZone: 'Indian/Mauritius', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(new Date()).map(x => [x.type, x.value]));
-  return { iso: `${p.year}-${p.month}-${p.day}`, min: +p.hour * 60 + +p.minute };
-}
-const ctx = () => { const s = getSettings(), { iso, min } = nowLocal(); return { s, iso, min, rd: routineDay(iso, min, s) }; };
-const wt = (iso, s) => sessionFor(iso, s) ? s.waterGym : s.waterRest;
-const done = (iso, h, s) => { const l = getLog(iso); return h === 'water' ? l.water >= wt(iso, s) : l[h]; };
-const prev = (iso, n = 1) => isoOf(dayNum(iso) - n);
-function streak(rd, h, s) {
-  let d = done(rd, h, s) ? rd : prev(rd), n = 0;
-  while (n < 365 && done(d, h, s)) { n++; d = prev(d); }
-  return n;
-}
-
-function today() {
-  const { s, iso, min, rd } = ctx(), d = getDay(rd, s), log = getLog(rd);
-  const label = d.type === 'off' ? 'Off day' : d.block === 'night' ? 'Night shift' : 'Morning shift';
-  const sw = sleepWindow(rd, s), gs = sessionFor(rd, s);
-  const yest = prev(rd), fu = getFirstUse();
-  const missed = fu && yest >= fu && ['junk', 'water', 'walk'].some(h => !done(yest, h, s));
-  const drowsy = iso !== rd && d.endsNextDay && min >= 420 && min <= 600;
-  const pct = Math.min(100, Math.round(log.water / wt(rd, s) * 100));
-  const item = (h, text, extra = '') => h === 'water'
-    ? `<li class="item"><div class="check" data-done="${!!done(rd, h, s)}">${text}</div>${extra}</li>`
-    : `<li class="item"><button type="button" class="check" data-act="${h}" aria-pressed="${!!done(rd, h, s)}">${text}</button>${done(rd, h, s) ? `<button type="button" class="add" data-act="undo-${h}">Undo</button>` : ''}</li>`;
-  const grid = Array.from({ length: 28 }, (_, i) => { const x = prev(rd, 27 - i); const c = ['junk', 'water', 'walk'].filter(h => done(x, h, s)).length; return `<i class="c${c}" title="${x}"></i>`; }).join('');
-  return `
-  <header class="hero ${d.type === 'off' ? 'off' : d.block}">
-    <h1>${label}</h1>
-    <p>${describeShift(rd, s)}</p>
-    <p>Sleep ${fmt(sw.start)}–${fmt(sw.end)} · wake ${fmt(sw.end)}</p>
-    ${d.override ? `<p class="mark">Changed from your usual pattern</p>` : ''}
-  </header>
-  ${drowsy ? `<p class="note">If you feel sleepy, pull over somewhere safe and nap 15–20 min.</p>` : ''}
-  ${missed ? `<p class="note">Missed yesterday, so today counts.</p>` : ''}
-  <section aria-labelledby="cl"><h2 id="cl">Today's checklist</h2>
-  <ul class="list">
-    ${item('junk', 'No junk food today')}
-    ${item('water', `Drink water: ${log.water} / ${wt(rd, s)} ml`, `<button type="button" class="add" data-act="water+" aria-label="Add 250 ml">+250 ml</button><button type="button" class="add" data-act="water-" aria-label="Remove 250 ml">−</button>`)}
-    ${item('walk', '10-minute walk')}
-  </ul><div class="bar" role="progressbar" aria-label="Water" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100"><b style="width:${pct}%"></b></div></section>
-  <section><h2>Gym</h2><p>${gs ? `${gs.kind} · ${gs.loc} gym · ${gs.time}` : 'Rest day'}</p></section>
-  ${foodSummary(rd)}
-  <section aria-labelledby="st"><h2 id="st">Streaks</h2>
-  <p class="streaks">No junk ${streak(rd, 'junk', s)} · Water ${streak(rd, 'water', s)} · Walk ${streak(rd, 'walk', s)} days</p>
-  <div class="grid" aria-label="Last 28 days, darker means more habits done">${grid}</div></section><p class="streaks">Build 4.0</p>`;
-}
-
-const later = n => () => `<section><h1 class="plain">Coming in step ${n}</h1><p class="note">Nothing to do here yet. Use Today for now.</p></section>`;
-addRoute('today', today);
-addRoute('gym', () => gymView(ctx().rd));
-addRoute('food', () => foodView(ctx().rd));
-addRoute('week', () => weekView(ctx().rd));
-['progress:6', 'settings:7'].forEach(x => { const [k, n] = x.split(':'); addRoute(k, later(n)); });
-
-await Promise.all([loadGymData(), loadFoodData()]);
+export const APP_VERSION = '2026-10-26';
+const MODS = { today, week, gym, food, study, progress, settings };
+const PREFIX = { today: today, week: week, gym, food, study, prog: progress, set: settings };
 const main = document.getElementById('main');
-const rerender = startRouter(main, [...document.querySelectorAll('nav a')]);
-main.addEventListener('change', e => { try { gymInput(e.target); } catch (err) { alert('Save failed: ' + err.message); } });
-main.addEventListener('click', e => {
-  const act = e.target.closest?.('[data-act]')?.dataset.act; if (!act) return;
-  try {
-    if (foodClick(act, e.target.closest('[data-act]'), ctx().rd)) { rerender(); return; }
-    if (weekClick(act)) { rerender(); return; }
-    if (gymClick(act, e.target.closest('[data-act]'))) { rerender(); return; }
-    const { s, rd } = ctx(), l = getLog(rd);
-    const name = { junk: 'No junk food today', walk: '10-minute walk' };
-    if ((act === 'junk' || act === 'walk') && !l[act] && confirm(`Mark "${name[act]}" as done?`)) setLog(rd, { [act]: true });
-    if (act.startsWith('undo-') && confirm('Undo this item?')) setLog(rd, { [act.slice(5)]: false });
-    if (act === 'water') setLog(rd, { water: l.water >= wt(rd, s) ? 0 : wt(rd, s) });
-    if (act === 'water+') setLog(rd, { water: l.water + 250 });
-    if (act === 'water-') setLog(rd, { water: Math.max(0, l.water - 250) });
-    rerender();
-  } catch (err) {
-    alert('Tap failed: ' + err.message);
+const tabs = [...document.querySelectorAll('nav.tabs a')];
+const state = { route: { name: 'today', arg: '' }, error: '', update: null, toast: '' };
+
+setProviders({ gymFor: (iso, s) => G.sessionFor(iso, s) });
+
+function ctx() {
+  const s = getSettings(), { iso, min, ms } = nowLocal();
+  return {
+    s, iso, min, ms, rd: routineDayAt(iso, min, s),
+    go: h => { location.hash = h; },
+    rerender: () => render(),
+    notify,
+    waterTarget: iso => waterTarget(iso, s),
+    gymPlanned: mon => { try { return G.planAll(s).filter(x => x.iso >= mon && x.iso <= addDays(mon, 6)).length; } catch { return null; } },
+    studyPlanned: mon => { try { const w = St.weekStudy(mon, s); return { aws: w.aws.plan, mandarin: w.mandarin.plan }; } catch { return null; } },
+  };
+}
+
+function bannerHtml() {
+  let h = '';
+  if (state.error) h += `<div class="note alert" role="alert"><b>Couldn't save.</b> ${esc(state.error)} <button type="button" class="btn small ghost" data-act="app-dismiss">Dismiss</button></div>`;
+  if (state.update) h += `<div class="note" role="status">Update available. <button type="button" class="btn small primary" data-act="app-update">Reload</button></div>`;
+  return h;
+}
+
+function render(changed = false) {
+  const r = state.route, name = r.name === 'day' ? 'week' : r.name, mod = MODS[name] || today;
+  const arg = r.name === 'day' ? 'day/' + r.arg : r.arg, c = ctx();
+  let html;
+  try { html = mod.view(c, arg); }
+  catch (e) { html = `<h1 class="page-title">Something went wrong</h1><p class="note alert">${esc(e.message)}</p><p><a href="#/today">Back to Today</a></p>`; console.error(e); }
+  main.innerHTML = bannerHtml() + html;
+  const tab = name === 'study' ? 'today' : name;
+  tabs.forEach(a => a.toggleAttribute('aria-current', a.dataset.tab === tab));
+  if (changed) {
+    scrollTo(0, 0);
+    const h1 = main.querySelector('h1'); if (h1) { h1.setAttribute('tabindex', '-1'); h1.focus({ preventScroll: true }); }
+    document.title = (h1?.textContent?.trim() || 'Routine') + ' · Routine';
   }
-});
-setInterval(() => { if (!location.hash || location.hash === '#/today') rerender(); }, 60000);
-document.addEventListener('visibilitychange', () => { if (!document.hidden) rerender(); });
+  try { mod.mounted?.(c); } catch (e) { console.error(e); }
+}
+
+function notify(msg) {
+  const t = document.getElementById('toast'); if (!t) return;
+  t.textContent = msg; t.hidden = false;
+  clearTimeout(notify.t); notify.t = setTimeout(() => { t.hidden = true; }, 2200);
+}
+
+async function dispatch(kind, e) {
+  const el = e.target.closest?.('[data-act]'); if (!el || !main.contains(el)) return;
+  if (kind === 'click' && /^(INPUT|SELECT|TEXTAREA)$/.test(el.tagName)) return; // inputs report through 'change'
+  const act = el.dataset.act;
+  if (kind === 'click' && act === 'app-dismiss') { state.error = ''; return render(); }
+  if (kind === 'click' && act === 'app-update') { state.update?.(); return; }
+  const mod = PREFIX[act.split('-')[0]]; if (!mod) return;
+  const fn = kind === 'click' ? mod.click : mod.change; if (!fn) return;
+  try {
+    const out = await fn.call(mod, act, el, ctx());
+    if (out) render();
+  } catch (err) { console.error(err); alert('That did not work: ' + err.message); }
+}
+main.addEventListener('click', e => dispatch('click', e));
+main.addEventListener('change', e => dispatch('change', e));
+
+const typing = () => /^(INPUT|SELECT|TEXTAREA)$/.test(document.activeElement?.tagName || '');
+setInterval(() => { if (state.route.name === 'today' && !typing()) render(); }, 60000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden && !typing()) render(); });
+
+async function boot() {
+  setErrorHandler(msg => { state.error = msg; if (main) render(); });
+  runMigrations(nowLocal().iso);
+  askPersist();
+  await Promise.allSettled(Object.values(MODS).map(m => m.init?.()));
+  startRouter((r, changed) => { state.route = r; render(changed); });
+  initPwa({ onUpdate: apply => { state.update = apply; render(); } });
+}
+boot();

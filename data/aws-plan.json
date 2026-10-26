@@ -1,0 +1,467 @@
+{
+  "exam": "AWS Certified Developer – Associate (DVA-C03)",
+  "bookingUrl": "https://home.pearsonvue.com/aws",
+  "weightsPreliminary": true,
+  "weightsNote": "Domain weights are preliminary (from a Tutorials Dojo summary) until you check the official DVA-C03 exam guide from AWS.",
+  "examGuideUrl": "https://aws.amazon.com/certification/certified-developer-associate/",
+  "domains": [
+    {
+      "id": "dev",
+      "name": "Development with AWS Services",
+      "weight": 30
+    },
+    {
+      "id": "sec",
+      "name": "Security",
+      "weight": 26
+    },
+    {
+      "id": "dep",
+      "name": "Testing and Deployment",
+      "weight": 22
+    },
+    {
+      "id": "trb",
+      "name": "Troubleshooting and Optimization",
+      "weight": 22
+    }
+  ],
+  "topics": [
+    {
+      "id": "iam",
+      "name": "IAM",
+      "domain": "sec",
+      "share": 0.35,
+      "maarek": "IAM & AWS CLI; AWS CLI, SDK, IAM Roles & Policies",
+      "light": [
+        "Watch one lecture on IAM users, groups and policies.",
+        "Watch one lecture on IAM roles and the AWS CLI.",
+        "Flashcards: policy structure (Effect, Action, Resource, Condition) and explicit deny.",
+        "Watch one lecture on the SDK default credential provider chain."
+      ],
+      "heavy": [
+        {
+          "lectures": "IAM users, groups, policies and roles",
+          "lab": "Create an IAM role a Lambda function can assume, with a policy that allows reading one S3 bucket. Test one allowed and one denied action in the IAM policy simulator.",
+          "questions": "10 questions on IAM policies and roles"
+        },
+        {
+          "lectures": "AWS CLI, SDK, STS AssumeRole and the credential provider chain",
+          "lab": "Use CloudShell to call sts get-caller-identity, then assume the role from your last lab with sts assume-role and list the bucket. Delete the role when you finish.",
+          "questions": "10 questions on STS, MFA and the credential chain"
+        },
+        {
+          "lectures": "IAM policy evaluation, permission boundaries and resource-based policies",
+          "lab": "Write a bucket policy that allows one IAM role and denies everyone else. Check it with the IAM policy simulator, then delete the bucket.",
+          "questions": "10 questions on policy evaluation logic"
+        }
+      ]
+    },
+    {
+      "id": "s3",
+      "name": "S3",
+      "domain": "dev",
+      "share": 0.12,
+      "maarek": "Amazon S3 Introduction; Advanced Amazon S3; Amazon S3 Security",
+      "light": [
+        "Watch one lecture on S3 storage classes and lifecycle rules.",
+        "Flashcards: S3 encryption options (SSE-S3, SSE-KMS, SSE-C, client-side).",
+        "Watch one lecture on pre-signed URLs and S3 event notifications."
+      ],
+      "heavy": [
+        {
+          "lectures": "S3 basics, versioning, lifecycle rules and storage classes",
+          "lab": "Create a bucket with versioning on, upload a file twice, restore the older version, and add a lifecycle rule. Empty and delete the bucket at the end.",
+          "questions": "10 questions on S3 storage and lifecycle"
+        },
+        {
+          "lectures": "S3 security, encryption, CORS, pre-signed URLs and event notifications",
+          "lab": "Turn on SSE-KMS default encryption on a bucket, generate a pre-signed URL from CloudShell with aws s3 presign, and open it in a browser. Delete the bucket after.",
+          "questions": "10 questions on S3 security and performance"
+        }
+      ]
+    },
+    {
+      "id": "lambda",
+      "name": "Lambda",
+      "domain": "dev",
+      "share": 0.25,
+      "maarek": "AWS Serverless: Lambda",
+      "light": [
+        "Watch one lecture on Lambda synchronous and asynchronous invocations.",
+        "Flashcards: Lambda limits (memory, timeout, package size, /tmp).",
+        "Watch one lecture on Lambda versions, aliases and environment variables.",
+        "Watch one lecture on Lambda concurrency and cold starts.",
+        "Flashcards: event source mappings (SQS, DynamoDB Streams, Kinesis).",
+        "Flashcards: VPC endpoints. Gateway (S3, DynamoDB) vs interface endpoints (AWS PrivateLink)."
+      ],
+      "heavy": [
+        {
+          "lectures": "Lambda basics, synchronous and asynchronous invocation",
+          "lab": "Create a Python or Node.js Lambda function in the console, invoke it with a test event, and read its log stream in CloudWatch Logs.",
+          "questions": "10 questions on Lambda invocation types"
+        },
+        {
+          "lectures": "Lambda event source mappings, destinations and dead-letter queues",
+          "lab": "Connect an SQS queue to your function as an event source, send three messages from the console, and confirm the function processed them in its logs. Add an on-failure destination.",
+          "questions": "10 questions on event sources and retries"
+        },
+        {
+          "lectures": "Lambda versions, aliases, environment variables, layers and concurrency",
+          "lab": "Publish two versions of your function, point an alias at both with a 90/10 weighted split, and set reserved concurrency to 5. Delete the function and queue when you finish.",
+          "questions": "10 questions on versions, aliases and concurrency"
+        },
+        {
+          "lectures": "Lambda in a VPC, VPC endpoints and AWS PrivateLink, performance tuning and container images",
+          "lab": "Change your function's memory from 128 MB to 1024 MB and compare the duration in the logs. Then read the VPC console's Endpoints page and note which services a gateway endpoint covers (S3, DynamoDB) and which need an interface endpoint (PrivateLink).",
+          "questions": "10 questions on Lambda performance and private networking"
+        }
+      ],
+      "learn": "AWS docs: AWS PrivateLink guide (What is AWS PrivateLink?)"
+    },
+    {
+      "id": "apigw",
+      "name": "API Gateway",
+      "domain": "dev",
+      "share": 0.12,
+      "maarek": "AWS Serverless: API Gateway",
+      "light": [
+        "Watch one lecture on REST API stages and stage variables.",
+        "Flashcards: API Gateway integration types (proxy vs non-proxy) and error codes.",
+        "Watch one lecture on API Gateway caching, throttling and usage plans."
+      ],
+      "heavy": [
+        {
+          "lectures": "API Gateway REST APIs, integrations, stages and deployments",
+          "lab": "Create a REST API with one GET method using Lambda proxy integration to your function. Deploy it to a dev stage and call the invoke URL in a browser.",
+          "questions": "10 questions on integrations and stages"
+        },
+        {
+          "lectures": "API Gateway caching, throttling, usage plans, API keys and authorizers",
+          "lab": "Turn on a usage plan with an API key for your API, call it with and without the x-api-key header from CloudShell with curl, then delete the API.",
+          "questions": "10 questions on API security and limits"
+        }
+      ]
+    },
+    {
+      "id": "dynamo",
+      "name": "DynamoDB",
+      "domain": "dev",
+      "share": 0.2,
+      "maarek": "AWS Serverless: DynamoDB",
+      "light": [
+        "Flashcards: read and write capacity unit maths (RCU and WCU).",
+        "Watch one lecture on partition keys, sort keys and hot partitions.",
+        "Watch one lecture on LSI vs GSI.",
+        "Flashcards: Query vs Scan, conditional writes, optimistic locking."
+      ],
+      "heavy": [
+        {
+          "lectures": "DynamoDB tables, keys, capacity modes and RCU/WCU maths",
+          "lab": "Create a table with a partition key and sort key in on-demand mode. Add five items in the console and run a Query and a Scan. Compare the consumed capacity.",
+          "questions": "10 questions on capacity maths"
+        },
+        {
+          "lectures": "DynamoDB indexes (LSI, GSI), conditional writes and batch operations",
+          "lab": "Add a global secondary index to your table and query it from CloudShell with aws dynamodb query. Try a conditional put that fails on purpose.",
+          "questions": "10 questions on indexes and conditional writes"
+        },
+        {
+          "lectures": "DynamoDB Streams, TTL, DAX and transactions",
+          "lab": "Turn on DynamoDB Streams and connect it to a Lambda function that logs each change. Set a TTL attribute on one item. Delete the table and function when you finish.",
+          "questions": "10 questions on streams, DAX and TTL"
+        }
+      ]
+    },
+    {
+      "id": "msg",
+      "name": "SQS, SNS, EventBridge and Data Firehose",
+      "domain": "dev",
+      "share": 0.15,
+      "maarek": "AWS Integration & Messaging: SQS, SNS & Kinesis (Kinesis Data Firehose lectures); Amazon EventBridge (in the monitoring section)",
+      "light": [
+        "Flashcards: SQS visibility timeout, long polling, delay queues and DLQs.",
+        "Watch one lecture on SQS FIFO queues and message groups.",
+        "Watch one lecture on SNS fan-out to SQS.",
+        "Watch one lecture on EventBridge rules and event buses.",
+        "Watch one lecture on Amazon Data Firehose: sources, buffering and destinations."
+      ],
+      "heavy": [
+        {
+          "lectures": "SQS standard and FIFO queues, visibility timeout, DLQs",
+          "lab": "Create a standard queue with a dead-letter queue (max receives 2). Send a message, receive it twice without deleting it, and watch it move to the DLQ.",
+          "questions": "10 questions on SQS"
+        },
+        {
+          "lectures": "SNS topics, fan-out pattern and EventBridge rules",
+          "lab": "Create an SNS topic, subscribe two SQS queues (fan-out), and publish a message. Then add an EventBridge scheduled rule that invokes a Lambda function every 5 minutes. Delete everything after.",
+          "questions": "10 questions on SNS and EventBridge"
+        },
+        {
+          "lectures": "Amazon Data Firehose and Kinesis Data Streams: when to use which",
+          "lab": "Create a Firehose stream with Direct PUT as the source and an S3 bucket as the destination. Send three test records from the console and find them in the bucket after the buffer interval. Delete the stream and bucket after.",
+          "questions": "10 questions on Firehose and Kinesis"
+        }
+      ]
+    },
+    {
+      "id": "genai",
+      "name": "Amazon Bedrock, AgentCore and AI-assisted development",
+      "domain": "dev",
+      "share": 0.16,
+      "learn": "AWS Skill Builder: Amazon Bedrock and Amazon Q Developer getting-started courses; AWS docs: Amazon Bedrock User Guide, Amazon Bedrock AgentCore developer guide, Amazon Q Developer User Guide; Kiro documentation",
+      "light": [
+        "Read the Amazon Bedrock User Guide overview: models, the Converse API and InvokeModel.",
+        "Read the Amazon Q Developer User Guide sections on code suggestions and code reviews.",
+        "Flashcards: Bedrock building blocks. Converse API, streaming, knowledge bases, agents, guardrails.",
+        "Flashcards: where AI assistants help a developer. Code generation, test generation, debugging, code review.",
+        "Read the Bedrock AgentCore overview: runtime, memory, gateway and identity.",
+        "Read the Kiro docs overview: specs, steering and agent hooks."
+      ],
+      "heavy": [
+        {
+          "lectures": "Calling Amazon Bedrock from code: Converse API, streaming responses and IAM permissions",
+          "lab": "If your playground allows it, enable access to one small text model in the Bedrock console, try it in the playground, then call it from a Lambda function with the Converse API using the function's execution role. If Bedrock is not enabled there, read the Converse API examples in the AWS docs instead.",
+          "questions": "10 questions on Bedrock for developers"
+        },
+        {
+          "lectures": "Amazon Q Developer and Kiro: generating code and tests, reviewing code and explaining errors",
+          "lab": "If you have access to Amazon Q Developer or Kiro in your editor, ask it to write unit tests for one of your Lambda functions from earlier labs, run them, and fix one failing case. Review every suggestion before you accept it.",
+          "questions": "10 questions on AI-assisted development"
+        },
+        {
+          "lectures": "Bedrock agents and AgentCore basics: tools, memory and how an agent calls your Lambda functions",
+          "lab": "If your playground allows it, create a simple Bedrock agent with one action group backed by a Lambda function and test it in the console. Delete the agent and function after.",
+          "questions": "10 questions on agents and AgentCore"
+        },
+        {
+          "lectures": "Debugging with AI assistance: explaining stack traces, logs and failed deployments",
+          "lab": "Break a Lambda function on purpose (wrong handler name or a missing permission), then use Amazon Q in the console or your editor, if available, to explain the error from CloudWatch Logs. Fix it and note what the assistant got right and wrong.",
+          "questions": "10 questions on troubleshooting with AI tools"
+        }
+      ]
+    },
+    {
+      "id": "kms",
+      "name": "KMS and Secrets Manager",
+      "domain": "sec",
+      "share": 0.3,
+      "maarek": "AWS Security & Encryption: KMS, Encryption SDK, SSM Parameter Store; AWS Secrets Manager",
+      "light": [
+        "Flashcards: envelope encryption and the 4 KB KMS Encrypt limit.",
+        "Watch one lecture on KMS key policies and grants.",
+        "Flashcards: SSM Parameter Store vs Secrets Manager (rotation, cost, size).",
+        "Watch one lecture on KMS request quotas and data key caching."
+      ],
+      "heavy": [
+        {
+          "lectures": "KMS keys, key policies, envelope encryption and GenerateDataKey",
+          "lab": "Create a customer managed KMS key. In CloudShell, encrypt and decrypt a short text with aws kms encrypt and decrypt, then call generate-data-key. Schedule the key for deletion.",
+          "questions": "10 questions on KMS"
+        },
+        {
+          "lectures": "SSM Parameter Store, Secrets Manager and secret rotation",
+          "lab": "Store a fake test value as a SecureString parameter and as a Secrets Manager secret. Read both from a Lambda function using its execution role. Delete both after. Use made-up values only.",
+          "questions": "10 questions on Parameter Store and Secrets Manager"
+        }
+      ]
+    },
+    {
+      "id": "cognito",
+      "name": "Cognito",
+      "domain": "sec",
+      "share": 0.2,
+      "maarek": "Cognito: Cognito User Pools, Cognito Identity Pools",
+      "light": [
+        "Flashcards: user pools (sign-in, JWTs) vs identity pools (AWS credentials).",
+        "Watch one lecture on Cognito user pool triggers and the hosted UI.",
+        "Watch one lecture on API Gateway with a Cognito authorizer."
+      ],
+      "heavy": [
+        {
+          "lectures": "Cognito user pools, hosted UI, tokens and Lambda triggers",
+          "lab": "Create a user pool with a test user and an app client. Sign in through the hosted UI and look at the ID token's claims. Delete the pool after.",
+          "questions": "10 questions on user pools"
+        },
+        {
+          "lectures": "Cognito identity pools and API Gateway Cognito authorizers",
+          "lab": "Add a Cognito user pool authorizer to a test API, call it with and without a token from CloudShell, then delete the API and pool.",
+          "questions": "10 questions on identity pools and authorizers"
+        }
+      ]
+    },
+    {
+      "id": "aisec",
+      "name": "AI security",
+      "domain": "sec",
+      "share": 0.15,
+      "learn": "AWS docs: Amazon Bedrock User Guide (security, Guardrails, data protection); CloudWatch Logs data protection; AWS Skill Builder: generative AI security courses",
+      "light": [
+        "Flashcards: IAM for AI features. Allow bedrock:InvokeModel on one model ARN only.",
+        "Read the Bedrock Guardrails overview: content filters, denied topics and sensitive-information filters.",
+        "Flashcards: prompt injection. What it is and how to limit damage (least-privilege tools, input checks, output checks).",
+        "Read the CloudWatch Logs data protection overview: masking sensitive data in logs."
+      ],
+      "heavy": [
+        {
+          "lectures": "Access control and data privacy for AI features: IAM scoping, agent tool permissions and data handling",
+          "lab": "Write an IAM policy that allows bedrock:InvokeModel on one model ARN only and check it in the IAM policy simulator. List what an agent's Lambda tool role should and should not be allowed to do.",
+          "questions": "10 questions on AI access control and privacy"
+        },
+        {
+          "lectures": "Content filtering, prompt-injection defences and keeping sensitive data out of logs",
+          "lab": "If your playground allows it, create a Bedrock guardrail with a content filter and a sensitive-information (PII) filter and test it in the console. Then add a CloudWatch Logs data protection policy to a test log group, log a fake email address, and confirm it is masked. Use made-up data only.",
+          "questions": "10 questions on AI security"
+        }
+      ]
+    },
+    {
+      "id": "cfn",
+      "name": "CloudFormation and SAM",
+      "domain": "dep",
+      "share": 0.35,
+      "maarek": "AWS CloudFormation; AWS Serverless: SAM - Serverless Application Model; Cloud Development Kit (CDK)",
+      "light": [
+        "Watch one lecture on CloudFormation template sections (Parameters, Mappings, Outputs).",
+        "Flashcards: intrinsic functions (Ref, Fn::GetAtt, Fn::Sub, Fn::ImportValue).",
+        "Watch one lecture on change sets, stack policies and nested stacks.",
+        "Watch one lecture on the SAM template and sam deploy."
+      ],
+      "heavy": [
+        {
+          "lectures": "CloudFormation templates, parameters, outputs and intrinsic functions",
+          "lab": "Write a small template that creates an S3 bucket with a parameter for the bucket name and an output. Create the stack in the console, update it with a change set, then delete the stack.",
+          "questions": "10 questions on CloudFormation"
+        },
+        {
+          "lectures": "SAM templates, sam build, sam deploy and SAM policy templates",
+          "lab": "In CloudShell, run sam init with the hello-world template, then sam build and sam deploy --guided. Call the API it creates, then run sam delete.",
+          "questions": "10 questions on SAM"
+        },
+        {
+          "lectures": "CloudFormation rollbacks, drift detection, StackSets and the CDK at a glance",
+          "lab": "Create a stack, change one resource by hand, and run drift detection. Then delete the stack.",
+          "questions": "10 questions on stack operations"
+        }
+      ]
+    },
+    {
+      "id": "cicd",
+      "name": "Testing and CI/CD: CodeBuild, CodeDeploy, CodePipeline",
+      "domain": "dep",
+      "share": 0.4,
+      "maarek": "AWS CICD: CodeCommit, CodePipeline, CodeBuild, CodeDeploy",
+      "light": [
+        "Flashcards: buildspec.yml phases (install, pre_build, build, post_build).",
+        "Watch one lecture on CodeDeploy deployment types (in-place, blue/green).",
+        "Flashcards: appspec.yml hooks for EC2, Lambda and ECS.",
+        "Watch one lecture on CodePipeline stages and artifacts.",
+        "Watch one lecture on testing serverless apps locally with sam local invoke and test events."
+      ],
+      "heavy": [
+        {
+          "lectures": "CodeBuild and buildspec.yml",
+          "lab": "Create a CodeBuild project from a small public sample repo with a buildspec that runs one test command. Start a build and read its logs in CloudWatch.",
+          "questions": "10 questions on CodeBuild"
+        },
+        {
+          "lectures": "CodeDeploy for EC2, Lambda and ECS, appspec.yml and deployment configs",
+          "lab": "Deploy a new Lambda version with CodeDeploy using a canary configuration (for example Canary10Percent5Minutes) and watch the traffic shift.",
+          "questions": "10 questions on CodeDeploy"
+        },
+        {
+          "lectures": "CodePipeline stages, actions, artifacts and approvals",
+          "lab": "Build a two-stage pipeline (source from an S3 zip, then CodeBuild). Add a manual approval step. Delete the pipeline, project and bucket after.",
+          "questions": "10 questions on CodePipeline"
+        },
+        {
+          "lectures": "Testing: Lambda test events, sam local invoke and running unit tests in CodeBuild",
+          "lab": "In CloudShell, run sam local invoke on the hello-world app from your SAM lab with a saved test event (or use a console test event if Docker is not available). Add a test command to a buildspec and run it in CodeBuild.",
+          "questions": "10 questions on testing and deployment"
+        }
+      ]
+    },
+    {
+      "id": "containers",
+      "name": "Containers (ECR, ECS, EKS, Fargate) and Elastic Beanstalk basics",
+      "domain": "dep",
+      "share": 0.25,
+      "maarek": "ECS, ECR & Fargate - Docker in AWS; AWS Elastic Beanstalk",
+      "light": [
+        "Watch one lecture on ECS task definitions, services and Fargate.",
+        "Flashcards: Elastic Beanstalk deployment policies (all at once, rolling, immutable, blue/green).",
+        "Watch one lecture on .ebextensions and Beanstalk environments.",
+        "Flashcards: ECS vs EKS vs Fargate. Who manages what, and when to pick each.",
+        "Watch one lecture on building images and pushing them to ECR."
+      ],
+      "heavy": [
+        {
+          "lectures": "Elastic Beanstalk environments, deployment policies and .ebextensions",
+          "lab": "Create a Beanstalk environment with the sample app, deploy a second version with the immutable policy, and watch the events. Terminate the environment after.",
+          "questions": "10 questions on Elastic Beanstalk"
+        },
+        {
+          "lectures": "ECS, ECR and Fargate: task definitions, task roles and services",
+          "lab": "Push a small container image to ECR from CloudShell and run it as a Fargate task with a task role. Stop the task and delete the repository after.",
+          "questions": "10 questions on ECS and ECR"
+        },
+        {
+          "lectures": "Choosing ECS, EKS or Fargate, and ECR image scanning and lifecycle policies",
+          "lab": "Turn on scan on push for an ECR repository, push an image from CloudShell, read the scan findings and add a lifecycle policy that keeps the last 5 images. Delete the repository after.",
+          "questions": "10 questions on containers"
+        }
+      ],
+      "learn": "AWS docs: Amazon EKS User Guide (Getting started); AWS Skill Builder: container courses for ECS and EKS"
+    },
+    {
+      "id": "obs",
+      "name": "CloudWatch and X-Ray",
+      "domain": "trb",
+      "share": 1,
+      "maarek": "AWS Monitoring & Audit: CloudWatch, X-Ray and CloudTrail",
+      "light": [
+        "Watch one lecture on CloudWatch metrics, custom metrics and dimensions.",
+        "Flashcards: CloudWatch Logs Insights, metric filters and log retention.",
+        "Watch one lecture on X-Ray traces, segments, subsegments and annotations.",
+        "Flashcards: CloudTrail vs CloudWatch vs X-Ray: which one answers which question.",
+        "Watch one lecture on CloudWatch alarms and composite alarms."
+      ],
+      "heavy": [
+        {
+          "lectures": "CloudWatch metrics, custom metrics, Logs and Logs Insights",
+          "lab": "Publish a custom metric from CloudShell with aws cloudwatch put-metric-data. Run a Logs Insights query on your Lambda log group to find the slowest invocations.",
+          "questions": "10 questions on CloudWatch metrics and logs"
+        },
+        {
+          "lectures": "CloudWatch alarms, metric filters and the CloudWatch agent",
+          "lab": "Create a metric filter that counts ERROR lines in a Lambda log group and an alarm on it. Make the function log an error and watch the alarm change state.",
+          "questions": "10 questions on alarms and filters"
+        },
+        {
+          "lectures": "X-Ray concepts, sampling, annotations and the X-Ray SDK",
+          "lab": "Turn on active tracing for a Lambda function behind API Gateway, call it a few times, and open the trace map in X-Ray. Find the slowest segment.",
+          "questions": "10 questions on X-Ray"
+        },
+        {
+          "lectures": "Troubleshooting and optimisation: CloudTrail, caching (CloudFront, ElastiCache, DAX) and Lambda tuning",
+          "lab": "Look up your own recent API calls in CloudTrail event history. Then compare the duration of a function at two memory sizes. Clean up any test resources.",
+          "questions": "10 questions on troubleshooting and optimisation"
+        }
+      ]
+    }
+  ],
+  "practice": {
+    "source": "Tutorials Dojo practice exams (use the DVA-C03 set if available, otherwise DVA-C02 and focus on the shared domains)",
+    "heavy": "Take Tutorials Dojo practice exam {n} in timed mode (65 questions). Use the DVA-C03 set if available, otherwise DVA-C02 and focus on the shared domains. A full exam runs up to 130 min, so plan the extra time or finish it in review mode next session. Then mark any topic you scored low on as 'Needs review'.",
+    "light": "Read 10 explanations from your last practice exam, starting with the questions you got wrong.",
+    "lightBefore": "Flashcards: run through the cards for the topic you feel least sure about."
+  },
+  "review": {
+    "heavy": "Review {topic}. Go back over what you found hardest in {section}. Repeat this lab: {lab} Then do 15–20 practice questions on {topic} and read every explanation.",
+    "light": "Flashcards or 10 practice questions on {topic}. Read the explanation for each wrong answer.",
+    "final": "Final Tutorials Dojo practice exam in timed mode, under exam conditions (65 questions, 130 min, no notes). Use the DVA-C03 set if available, otherwise DVA-C02. Review every wrong answer afterwards, and read up on the new DVA-C03 topics (AI security, Bedrock, AI-assisted development) where a DVA-C02 exam cannot test them. Aim for 80% or more before exam day.",
+    "afterFinal": "Go through the questions you got wrong in your final practice exam, 10 at a time. Keep it light; rest well before the exam.",
+    "guidance": "Mark a topic 'Needs review' after a practice exam when you scored under about 75% on it. Weeks 7 and 8 start with your marked topics, then the heaviest domains."
+  },
+  "courseNote": "Stephane Maarek's course and Tutorials Dojo may still be catching up with DVA-C03. New topics point to AWS Skill Builder and the AWS docs by name. Check the section names in your Udemy course."
+}

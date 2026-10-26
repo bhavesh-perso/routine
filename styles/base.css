@@ -1,0 +1,91 @@
+/* Palette (see docs/reference.md)
+   Ink    #11141a  page background
+   Slate  #1b2029  raised surfaces
+   Bone   #ece9e2  main text
+   Mist   #9aa3b5  secondary text, outlines
+   Ember  #f0a53a  accent, progress, focus, morning block
+   Indigo #26305c  night block
+*/
+:root{--ink:#11141a;--slate:#1b2029;--line:#2c3441;--bone:#ece9e2;--mist:#9aa3b5;--ember:#f0a53a;--indigo:#26305c;--indigo-hi:#5a6bc4;
+--display:"Fraunces",Georgia,"Iowan Old Style",serif;--text:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif;
+color-scheme:dark}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--ink);color:var(--bone);font:17px/1.45 var(--text)}
+main{max-width:520px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 8px) max(16px, env(safe-area-inset-right)) calc(84px + env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left))}
+h1,h2,h3{margin:0}
+h2{font-size:1.08rem;font-weight:700;margin:26px 0 10px}
+h3{font-size:1rem;font-weight:700;margin:14px 0 6px}
+p{margin:6px 0}
+a{color:var(--ember)}
+.page-title{font:700 2rem/1.1 var(--display);margin:18px 0 4px;letter-spacing:-.01em}
+.muted{color:var(--mist);font-size:.94rem}
+.num{font-variant-numeric:tabular-nums}
+
+/* Callouts */
+.note{background:var(--slate);border-left:4px solid var(--ember);padding:12px 14px;margin:12px 0;border-radius:0 6px 6px 0}
+.note.alert{border-left-color:#e8735a}
+.note.calm{border-left-color:var(--mist)}
+
+/* Lists and rows */
+.list{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.rules{list-style:none;margin:0;padding:0}
+.rules>li{padding:12px 0;border-bottom:1px solid var(--line)}
+.rules>li:last-child{border-bottom:0}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.grow{flex:1;min-width:0}
+.item{display:flex;gap:8px}
+.tile{background:var(--slate);border-radius:6px;padding:14px}
+
+/* Buttons. Every tap target is at least 44px. */
+.btn,.check,.add{min-height:48px;font:inherit;font-size:1rem;color:var(--bone);background:var(--slate);border:1px solid var(--line);border-radius:6px;cursor:pointer;padding:0 14px;display:inline-flex;align-items:center;justify-content:center;gap:6px;text-decoration:none}
+.btn.primary{background:var(--ember);color:var(--ink);border-color:var(--ember);font-weight:700}
+.btn.ghost{background:transparent}
+.btn.small{min-height:44px;padding:0 12px;font-size:.95rem}
+.btn.wide,.wide{width:100%}
+.btn[disabled]{opacity:.45;cursor:default}
+.btn[aria-pressed=true]{border-color:var(--ember);background:#2a2518}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+
+/* Checklist toggle */
+.check{flex:1;justify-content:flex-start;text-align:left;padding:0 14px 0 48px;position:relative}
+.check::before{content:"";position:absolute;left:14px;width:22px;height:22px;border:2px solid var(--mist);border-radius:5px}
+.check[aria-pressed=true],.check[data-done=true]{border-color:var(--ember);background:#2a2518}
+.check[aria-pressed=true]::before,.check[data-done=true]::before{content:"\2713";background:var(--ember);border-color:var(--ember);color:var(--ink);font-weight:700;text-align:center;line-height:18px}
+.add{min-width:56px;padding:0 10px}
+
+/* Forms. Inputs are 16px or larger so iOS never zooms on focus. */
+label{display:block}
+.field{display:grid;gap:4px;margin:10px 0}
+.field>span{color:var(--mist);font-size:.92rem}
+input,select,textarea{font:inherit;font-size:16px;color:var(--bone);background:var(--ink);border:1px solid var(--line);border-radius:6px;min-height:48px;padding:0 12px;width:100%}
+textarea{padding:10px 12px;min-height:80px}
+input[type=checkbox],input[type=radio]{width:22px;height:22px;min-height:0;accent-color:var(--ember)}
+.toggle{display:flex;align-items:center;gap:12px;min-height:48px}
+
+/* Fold-out sections */
+details.fold{background:var(--slate);border-radius:6px;margin:8px 0;padding:0 14px}
+details.fold>summary{min-height:48px;display:flex;align-items:center;font-weight:600;cursor:pointer;list-style:none}
+details.fold>summary::-webkit-details-marker{display:none}
+details.fold>summary::after{content:"+";margin-left:auto;color:var(--mist);font-weight:400}
+details.fold[open]>summary::after{content:"\2212"}
+details.fold[open]{padding-bottom:12px}
+
+/* Segmented sub-navigation inside a tab */
+.seg{display:flex;gap:4px;background:var(--slate);border-radius:8px;padding:4px;margin:12px 0}
+.seg a,.seg button{flex:1;min-height:44px;display:grid;place-items:center;color:var(--mist);text-decoration:none;border-radius:6px;font:inherit;font-size:.95rem;background:none;border:0;cursor:pointer}
+.seg [aria-current=page],.seg [aria-pressed=true]{background:var(--ink);color:var(--bone);font-weight:700}
+
+/* Progress */
+.bar{height:6px;background:var(--slate);border-radius:3px;margin-top:8px;overflow:hidden}
+.bar>b{display:block;height:100%;background:var(--ember)}
+.tag{display:inline-block;font-size:.85rem;color:var(--mist);border:1px solid var(--line);border-radius:4px;padding:1px 6px;margin-right:4px}
+
+:focus-visible{outline:3px solid var(--ember);outline-offset:2px}
+
+/* Bottom tab bar */
+nav.tabs{position:fixed;inset:auto 0 0;display:flex;background:var(--slate);border-top:1px solid var(--line);padding:0 env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);z-index:5}
+nav.tabs a{flex:1;min-height:56px;display:grid;place-items:center;color:var(--mist);text-decoration:none;font-size:.8rem}
+nav.tabs a[aria-current]{color:var(--ember);font-weight:700}
+
+@media (prefers-reduced-motion:no-preference){.bar>b{transition:width .2s}}

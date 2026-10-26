@@ -1,0 +1,93 @@
+/* Gym (#/gym, #/gym/session, #/gym/summary/<id>, #/gym/ex/<id>, #/gym/history) and the gym card on Today.
+   Uses base tokens only. Every control is at least 44px tall, inputs are 16px, nothing is wider than the
+   390px phone (long text wraps, number rows wrap, grids use minmax(0,1fr)). */
+
+/* Overview: today's / next session and the coming-up list */
+.gym-now{background:var(--slate);border-radius:6px;border-left:4px solid var(--ember);padding:14px;margin:14px 0}
+.gym-now h2{margin:0 0 6px;font:700 1.35rem/1.2 var(--display);overflow-wrap:anywhere}
+.gym-now p{margin:4px 0}
+.gym-now .row{margin-top:10px}
+.gym-now .btn.wide{margin-top:8px}
+.gym-up>li{min-width:0}
+.gym-up .row>a{display:flex;align-items:center;min-height:44px;color:var(--bone);text-decoration:none;overflow-wrap:anywhere}
+.gym-up .row>a b{color:var(--ember)}
+.gym-up p{margin:0 0 4px}
+.gym-acts{margin-top:6px}
+.gym-acts .btn{flex:0 1 auto}
+
+/* Planned exercises (preview, day view) */
+.gym-plan{counter-reset:ex}
+.gym-plan>li{counter-increment:ex;position:relative;padding-left:34px;min-width:0}
+.gym-plan>li::before{content:counter(ex);position:absolute;left:0;top:12px;width:24px;height:24px;border-radius:50%;background:var(--slate);border:1px solid var(--line);color:var(--mist);font-size:.85rem;display:grid;place-items:center;font-variant-numeric:tabular-nums}
+.gym-plan a{display:inline-flex;align-items:center;min-height:44px;overflow-wrap:anywhere}
+.gym-plan p{margin:0 0 2px}
+
+/* How-to block */
+.gym-how{margin:10px 0 12px;display:grid;gap:2px}
+.gym-how dt{font-weight:700;margin-top:10px}
+.gym-how dt:first-child{margin-top:0}
+.gym-how dd{margin:0;color:var(--bone);overflow-wrap:anywhere}
+
+/* Active session */
+#gym-session{min-width:0}
+.gym-safety{font-size:.94rem}
+.gym-guided{margin:10px 0}
+.gym-exname{font:700 1.7rem/1.15 var(--display);margin:2px 0 6px;overflow-wrap:anywhere}
+.gym-exname a{color:var(--bone);text-decoration:none;display:inline-block;min-height:44px;line-height:1.15;padding:4px 0}
+.gym-target{margin:6px 0 2px;font-size:1.3rem;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px}
+.gym-target b{color:var(--ember);font-weight:700}
+.gym-target .muted{font-size:.94rem}
+.gym-lb{display:block;margin:2px 0 10px;overflow-wrap:anywhere}
+.gym-pr{margin:10px 0;font-weight:700}
+.gym-guided>.btn.wide{min-height:56px;font-size:1.1rem;margin:6px 0 4px}
+.gym-guided>.row{margin:8px 0}
+.gym-guided>.chips{margin:8px 0}
+.gym-edit{margin:10px 0}
+.gym-edit .btn.wide{margin-top:4px}
+.gym-upnext{margin:12px 0;padding:10px 12px;background:var(--slate);border-radius:6px;overflow-wrap:anywhere}
+.gym-upnext .muted{margin-right:4px}
+
+/* Weight and rep fields */
+.gym-inputs{align-items:flex-start;flex-wrap:wrap;gap:8px}
+.gym-in{flex:1 1 120px;min-width:0;margin:6px 0}
+.gym-in input{text-align:center;font-size:1.15rem;font-variant-numeric:tabular-nums}
+
+/* Effort chips: five equal buttons that fit 390px */
+.gym-rpe{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin:6px 0 10px}
+.gym-rpe .btn{padding:0;min-width:0}
+
+/* Rest timer */
+.gym-rest{background:var(--slate);border:1px solid var(--line);border-radius:6px;padding:12px 14px;margin:12px 0;text-align:center}
+.gym-clock{font:700 3rem/1 var(--display);font-variant-numeric:tabular-nums;color:var(--ember);margin:2px 0}
+.gym-rest-msg{margin:4px 0 8px;overflow-wrap:anywhere}
+.gym-rest .row{justify-content:center}
+.gym-rest.over{border-color:var(--ember);background:#2a2518}
+.gym-rest.over .gym-clock{color:var(--bone)}
+.gym-rest.over .gym-rest-msg{color:var(--bone)}
+
+/* All-sets list */
+.gym-list>li{min-width:0}
+.gym-list h3{margin:4px 0 4px}
+.gym-list h3 a{display:inline-flex;align-items:center;min-height:44px;color:var(--bone);overflow-wrap:anywhere}
+.gym-sets{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.gym-set{background:var(--slate);border:1px solid var(--line);border-radius:6px;padding:10px 12px;min-width:0}
+.gym-set .row{margin:2px 0}
+.gym-set .gym-lb{margin:0 0 6px}
+.gym-set.done{border-left:4px solid var(--ember);background:#211f1a}
+.gym-set.done b{overflow-wrap:anywhere}
+
+/* Finish */
+.gym-finish{margin:18px 0 8px;padding-top:6px}
+.gym-finish h2{margin-top:8px}
+.gym-finish .chips{margin:8px 0}
+.gym-finish .chips .btn{flex:1 1 0;min-width:0}
+.gym-finish .btn.wide{margin-top:6px}
+
+/* Summary */
+.gym-sum{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:12px 0}
+.gym-sum>div{background:var(--slate);border-radius:6px;padding:10px 12px;min-width:0}
+.gym-sum dt{color:var(--mist);font-size:.92rem}
+.gym-sum dd{margin:2px 0 0;font:700 1.35rem/1.2 var(--display);overflow-wrap:anywhere;text-transform:capitalize}
+.gym-sum dd.num{text-transform:none}
+
+@media (prefers-reduced-motion:no-preference){.gym-rest{transition:background .2s,border-color .2s}}

@@ -1,0 +1,21 @@
+/* Settings screen */
+.set-fold h3{margin-top:18px}
+.set-fold .set-sub{font-size:1rem;margin:22px 0 4px;padding-top:14px;border-top:1px solid var(--line)}
+.set-fold small{display:block;font-size:.88rem;line-height:1.35}
+.set-pair{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.set-pair .field{margin:6px 0;min-width:0}
+.set-err{color:#f19a85;font-size:.92rem}
+.set input[aria-invalid=true]{border-color:#e8735a}
+.set fieldset{border:1px solid var(--line);border-radius:6px;margin:12px 0;padding:4px 12px 8px;display:grid;grid-template-columns:1fr 1fr;column-gap:8px}
+.set legend{padding:0 6px;color:var(--mist);font-size:.92rem}
+.set .toggle span{min-width:0}
+.set-ov>li{gap:12px;flex-wrap:nowrap}
+.set-past{margin:6px 0 10px}
+.set-past>summary{min-height:44px;display:flex;align-items:center;color:var(--mist);cursor:pointer}
+.set-actions{display:grid;gap:8px;margin:12px 0}
+.set-file{position:relative;overflow:hidden}
+.set-file input{position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer}
+.set-file:focus-within{outline:3px solid var(--ember);outline-offset:2px}
+.set-danger{color:#f19a85;border-color:#6b3a33;background:transparent}
+.set-fold .btn.wide{margin-top:8px}
+@media (max-width:360px){.set-pair,.set fieldset{grid-template-columns:1fr}}

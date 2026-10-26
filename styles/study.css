@@ -1,0 +1,28 @@
+/* Study (#/study, #/study/plan, #/study/week) and the study card on Today */
+.study-back{margin:12px 0 0}
+.study-back a{display:inline-flex;align-items:center;min-height:44px;font-weight:600}
+.study-count{font-size:1.05rem;margin:10px 0}
+.study-count b{font:700 1.6rem/1 var(--display);color:var(--ember);margin-right:2px}
+.study-book{margin:10px 0}
+.study-book .check{min-width:0}
+.study-topic{font:700 1.3rem/1.2 var(--display);margin:6px 0}
+.study-log{display:grid;gap:8px;margin:10px 0}
+.study-log .check{width:100%}
+.study-min{margin:0}
+.study-min input{max-width:160px}
+.study-man{margin-top:8px}
+.study-man .check{min-width:0}
+.study-card>li>p{margin:4px 0}
+.study-card .check{width:100%;margin-top:8px}
+.study-topics .btn{flex:none}
+.study-topics p{margin:2px 0 0}
+.study-week>summary{gap:8px}
+.study-sum{margin-left:auto;margin-right:12px;font-variant-numeric:tabular-nums}
+.study-day p{margin:4px 0}
+.study-day .check{width:100%;margin-top:8px}
+.study-day.is-today,.study-days>li.is-today{border-left:3px solid var(--ember);padding-left:10px}
+.study-bar{margin:14px 0}
+.study-weeknav{margin:12px 0}
+.study-weeknav .grow{text-align:center;color:var(--mist)}
+.study-days>li{gap:12px}
+.study-booked{display:flex;align-items:center;gap:8px;flex-wrap:wrap}

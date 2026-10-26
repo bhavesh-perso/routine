@@ -1,0 +1,54 @@
+/* Today header: the one bold element in the app. */
+.hero{margin:10px -4px 0;padding:22px 20px 18px;border-radius:8px;position:relative;overflow:hidden}
+.hero h1{font:700 clamp(2.6rem,13vw,3.4rem)/.95 var(--display);margin:4px 0 12px;letter-spacing:-.025em}
+.hero p{margin:2px 0}
+.hero .hero-date{font-size:.95rem;opacity:.85}
+.hero .hero-shift{font-weight:700}
+.hero.night{background:var(--indigo);color:var(--bone)}
+.hero.night::after{content:"";position:absolute;right:-40px;top:-40px;width:150px;height:150px;border-radius:50%;box-shadow:-22px 18px 0 0 #3a4683;pointer-events:none}
+.hero.morning{background:var(--ember);color:var(--ink)}
+.hero.morning::after{content:"";position:absolute;right:-36px;top:-36px;width:120px;height:120px;border-radius:50%;background:#f6c272;pointer-events:none}
+.hero.off{background:var(--slate);box-shadow:inset 0 0 0 2px var(--mist)}
+.hero>*{position:relative;z-index:1}
+.strip{position:relative;height:10px;border-radius:5px;background:rgba(255,255,255,.14);margin-top:14px}
+.hero.morning .strip{background:rgba(17,20,26,.18)}
+.strip i{position:absolute;top:0;bottom:0;border-radius:5px}
+.strip .sh{background:var(--bone)}
+.hero.morning .strip .sh{background:var(--ink)}
+.strip .sl{background:repeating-linear-gradient(90deg,currentColor 0 3px,transparent 3px 6px);opacity:.55}
+.strip .now{width:3px;top:-4px;bottom:-4px;background:currentColor;border-radius:2px}
+.strip-legend{display:flex;justify-content:space-between;margin-top:6px;color:inherit;opacity:.85}
+
+.next .next-main{font-size:1.15rem;font-weight:700;margin:4px 0 10px}
+.switch h2{margin:0 0 6px}
+.switch .today{font-weight:700}
+.switch li b{color:var(--ember)}
+
+/* 4-week grid */
+.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;max-width:360px}
+.grid i{aspect-ratio:1;border-radius:3px;background:var(--slate)}
+.grid .c1{background:#6b4f1d}.grid .c2{background:#b07a22}.grid .c3{background:var(--ember)}
+.grid .today{outline:2px solid var(--bone);outline-offset:1px}
+
+/* Week */
+.weeknav{margin:8px 0 12px}
+.weeklist .day{display:grid;gap:2px;padding:12px 14px;background:var(--slate);border-radius:6px;border-left:6px solid var(--mist);color:var(--bone);text-decoration:none}
+.weeklist .day.night{border-left-color:var(--indigo-hi)}
+.weeklist .day.morning{border-left-color:var(--ember)}
+.weeklist .day.now{outline:2px solid var(--bone)}
+.weeklist .day span{color:var(--mist);font-size:.92rem}
+
+/* Day timeline */
+.timeline{list-style:none;margin:0;padding:0 0 0 14px;border-left:2px solid var(--line)}
+.timeline li{display:grid;grid-template-columns:6.4rem 1fr;gap:8px;padding:8px 0;position:relative}
+.timeline li::before{content:"";position:absolute;left:-21px;top:13px;width:10px;height:10px;border-radius:50%;background:var(--mist)}
+.timeline .tl-shift::before{background:var(--indigo-hi)}
+.timeline .tl-gym::before,.timeline .tl-cook::before{background:var(--ember)}
+.timeline .tl-study::before{background:var(--bone)}
+.timeline .tl-sleep{color:var(--mist)}
+.tl-time{color:var(--mist);font-size:.92rem}
+.customshift{margin-top:8px}
+.movepick{margin-top:10px}
+
+/* Toast */
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(68px + env(safe-area-inset-bottom));background:var(--bone);color:var(--ink);padding:10px 16px;border-radius:6px;font-weight:700;z-index:10;max-width:90vw}
