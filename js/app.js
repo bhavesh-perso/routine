@@ -3,6 +3,7 @@ import { getSettings, getLog, setLog, getFirstUse } from './storage.js';
 import { sleepWindow, fmt } from './plan.js';
 import { gymView, gymClick, gymInput, loadGymData, sessionFor } from './gym.js';
 import { weekView, weekClick } from './week.js';
+import { foodView, foodClick, foodSummary, loadFoodData } from './food.js';
 import { addRoute, startRouter } from './router.js';
 
 function nowLocal() { // Mauritius calendar date + minutes since midnight
@@ -47,24 +48,27 @@ function today() {
     ${item('walk', '10-minute walk')}
   </ul><div class="bar" role="progressbar" aria-label="Water" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100"><b style="width:${pct}%"></b></div></section>
   <section><h2>Gym</h2><p>${gs ? `${gs.kind} · ${gs.loc} gym · ${gs.time}` : 'Rest day'}</p></section>
+  ${foodSummary(rd)}
   <section aria-labelledby="st"><h2 id="st">Streaks</h2>
   <p class="streaks">No junk ${streak(rd, 'junk', s)} · Water ${streak(rd, 'water', s)} · Walk ${streak(rd, 'walk', s)} days</p>
-  <div class="grid" aria-label="Last 28 days, darker means more habits done">${grid}</div></section><p class="streaks">Build 3.1</p>`;
+  <div class="grid" aria-label="Last 28 days, darker means more habits done">${grid}</div></section><p class="streaks">Build 4.0</p>`;
 }
 
 const later = n => () => `<section><h1 class="plain">Coming in step ${n}</h1><p class="note">Nothing to do here yet. Use Today for now.</p></section>`;
 addRoute('today', today);
 addRoute('gym', () => gymView(ctx().rd));
+addRoute('food', () => foodView(ctx().rd));
 addRoute('week', () => weekView(ctx().rd));
-['food:4', 'progress:6', 'settings:7'].forEach(x => { const [k, n] = x.split(':'); addRoute(k, later(n)); });
+['progress:6', 'settings:7'].forEach(x => { const [k, n] = x.split(':'); addRoute(k, later(n)); });
 
-await loadGymData();
+await Promise.all([loadGymData(), loadFoodData()]);
 const main = document.getElementById('main');
 const rerender = startRouter(main, [...document.querySelectorAll('nav a')]);
 main.addEventListener('change', e => { try { gymInput(e.target); } catch (err) { alert('Save failed: ' + err.message); } });
 main.addEventListener('click', e => {
   const act = e.target.closest?.('[data-act]')?.dataset.act; if (!act) return;
   try {
+    if (foodClick(act, e.target.closest('[data-act]'), ctx().rd)) { rerender(); return; }
     if (weekClick(act)) { rerender(); return; }
     if (gymClick(act, e.target.closest('[data-act]'))) { rerender(); return; }
     const { s, rd } = ctx(), l = getLog(rd);

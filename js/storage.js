@@ -18,9 +18,10 @@ function load() {
 const state = load();
 
 let v = 0; export const ver = () => v; export const allLogs = () => state.logs;
+export function setSetting(k, v) { state.settings[k] = v; save(); }
 export function save() { v++; try { localStorage.setItem(KEY, JSON.stringify(state)); } catch { /* storage full or blocked */ } }
 export const getFirstUse = () => state.firstUse;
-export const getSettings = () => ({ ...DEFAULTS, waterRest: 2000, waterGym: 2500, gym: { start: '2026-10-30' }, equipment: { home: ['dumbbells', 'bench'], work: ['dumbbells', 'bench'] }, ...state.settings });
+export const getSettings = () => ({ ...DEFAULTS, kcal: 2500, protein: 120, whey: false, waterRest: 2000, waterGym: 2500, gym: { start: '2026-10-30' }, equipment: { home: ['dumbbells', 'bench'], work: ['dumbbells', 'bench'] }, ...state.settings });
 export const getLog = iso => ({ junk: false, water: 0, walk: false, ...state.logs[iso] });
 export function setLog(iso, patch) {
   state.logs[iso] = { ...getLog(iso), ...patch };
