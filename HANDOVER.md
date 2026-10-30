@@ -18,7 +18,7 @@ Owner: Bhavesh Gajadhar (Mauritius, 12h shifts). App "Routine" = static ES-modul
 - User = 70 kg, goal fat to muscle + 10 km < 45 min in 1 yr. App = his coach plan; talk as gym coach.
 - Morning-shift gym place undecided (default gym near work 19:15-20:00). Home gym closes 21:00, home before 20:00. Ask later if he picked.
 - Some weeks only 2 runs (shift pattern). Accepted; free log covers extras.
-- 2026-10-31 clock fix (app.js): redraw on minute boundary, any screen on routine-day rollover, on visible/pageshow/focus. User offered features: 1 machine settings memory, 2 run chart, 3 shake on gym days, 4 rest-day stretch, 5 photo reminder. Awaiting pick (my rec 1+2).
+- 2026-10-31 Today shows "Now Sat 00:25 · your Fri ends when you sleep at 09:30" when calendar date != routine day (user confused by wake-to-sleep day). Clock fix (app.js): redraw on minute boundary, any screen on routine-day rollover, on visible/pageshow/focus. User offered features: 1 machine settings memory, 2 run chart, 3 shake on gym days, 4 rest-day stretch, 5 photo reminder. Awaiting pick (my rec 1+2).
 - Budget: DONE 2026-10-27, user chose keep as is (logged in decisions.md). Do not re-ask.
 - User declined: launch screen, undo-toast checklist, swipe between tabs, caffeine/light plans, quiz, hours tracker, journal, badges etc. Don't re-pitch.
 

@@ -7,7 +7,7 @@
    - non-GET and cross-origin requests: not touched (YouTube, Mandarin app links)
    The new worker waits until the page posts {type:'SKIP_WAITING'}, so the app can
    show an "Update available — reload" banner instead of swapping files mid-use. */
-const VERSION = 'routine-2026-10-31-1';
+const VERSION = 'routine-2026-10-31-2';
 
 // Every app file, relative to this file. tests/pwa.test.js checks this list
 // against the repo, so a new js/*.js, data/*.json, font or icon must be added here.

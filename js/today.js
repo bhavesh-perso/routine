@@ -45,6 +45,7 @@ function header(rd, ctx, blocks) {
     <h1>${dayLabelOf(d)}</h1>
     <p class="hero-shift">${esc(describeShift(rd, s))}</p>
     <p>Sleep ${timeLabel(bed)} → ${fmt(nextWake)}</p>
+    ${ctx.iso && ctx.iso !== rd ? `<p class="muted">Now ${esc(dayLabel(ctx.iso))}, ${fmt(ctx.min)} · your ${esc(dayLabel(rd).split(' ')[0])} ends when you sleep at ${fmt(bed % 1440)}</p>` : ''}
     ${dayStrip(rd, ctx, blocks)}
   </header>`;
 }
