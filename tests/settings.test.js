@@ -34,21 +34,21 @@ field('night.start', 'time', '19:00');
 field('exam', 'date', '2026-10-01');
 ok('exam before study start rejected', st.getSettings().exam === '2026-12-21');
 field('gymSlots.morningWork#1', 'time', '19:30');
-ok('gym slot half saves as one HH:MM-HH:MM string', st.getSettings().gymSlots.morningWork === '19:10-19:30');
+ok('gym slot half saves as one HH:MM-HH:MM string', st.getSettings().gymSlots.morningWork === '19:15-19:30');
 field('gymSlots.morningWork#1', 'time', '19:00');
-ok('gym slot ending before it starts is rejected', st.getSettings().gymSlots.morningWork === '19:10-19:30');
-field('gymSlots.morningWork#1', 'time', '19:55');
+ok('gym slot ending before it starts is rejected', st.getSettings().gymSlots.morningWork === '19:15-19:30');
+field('gymSlots.morningWork#1', 'time', '20:00');
 
 // ---- dumbbells ----
 const p = settings.parseDumbbells('10, 2,4kg 4; 2.5');
 ok('dumbbell list is parsed, de-duplicated and sorted', p.ok && JSON.stringify(p.list) === '[2,2.5,4,10]');
 ok('dumbbell list with junk is rejected', !settings.parseDumbbells('2, four, 6').ok && !settings.parseDumbbells('').ok && !settings.parseDumbbells('-2').ok);
 field('dumbbells.home', 'text', '12, 6, 8');
-ok('dumbbell list saved per gym', JSON.stringify(st.getSettings().dumbbells.home) === '[6,8,12]' && st.getSettings().dumbbells.work.length === 10);
+ok('dumbbell list saved per gym', JSON.stringify(st.getSettings().dumbbells.home) === '[6,8,12]' && st.getSettings().dumbbells.work.length === 15);
 
 // ---- equipment ----
-mod.change('set-equip', { dataset: { gym: 'work', item: 'treadmill' }, checked: true }, ctx());
-ok('equipment checkbox adds to that gym only', st.getSettings().equipment.work.includes('treadmill') && !st.getSettings().equipment.home.includes('treadmill'));
+mod.change('set-equip', { dataset: { gym: 'work', item: 'rower' }, checked: true }, ctx());
+ok('equipment checkbox adds to that gym only', st.getSettings().equipment.work.includes('rower') && !st.getSettings().equipment.home.includes('rower'));
 mod.change('set-bool', { dataset: { path: 'restSound' }, checked: false }, ctx());
 ok('rest sound toggle saves', st.getSettings().restSound === false);
 

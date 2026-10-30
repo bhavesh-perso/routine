@@ -14,7 +14,23 @@ ok('checklist kept', S.getDayLog('2026-10-25').junk === true && S.getDayLog('202
 ok('food kept with meal slot field', S.get('food').log['2026-10-25'][0].n === 'Egg' && 'meal' in S.get('food').log['2026-10-25'][0]);
 ok('future test gym taps dropped', Object.keys(S.get('gym').sessions).length === 0);
 ok('settings kept and merged with defaults', S.getSettings().whey === true && S.getSettings().kcal === 2500 && S.getSettings().water.gym === 2500);
-ok('wake derived from sleep windows', S.getSettings().wake.nightWork === 900);
+ok('wake derived from sleep windows', S.getSettings().wake.nightWork === 960);
+
+// One-time cleanup of values equal to an OLD default (meta.defaults2): the new default applies, real choices stay.
+S.update('settings', st => {
+  st.sleep = { nightWork: { start: '08:15', end: '15:00' }, nightOff: { start: '08:00', end: '15:00' } };
+  st.gymSlots = { nightWork: '15:30-16:30', morningWork: '19:10-19:55', nightOff: '19:00-20:00' };
+  st.gym = { start: '2026-10-30', lightWeek: false };
+  st.equipment = { home: ['dumbbells', 'bench'], work: ['dumbbells'] };
+  st.dumbbells = { home: [2, 4, 6, 8, 10, 12, 14, 16, 18, 20], work: [2, 4, 6] };
+});
+S.update('meta', m => { delete m.defaults2; });
+S.runMigrations('2026-10-26');
+const cl = S.get('settings'), ns = S.getSettings();
+ok('old default values are removed so the new defaults apply', ns.sleep.nightWork.start === '09:30' && ns.sleep.nightWork.end === '16:00' && ns.wake.nightWork === 960 && ns.gymSlots.nightWork === '07:50-08:50' && ns.gymSlots.morningWork === '19:15-20:00' && ns.gym.start === '2026-10-31' && ns.equipment.home.includes('barbell') && ns.dumbbells.home.at(-1) === 30);
+ok('anything else the user changed stays', cl.sleep.nightOff.start === '08:00' && cl.gymSlots.nightOff === '19:00-20:00' && cl.gym.lightWeek === false && JSON.stringify(cl.equipment.work) === '["dumbbells"]' && JSON.stringify(cl.dumbbells.work) === '[2,4,6]' && !('nightWork' in cl.sleep) && !('start' in cl.gym) && !('home' in cl.equipment));
+ok('the cleanup is flagged in meta and runs only once', S.getMeta().defaults2 === true && (S.setSetting('gym.start', '2026-10-30'), S.runMigrations('2026-10-26'), S.get('settings').gym.start === '2026-10-30'));
+S.setSetting('gym.start', undefined);
 
 const before = mem['routine.v2.food'];
 S.setDayLog('2026-10-26', { walk: true });

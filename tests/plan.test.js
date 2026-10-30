@@ -8,8 +8,8 @@ const s = getSettings();
 const at = (iso, kind) => P.dayPlan(iso, s).filter(b => b.kind === kind);
 const hhmm = m => P.timeLabel(m);
 
-ok('night work day wakes 15:00', P.wakeFor('2026-10-29', s) === 900);
-ok('night off day sleeps 09:00–16:00', P.wakeFor('2026-10-31', s) === 960 && P.sleepFor('2026-10-31', s).start === 540);
+ok('night work day wakes 16:00', P.wakeFor('2026-10-29', s) === 960);
+ok('night off day sleeps 09:30–16:30', P.wakeFor('2026-10-31', s) === 990 && P.sleepFor('2026-10-31', s).start === 570);
 ok('morning work day wakes 04:30 after 21:45', P.wakeFor('2026-11-26', s) === 270 && P.sleepFor('2026-11-26', s).start === 1305 - 1440);
 ok('morning off day wakes 06:15 after 23:15', P.wakeFor('2026-11-28', s) === 375 && P.sleepFor('2026-11-28', s).start === 1395 - 1440);
 ok('morning off day before work sleeps 21:45', P.bedFor('2026-11-30', s) === 1305);
@@ -19,12 +19,12 @@ ok('night shift block 19:00 → 07:00 next day', sh.start === 1140 && sh.end ===
 const m2 = P.dayPlan('2026-10-29', s).find(b => b.slot === 'm2');
 ok('packed meal 2 at 23:00 on night shift', m2.start === 1380);
 ok('caffeine cutoff 01:00', P.dayPlan('2026-10-29', s).some(b => b.label === 'Caffeine cutoff' && b.start === 1500));
-ok('night shift sleep 08:15 next morning before another shift, 09:00 before an off day', P.bedFor('2026-10-28', s) === 1440 + 495 && P.bedFor('2026-10-29', s) === 1440 + 540);
+ok('night shift sleep 09:30 next morning before another shift and before an off day', P.bedFor('2026-10-28', s) === 1440 + 570 && P.bedFor('2026-10-29', s) === 1440 + 570);
 ok('drive home flagged for drowsy note', at('2026-10-29', 'drive').some(b => b.drowsy && b.start === 1860));
 ok('morning work: leave 05:30, meal 2 12:00, snack 15:30', at('2026-11-26', 'drive')[0].start === 330 && P.dayPlan('2026-11-26', s).find(b => b.slot === 'm2').start === 720 && P.dayPlan('2026-11-26', s).find(b => b.slot === 'snack').start === 930);
 ok('morning work non-gym: meal 3 20:00, study 20:30', P.dayPlan('2026-11-26', s).find(b => b.slot === 'm3').start === 1200 && at('2026-11-26', 'study')[0].start === 1230);
 ok('morning off: study 09:00–10:45 (90 + 15 min)', at('2026-11-28', 'study')[0].start === 540 && at('2026-11-28', 'study')[0].end === 645);
-ok('night off: study 21:00 (90 + 15 min)', at('2026-10-31', 'study')[0].start === 1260 && at('2026-10-31', 'study')[0].end === 1365);
+ok('night off: study 21:30 (90 + 15 min)', at('2026-10-31', 'study')[0].start === 1290 && at('2026-10-31', 'study')[0].end === 1395);
 ok('work day study is 20 + 15 min', at('2026-10-29', 'study')[0].end - at('2026-10-29', 'study')[0].start === 35);
 ok('batch cook on first off day of a stretch only', at('2026-10-30', 'cook').length === 1 && at('2026-10-31', 'cook').length === 0 && at('2026-11-04', 'cook').length === 1);
 ok('weigh-in on Sunday at wake', at('2026-11-01', 'weigh')[0]?.start === P.wakeFor('2026-11-01', s) && at('2026-10-31', 'weigh').length === 0);
@@ -45,7 +45,7 @@ ok('switch card on 23 Nov and 21 Dec, not on a normal day', P.switchCard('2026-1
 // Routine day
 ok('02:00 on 29 Oct belongs to 28 Oct', P.routineDayAt('2026-10-29', 120, s) === '2026-10-28');
 ok('10:00 on 30 Oct still 29 Oct (asleep after shift)', P.routineDayAt('2026-10-30', 600, s) === '2026-10-29');
-ok('16:00 on 30 Oct is 30 Oct', P.routineDayAt('2026-10-30', 960, s) === '2026-10-30');
+ok('16:30 on 30 Oct is 30 Oct', P.routineDayAt('2026-10-30', 990, s) === '2026-10-30');
 ok('04:29 on 26 Nov is still 25 Nov, 04:30 is 26 Nov', P.routineDayAt('2026-11-26', 269, s) === '2026-11-25' && P.routineDayAt('2026-11-26', 270, s) === '2026-11-26');
 
 // Every day for 16 weeks: blocks sorted, nothing after bedtime, no meal inside gym/study/cook
@@ -57,6 +57,24 @@ for (let i = 0; i < 112; i++) {
   const busy = b.filter(x => ['gym', 'study', 'cook'].includes(x.kind));
   if (b.some(x => x.kind === 'meal' && busy.some(y => x.start >= y.start && x.start < y.end))) clean = false;
 }
+// Gym block on a night work day is the morning after the shift (nextDay slot, minutes + 1440).
+P.setProviders({ gymFor: iso => iso === '2026-10-29' ? { kind: 'Upper', loc: 'home', cardio: 0, start: '07:50', end: '08:50', nextDay: true } : null });
+{
+  const b = P.dayPlan('2026-10-29', s), g = b.find(x => x.kind === 'gym'), m3 = b.find(x => x.slot === 'm3'), dh = b.find(x => x.drowsy);
+  ok('night work day: gym at 07:50-08:50 next morning, after Drive home, labelled with the gym', g.start === 1910 && g.end === 1970 && g.start >= dh.end && g.label === 'Gym: Upper (gym near home)' && g.loc === 'home');
+  ok('night work day: shower + Meal 3 right after the gym, nothing after bedtime', m3.start === 1970 && m3.label.includes('Meal 3 (protein)') && m3.end <= P.bedFor('2026-10-29', s) && b.every(x => x.bedtime || x.start < P.bedFor('2026-10-29', s)) && b.indexOf(g) < b.indexOf(m3));
+  ok('night work day: nothing in the old pre-shift gym slot', !b.some(x => x.kind === 'gym' && x.start < 1140));
+}
+P.setProviders({ gymFor: () => null });
+// Standalone run provider: a run block on that off day; a gym slot with a run says so in its label.
+P.setProviders({ runFor: iso => iso === '2026-10-31' ? { title: 'Long run 5 km', start: '18:00', end: '18:35', km: 5 } : null, gymFor: iso => iso === '2026-11-01' ? { kind: 'Upper', loc: 'home', cardio: 25, run: { title: 'Easy run 25 min', estMin: 25 }, start: '18:00', end: '19:15' } : null });
+{
+  const rb = P.dayPlan('2026-10-31', s).find(x => x.kind === 'run'), gb = P.dayPlan('2026-11-01', s).find(x => x.kind === 'gym');
+  ok('runFor adds a run block at its time with the run label', rb && rb.start === 1080 && rb.end === 1115 && rb.label === 'Run: Long run 5 km' && rb.km === 5);
+  ok('a gym block with a run attached shows it in the label', gb.label === 'Gym: Upper (gym near home) + run 25 min');
+  ok('no run block on days without a run', !P.dayPlan('2026-11-02', s).some(x => x.kind === 'run'));
+}
+P.setProviders({ gymFor: () => null, runFor: () => null });
 ok('16 weeks of plans are ordered and fit before bed', clean);
 
 const alt = { ...s, sleep: { ...s.sleep, nightOff: { start: '08:30', end: '15:30' } }, wake: { ...s.wake, nightOff: 930 } };

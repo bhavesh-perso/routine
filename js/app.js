@@ -21,7 +21,7 @@ const main = document.getElementById('main'), fabBox = document.getElementById('
 const tabs = [...document.querySelectorAll('nav.tabs a')];
 const state = { route: { name: 'today', arg: '' }, error: '', update: null, toast: '' };
 
-setProviders({ gymFor: (iso, s) => G.sessionFor(iso, s) });
+setProviders({ gymFor: (iso, s) => G.sessionFor(iso, s), runFor: (iso, s) => G.runFor(iso, s) });
 
 function ctx() {
   const s = getSettings(), { iso, min, ms } = nowLocal();

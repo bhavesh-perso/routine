@@ -16,13 +16,14 @@ let moving = null; // iso of the gym session whose "Move to…" picker is open
 function weekView(ctx, arg) {
   const s = ctx.s, mon = /^\d{4}-\d{2}-\d{2}$/.test(arg) ? mondayOf(arg) : mondayOf(ctx.rd);
   const rows = Array.from({ length: 7 }, (_, i) => {
-    const iso = addDays(mon, i), d = getDay(iso, s), g = opt(gym.sessionFor, iso, s), st = studyMinutes(iso, s), sf = opt(study.studyFor, iso, s);
+    const iso = addDays(mon, i), d = getDay(iso, s), g = opt(gym.sessionFor, iso, s), rn = opt(gym.runFor, iso, s), st = studyMinutes(iso, s), sf = opt(study.studyFor, iso, s);
     const ov = d.override ? `<span class="tag">${esc(OV[d.override.kind] || 'Changed')}</span>` : '';
     return `<li><a class="day ${d.type === 'off' ? 'off' : d.block}${iso === ctx.rd ? ' now' : ''}" href="#/day/${iso}">
       <b>${esc(dayLabel(iso))} · ${dayLabelOf(d)}</b>${ov}
       <span>${esc(describeShift(iso, s))} · ${d.block === 'night' ? 'Night' : 'Morning'} block</span>
       <span>Sleep ${timeLabel(bedFor(iso, s))} → ${fmt(wakeFor(addDays(iso, 1), s))}</span>
-      ${g ? `<span>Gym: ${esc(g.kind)}${g.light ? ' (light week)' : ''} · ${esc(g.loc)} gym · ${esc(g.time || g.start + '–' + g.end)}${g.done ? ' · done' : ''}</span>` : ''}
+      ${g ? `<span>Gym: ${esc(g.kind)}${g.light ? ' (light week)' : ''} · ${esc(gym.locName(g.loc))} · ${esc(gym.whenText ? gym.whenText(g) : g.time || g.start + '–' + g.end)}${g.run ? ' · plus run ' + g.run.estMin + ' min' : ''}${g.done ? ' · done' : ''}</span>` : ''}
+      ${rn ? `<span>Run: ${esc(rn.title)} · ${rn.start}–${rn.end}</span>` : ''}
       <span>Study: ${st.aws ? `AWS ${st.aws} min${sf?.aws?.topic ? ' (' + esc(sf.aws.topic) + ')' : ''} + ` : ''}Mandarin ${st.mandarin} min</span>
       ${isPrepDay(iso, s) ? '<span>Batch-cook day</span>' : ''}
       ${switchInfo(iso, s) && getDay(iso, s).type === 'off' ? '<span>Sleep-switch day</span>' : ''}
@@ -47,14 +48,17 @@ function dayView(ctx, iso) {
     const end = b.end > b.start + 1 && !['sleep'].includes(b.kind) || (b.kind === 'sleep' && !b.bedtime) ? `–${timeLabel(b.end)}` : '';
     return `<li class="tl-${b.kind}"><span class="tl-time num">${timeLabel(b.start)}${end}</span><span class="tl-what">${esc(b.label)}${extra ? '<br>' + extra : ''}</span></li>`;
   };
+  const rn = opt(gym.runFor, iso, s);
+  const runPart = rn ? `<section aria-labelledby="dr"><h2 id="dr">Run</h2><p>${esc(rn.title)} · ${rn.start}–${rn.end}</p><a class="btn small" href="#/gym/run/${iso}">Open run</a></section>` : '';
   const ov = d.override;
-  const gymPart = g ? `<section aria-labelledby="dg"><h2 id="dg">Gym session</h2><p>${esc(g.kind)} · ${esc(g.loc)} gym · ${esc(g.time || g.start + '–' + g.end)}${g.done ? ' · done' : ''}</p>
+  const gymPart = g ? `<section aria-labelledby="dg"><h2 id="dg">Gym session</h2><p>${esc(g.kind)} · ${esc(gym.locName(g.loc))} · ${esc(gym.whenText ? gym.whenText(g) : g.time || g.start + '–' + g.end)}${g.done ? ' · done' : ''}</p>
     ${g.done ? '' : `<div class="row"><a class="btn small" href="#/gym/day/${iso}">Preview</a><button type="button" class="btn small" data-act="week-move" data-iso="${iso}" aria-expanded="${moving === iso}">Move to…</button><button type="button" class="btn small ghost" data-act="week-skip" data-iso="${iso}">Skip</button></div>`}
+    ${g.run ? `<p class="muted">Plus run: ${esc(g.run.title)}, about ${g.run.estMin} min. <a href="#/gym/run/${iso}">Run details</a></p>` : ''}
     ${moving === iso ? movePicker(iso, s) : ''}</section>` : '';
   return `<a class="back" href="#/week/${iso}">Week</a>
   <h1 class="page-title">${esc(dayLabel(iso))}</h1><p class="muted">${dayLabelOf(d)} · ${esc(describeShift(iso, s))}${ov ? ' · ' + esc(OV[ov.kind] || 'Changed') : ''}</p>
   <section aria-labelledby="dt"><h2 id="dt">Timeline</h2><ol class="timeline">${blocks.map(line).join('')}</ol></section>
-  ${gymPart}
+  ${gymPart}${runPart}
   <section aria-labelledby="do"><h2 id="do">Change this day</h2>
   <p class="muted">Overrides only change this one date and always win over the pattern.</p>
   <div class="chips">

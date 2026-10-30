@@ -91,3 +91,10 @@
 .gym-sum dd.num{text-transform:none}
 
 @media (prefers-reduced-motion:no-preference){.gym-rest{transition:background .2s,border-color .2s}}
+
+/* Running */
+.gym-run,.gym-running{background:var(--slate);border-radius:12px;padding:14px;margin:14px 0;min-width:0}
+.gym-run h2,.gym-running h2{margin:0 0 6px}
+.gym-run p,.gym-running p{margin:6px 0;overflow-wrap:anywhere}
+.gym-run .gym-target{font-size:1rem;display:block}
+.gym-run .btn,.gym-running .go{min-height:44px}

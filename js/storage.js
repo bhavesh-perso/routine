@@ -41,22 +41,22 @@ export function update(area, fn) {
 export const DEFAULT_SETTINGS = {
   ...DEFAULTS, // anchor, anchorBlock, blockLength, night, morning, overrides, wake (wake is derived below)
   sleep: {
-    nightWork: { start: '08:15', end: '15:00' },
-    nightOff: { start: '09:00', end: '16:00' },
+    nightWork: { start: '09:30', end: '16:00' },
+    nightOff: { start: '09:30', end: '16:30' },
     morningWork: { start: '21:45', end: '04:30' },
     morningOff: { start: '23:15', end: '06:15' },
   },
   switchPlan: { napStart: '08:15', napEnd: '11:30', morningBed: '21:45', morningWake: '04:30', laterHours: 2 },
   leaveEarly: { night: 45, morning: 90 }, // minutes before shift start you leave home
   drive: 45,
-  gym: { start: '2026-10-30', lightWeek: true },
-  gymSlots: { nightWork: '15:30-16:30', nightOff: '18:00-19:15', morningWork: '19:10-19:55', morningOff: '17:00-18:15' },
+  gym: { start: '2026-10-31', lightWeek: true },
+  gymSlots: { nightWork: '07:50-08:50', nightOff: '18:00-19:15', morningWork: '19:15-20:00', morningOff: '17:00-18:15' }, // nightWork = the morning after the night shift,
   gymLoc: { nightWork: 'home', nightOff: 'home', morningWork: 'work', morningOff: 'home' },
-  equipment: { home: ['dumbbells', 'bench'], work: ['dumbbells', 'bench'] },
-  dumbbells: { home: [2, 4, 6, 8, 10, 12, 14, 16, 18, 20], work: [2, 4, 6, 8, 10, 12, 14, 16, 18, 20] },
+  equipment: { home: ['barbell', 'rack', 'machines', 'dumbbells', 'cables', 'bench', 'treadmill', 'bike'], work: ['barbell', 'rack', 'machines', 'dumbbells', 'cables', 'bench', 'treadmill', 'bike'] },
+  dumbbells: { home: [2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30], work: [2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30] },
   workShowers: 'unknown',
   restSound: true,
-  kcal: 2500, protein: 120, whey: false, budget: 5000, // budget = Rs per month for food
+  kcal: 2500, protein: 130, whey: false, budget: 5000, // budget = Rs per month for food
   water: { rest: 2000, gym: 2500 },
   exam: '2026-12-21', studyStart: '2026-10-26',
   aws: { work: 20, off: 90 }, mandarinMin: 15,
@@ -130,7 +130,37 @@ export function migrateV1(v1, todayIso) {
   }
   return out;
 }
+// One-time cleanup (meta.defaults2): settings are stored as diffs on the defaults, so a value that
+// equals an OLD default was never a choice. Delete it and the new default applies. Anything else stays.
+const OLD_DEFAULTS = [
+  ['sleep.nightWork.start', '08:15'], ['sleep.nightWork.end', '15:00'],
+  ['sleep.nightOff.start', '09:00'], ['sleep.nightOff.end', '16:00'],
+  ['gymSlots.nightWork', '15:30-16:30'], ['gymSlots.morningWork', '19:10-19:55'],
+  ['gym.start', '2026-10-30'], ['protein', 120],
+  ['equipment.home', ['dumbbells', 'bench']], ['equipment.work', ['dumbbells', 'bench']],
+  ['dumbbells.home', [2, 4, 6, 8, 10, 12, 14, 16, 18, 20]], ['dumbbells.work', [2, 4, 6, 8, 10, 12, 14, 16, 18, 20]],
+];
+export function cleanOldDefaults() {
+  if (get('meta').defaults2) return false;
+  update('settings', st => {
+    for (const [path, old] of OLD_DEFAULTS) {
+      const keys = path.split('.'), chain = [st];
+      let o = st;
+      for (const k of keys.slice(0, -1)) { if (!isObj(o[k])) { o = null; break; } o = o[k]; chain.push(o); }
+      if (!o || !(keys.at(-1) in o) || JSON.stringify(o[keys.at(-1)]) !== JSON.stringify(old)) continue;
+      delete o[keys.at(-1)];
+      for (let j = chain.length - 1; j > 0; j--) if (!Object.keys(chain[j]).length) delete chain[j - 1][keys[j - 1]];
+    }
+  });
+  update('meta', m => { m.defaults2 = true; });
+  return true;
+}
 export function runMigrations(todayIso) {
+  const r = migrateSchema(todayIso);
+  cleanOldDefaults();
+  return r;
+}
+function migrateSchema(todayIso) {
   if (get('meta').schema === SCHEMA) return false;
   const v1 = readKey(V1_KEY);
   if (v1 && v1.schema === 1) {

@@ -19,13 +19,37 @@ get an inline error and `aria-invalid`, and nothing changes in storage:
 - The exam has to be after the study start.
 - Numbers respect the input's `min`/`max`.
 - Gym slots are stored as one `'HH:MM-HH:MM'` string (`s.gymSlots.<dayType>`). The screen shows two
-  inputs (`data-path="gymSlots.nightOff#0"` / `#1`), and the end has to be after the start.
+  inputs (`data-path="gymSlots.nightOff#0"` / `#1`), and the end has to be after the start. Slot labels: nightWork =
+  "After a night shift (next morning)", nightOff = "Night-block off day", morningWork = "After a morning shift",
+  morningOff = "Morning-block off day". Hint under the heading: on night shifts the session is the next morning,
+  after the drive home and before sleep. A nightWork slot starting before wake is read as the next calendar
+  morning (see Gym).
+- Gym naming: "Gym near home" / "Gym near work" everywhere (which-gym selects, equipment fieldsets, dumbbell
+  fields, "Showers at the gym near work"). Equipment note: runs work on a treadmill or outside.
 - Dumbbell lists (`s.dumbbells.home|work`) are typed as `2, 4, 6`. `parseDumbbells` accepts commas,
   semicolons, spaces and an optional `kg`, removes duplicates, sorts them and rejects anything
   outside 0–100 kg.
 
 Sleep: each day type has a sleep and wake time. Wake = the end of the window (storage derives
 `s.wake` from it). The screen shows each window's length and never suggests a longer one.
+
+### Defaults (`DEFAULT_SETTINGS` in `js/storage.js`)
+- Sleep: nightWork 09:30-16:00, nightOff 09:30-16:30 (moved later so the post-shift gym fits before bed);
+  morningWork 21:45-04:30, morningOff 23:15-06:15 unchanged.
+- Gym: `gym.start` 2026-10-31, `lightWeek` on. `gymSlots`: nightWork 07:50-08:50 (next morning), nightOff
+  18:00-19:15, morningWork 19:15-20:00, morningOff 17:00-18:15. `gymLoc`: nightWork home, nightOff home,
+  morningWork work, morningOff home.
+- Equipment (both gyms): barbell, rack, machines, dumbbells, cables, bench, treadmill, bike. Dumbbells (both
+  gyms): 2-30 kg in steps of 2.
+- Protein 130 g (kcal stays 2500).
+
+### One-time default cleanup (`cleanOldDefaults`, flag `meta.defaults2`)
+Settings are stored as diffs on the defaults, so a stored value equal to an OLD default was never a real choice.
+`runMigrations` runs `cleanOldDefaults` after the schema migration. Once only (flag `meta.defaults2`, returns
+false after): for each pair in `OLD_DEFAULTS` the stored value is deleted when it equals the old default (JSON
+compare), emptied parent objects are removed, and the new default applies. Anything else the user set stays.
+Old defaults: sleep nightWork 08:15-15:00, nightOff 09:00-16:00, gymSlots nightWork 15:30-16:30, morningWork
+19:10-19:55, `gym.start` 2026-10-30, protein 120, equipment dumbbells + bench, dumbbells 2-20 kg.
 
 ## Changed days (overrides)
 
@@ -62,7 +86,7 @@ Otherwise it returns `''`, which includes a fresh install with no data.
 `buildIcs(s, fromIso, days = 56, { now })` → RFC 5545 text. Export calendar starts from the routine
 day (so a night shift that is under way is included) and covers 8 weeks.
 
-- Events are the `shift`, `gym`, `study` and `weigh` blocks of `plan.dayPlan(iso, s)`, so the calendar
+- Events are the `shift`, `gym`, `run`, `study` and `weigh` blocks of `plan.dayPlan(iso, s)`, so the calendar
   matches the app exactly. Gym blocks only exist once the app has registered the gym provider
   (`plan.setProviders`). The tests register a stub.
 - Times are local, `DTSTART;TZID=Indian/Mauritius:…`, with a `VTIMEZONE` that has one `STANDARD`

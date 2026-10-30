@@ -1,4 +1,4 @@
-// Gym module: phased planner, exercise data, progression, PRs, and the gym screens.
+// Gym module: planner (5-day rotation), running plan, exercise data, progression, PRs, and the gym screens.
 // The active-session screen (guided logging, rest timer, wake lock, sound) lives in gym-session.js.
 import { getDay } from './schedule.js';
 import { get, update } from './storage.js';
@@ -7,15 +7,13 @@ import { toMin, fmt, addDays, esc, dayLabel, dayNum, isoOf, nowLocal, mondayOf }
 import { lineChart } from './chart.js';
 import * as S from './gym-session.js';
 import { ask } from './sheet.js';
+import * as R from './run.js';
 
 const ISO = /^\d{4}-\d{2}-\d{2}$/;
 const fin = v => typeof v === 'number' && Number.isFinite(v);
 export const SAFETY = "Stop if you feel chest pain, dizziness or can't catch your breath. See a doctor before continuing.";
 export const PRE_GYM = 'Eat a meal 1–2 hours before. Drink about 500 ml of water during the session.';
 export const WARMUP = '5-minute warm-up: march or walk on the spot, arm circles, hip circles, then 10 slow bodyweight squats.';
-export const GATE_NOTE = '4 solid sessions beat 5 tired ones.';
-const KINDS = { 1: ['Full Body A', 'Full Body B'], 2: ['Upper', 'Lower'], 3: ['Upper', 'Lower', 'Push', 'Pull', 'Legs'] };
-const CARDIO_MACHINES = ['treadmill', 'bike', 'rower'];
 
 // ---------- exercise data ----------
 let DATA = null;
@@ -39,7 +37,6 @@ export function resolveExercise(id, loc, s) {
   const alts = ex.alts || [];
   return alts.find(a => EX(a) && needsMet(EX(a), eq)) || alts.find(a => EX(a) && !(EX(a).needs || []).length) || id;
 }
-export const cardioWith = (loc, s) => CARDIO_MACHINES.find(m => equipmentAt(loc, s).includes(m)) || 'walk';
 
 // ---------- writes (the gym area is the only area this module writes) ----------
 let gymRef = null, pv = 0, wv = 0; // plan version (start/finish/skip/move) and write version (every write)
@@ -62,22 +59,31 @@ let fixedToday = null;
 export const _setToday = iso => { fixedToday = iso; };
 export const currentRd = s => { if (fixedToday) return fixedToday; const { iso, min } = nowLocal(); return routineDayAt(iso, min, s); };
 export const weekOf = (iso, s) => Math.floor((dayNum(iso) - dayNum(s.gym.start)) / 7) + 1;
-export const phaseOf = w => w <= 4 ? 1 : w <= 8 ? 2 : 3;
 export const isLightWeek = (w, s) => !!s.gym?.lightWeek && w >= 9 && (w - 9) % 8 === 0;
-export const cardioMinutes = w => w <= 2 ? 10 : Math.min(30, 10 + 5 * (w - 2));
-const DEF_SLOT = { nightWork: '15:30-16:30', nightOff: '18:00-19:15', morningWork: '19:10-19:55', morningOff: '17:00-18:15' };
+const DEF_SLOT = { nightWork: '07:50-08:50', nightOff: '18:00-19:15', morningWork: '19:15-20:00', morningOff: '17:00-18:15' };
+
+// Planner rules (all in one place).
+const MAX_WEEK = 5;       // sessions in any rolling 7 days
+const MAX_RUN = 3;        // training routine-days in a row
+const MAX_WORK_WEEK = 3;  // sessions on work days in any rolling 7 days
+const MAX_TIGHT_WEEK = 2; // of those, tight (morning-shift evening) ones
+const MIN_GAP = 20 * 60;  // minutes between the starts of two sessions
+const KINDS = ['Upper', 'Lower', 'Push', 'Pull', 'Legs'];
+const LEG = /^(Lower|Legs)$/;
 
 const sKeys = new WeakMap();
 function settingsKey(s) {
   let k = sKeys.get(s);
   if (!k) {
-    k = JSON.stringify([s.gym, s.gymSlots, s.gymLoc, s.equipment, s.anchor, s.anchorBlock, s.blockLength, s.night, s.morning, s.overrides, s.sleep, s.switchPlan]);
+    k = JSON.stringify([s.gym, s.gymSlots, s.gymLoc, s.equipment, s.anchor, s.anchorBlock, s.blockLength, s.night, s.morning, s.overrides, s.sleep, s.switchPlan, s.drive]);
     sKeys.set(s, k);
   }
   return k;
 }
 
 // Static facts about a date for gym planning (depend on settings only), cached per settings.
+// A slot that starts before that date's wake time is on the NEXT calendar morning (+1440): the
+// session after a night shift. a/b are minutes from the date's midnight and may pass 1440.
 let infoCache = { key: null, map: new Map() };
 function dayInfo(n, s) {
   const key = settingsKey(s);
@@ -86,20 +92,42 @@ function dayInfo(n, s) {
   if (i) return i;
   const iso = isoOf(n), d = getDay(iso, s), slotKey = gymSlotKey(iso, s);
   const [ta, tb] = String(s.gymSlots?.[slotKey] || DEF_SLOT[slotKey]).split('-');
-  const a = toMin(ta); let b = toMin(tb); if (b <= a) b += 1440;
+  let a = toMin(ta), b = toMin(tb); if (b <= a) b += 1440;
   const wake = wakeFor(iso, s), bed = bedFor(iso, s);
-  let ok = a >= wake && b <= bed;
-  if (ok && d.type === 'work') { const S = toMin(d.shiftStart); let E = toMin(d.shiftEnd); if (E <= S) E += 1440; if (a < E && b > S) ok = false; }
+  const nextDay = a < wake;
+  if (nextDay) { a += 1440; b += 1440; }
+  let ok = b <= bed;
+  if (d.type === 'work') {
+    const S = toMin(d.shiftStart); let E = toMin(d.shiftEnd); if (E <= S) E += 1440;
+    ok = nextDay ? ok && a >= E + (s.drive || 0) : ok && a >= wake && !(a < E && b > S);
+  } else if (!nextDay) ok = ok && a >= wake;
   // Never between a night shift's end and the next main sleep: a nap day (the first day of a
   // switch to mornings) has its main sleep tonight, so it gets no session at all.
   const y = getDay(addDays(iso, -1), s);
   if (ok && y.endsNextDay && sleepFor(iso, s).nap) ok = false;
-  i = { n, iso, type: d.type, block: d.block, slotKey, a, b, ok, loc: s.gymLoc?.[slotKey] || (slotKey === 'morningWork' ? 'work' : 'home'), tight: slotKey === 'morningWork' };
+  i = { n, iso, type: d.type, block: d.block, slotKey, a, b, abs: n * 1440 + a, nextDay, ok, loc: s.gymLoc?.[slotKey] || (slotKey === 'morningWork' ? 'work' : 'home'), tight: slotKey === 'morningWork' };
   infoCache.map.set(n, i);
   return i;
 }
 
-let memo = { key: null, until: 0, list: [], byIso: new Map(), five: new Map() };
+// Can day n take a session, given which other days have one (has(m) -> boolean)?
+// Checks the slot, the 20 h gap, 5 per rolling 7 days, work-day limits and the run of 3.
+function allowed(n, i, s, has) {
+  if (!i.ok) return false;
+  for (let m = n - 2; m <= n + 2; m++) if (m !== n && has(m) && Math.abs(dayInfo(m, s).abs - i.abs) < MIN_GAP) return false;
+  const cnt = (lo, hi, f) => { let c = 0; for (let m = lo; m <= hi; m++) if (m !== n && has(m) && f(dayInfo(m, s))) c++; return c; };
+  const any = () => true, wk = x => x.type === 'work', tg = x => x.tight;
+  for (let k = 0; k < 7; k++) {
+    const lo = n - 6 + k, hi = n + k;
+    if (cnt(lo, hi, any) + 1 > MAX_WEEK) return false;
+    if (i.type === 'work' && cnt(lo, hi, wk) + 1 > MAX_WORK_WEEK) return false;
+    if (i.tight && cnt(lo, hi, tg) + 1 > MAX_TIGHT_WEEK) return false;
+  }
+  let l = 0, r = 0; while (has(n - 1 - l)) l++; while (has(n + 1 + r)) r++;
+  return l + r + 1 <= MAX_RUN;
+}
+
+let memo = { key: null, until: 0, list: [], byIso: new Map(), runs: new Map() };
 
 function build(s, today, until) {
   const start = dayNum(s.gym.start), T = dayNum(today), g = get('gym');
@@ -113,77 +141,89 @@ function build(s, today, until) {
   for (const [from, to] of Object.entries(g.moves || {})) if (ISO.test(from) && ISO.test(String(to))) { forced.add(dayNum(to)); movedTo.set(dayNum(to), from); excluded.add(dayNum(from)); }
   for (const k of Object.keys(g.skips || {})) if (ISO.test(k) && g.skips[k]) { excluded.add(dayNum(k)); skipDays.add(dayNum(k)); }
 
-  const has = new Map(), slots = [], five = new Map();
+  const has = new Map(), slots = [];
   const occ = m => has.has(m) || (m >= start && forced.has(m));
-  const workOcc = m => occ(m) && dayInfo(m, s).type === 'work';
-  const staticOff = m => { const i = dayInfo(m, s); return i.type === 'off' && i.ok; };
-  const count = (lo, hi, n, f = occ) => { let c = 0; for (let m = lo; m <= hi; m++) if (m !== n && f(m)) c++; return c; };
-  // Phase 3 gate: every planned session in the last 14 days was completed (future ones are assumed done).
-  const gate = n => {
-    let c = 0;
-    for (const x of slots) if (x.n >= n - 14 && x.n < n) { c++; if (x.n < T && !doneAt.has(x.n)) return false; }
-    return c > 0;
-  };
-  const canPlace = (n, i, ph, cap, workLimit) => {
-    if (!i.ok) return false;
-    if (i.type === 'work') {
-      if (ph === 1) return false;
-      for (let k = 0; k < 7; k++) if (count(n - 6 + k, n + k, n, workOcc) + 1 > workLimit) return false;
-    }
-    for (let k = 0; k < 7; k++) { const c = count(n - 6 + k, n + k, n) + 1; if (c > cap || c > 6) return false; }
-    let l = 0, r = 0; while (occ(n - 1 - l)) l++; while (occ(n + 1 + r)) r++;
-    return l + r + 1 <= 3;
-  };
-  const prefer = (n, i, ph, cap) => {
-    if (i.type === 'off') return !occ(n - 1) || ph >= 2 || !(staticOff(n + 1) || staticOff(n + 2));
-    let ahead = 0; for (let m = n + 1; m <= n + 3; m++) if (staticOff(m)) ahead++;
-    return count(n - 6, n - 1, n) + ahead < cap; // work days only top up the week
+  const count = (lo, hi, n) => { let c = 0; for (let m = lo; m <= hi; m++) if (m !== n && occ(m)) c++; return c; };
+  // Off days take sessions freely. A work day only tops up: it is used when the 7 days around it
+  // (3 before, 3 after) would still have room under the weekly cap once the off days that can
+  // still take a session (slot ok, 20 h gap kept) are counted.
+  const prefer = (n, i) => {
+    if (i.type === 'off') return true;
+    let ahead = 0;
+    for (let m = n + 1; m <= n + 3; m++) { const j = dayInfo(m, s); if (j.type === 'off' && j.ok && j.abs - i.abs >= MIN_GAP) ahead++; }
+    return count(n - 3, n - 1, n) + ahead + 1 <= MAX_WEEK;
   };
   let owed = [];
   for (let n = start; n <= until; n++) {
-    const w = Math.floor((n - start) / 7) + 1, ph = phaseOf(w), i = dayInfo(n, s);
-    let f5 = false;
-    if (ph === 3) { f5 = gate(n); five.set(n, f5); }
-    const cap = ph === 1 ? 3 : ph === 2 ? 4 : f5 ? 5 : 4, workLimit = ph === 3 && f5 ? 2 : 1;
+    const w = Math.floor((n - start) / 7) + 1, i = dayInfo(n, s);
     let place = forced.has(n);
     if (!place) {
-      const ok = canPlace(n, i, ph, cap, workLimit);
-      if (excluded.has(n)) { if (skipDays.has(n) && ok && prefer(n, i, ph, cap)) owed.push(n); continue; }
+      const ok = allowed(n, i, s, occ);
+      if (excluded.has(n)) { if (skipDays.has(n) && ok && prefer(n, i)) owed.push(n); continue; }
       owed = owed.filter(d => n - d <= 7);
-      if (ok && prefer(n, i, ph, cap)) place = true;
+      if (ok && prefer(n, i)) place = true;
       else if (ok && n >= T && owed.length) { owed.shift(); place = true; } // a skipped session rolls to the next valid day
     }
     if (!place) continue;
-    const cardioBefore = slots.filter(x => x.n >= n - 6 && x.cardio > 0).length;
     const light = isLightWeek(w, s), iso = isoOf(n), [st, en] = [fmt(i.a), fmt(i.b)];
     const done = doneAt.get(n) || null;
     const loc = done?.loc || (act && !act.endedAt && act.planIso === iso ? act.loc : i.loc);
     const x = {
-      iso, n, kind: null, week: w, phase: ph, five: f5, light, loc, start: st, end: en, time: `${st}–${en}`,
+      iso, n, kind: null, week: w, light, loc, start: st, end: en, time: `${st}–${en}`, nextDay: i.nextDay,
       len: i.b - i.a, tight: i.tight, type: i.type, block: i.block,
-      cardio: cardioBefore < 3 && !i.tight ? cardioMinutes(w) : 0, cardioWith: cardioWith(loc, s),
-      sets: w === 1 || light ? 2 : 3, done: !!done, sessionId: done?.id || null, missed: false,
+      cardio: 0, run: null,
+      sets: w <= 2 || light ? 2 : 3, done: !!done, sessionId: done?.id || null, missed: false,
       movedFrom: movedTo.get(n) || null,
     };
     has.set(n, x); slots.push(x);
   }
-  // A/B order (addendum A9): it only moves forward when a session is logged. Missed sessions keep
-  // their place, so the next one is the same workout. Future sessions project the order forward.
-  let counter = 0, curPhase = 0;
+  // Order: Upper, Lower, Push, Pull, Legs. It only moves forward when a session is logged. Missed
+  // sessions keep their place, so the next one is the same workout. Future sessions project the order.
+  // A logged session with an old kind (Full Body A/B) just advances the counter by one.
+  let counter = 0;
   for (const x of slots) {
-    if (x.phase !== curPhase) { curPhase = x.phase; counter = 0; }
-    const seq = x.phase === 3 && !x.five ? KINDS[2] : KINDS[x.phase];
     const ses = doneAt.get(x.n);
     if (ses) {
-      x.kind = ses.kind || seq[counter % seq.length];
-      const k = seq.indexOf(ses.kind);
+      x.kind = ses.kind || KINDS[counter % KINDS.length];
+      const k = KINDS.indexOf(ses.kind);
       counter = k >= 0 ? k + 1 : counter + 1;
     } else {
-      x.kind = seq[counter % seq.length];
+      x.kind = KINDS[counter % KINDS.length];
       if (x.n < T) x.missed = true; else counter++;
     }
   }
-  return { list: slots, five };
+  return { list: slots, runs: planRuns(s, slots, until, start, g) };
+}
+
+// Running plan (data/run-plan.json): attaches runs to sessions (x.run, x.cardio = estimated minutes) and
+// returns the standalone runs (long run / test on a free off day). Complete weeks only. Does not touch gym caps.
+function planRuns(s, slots, until, start, g) {
+  const out = [];
+  if (!R.hasPlan()) return out;
+  const race = R.racePaceOf(R.latestTest(g.runs)), byN = new Map(slots.map(x => [x.n, x]));
+  for (let w = 1; start + 7 * w - 1 <= until; w++) {
+    const lo = start + 7 * (w - 1), def = R.weekDef(w); if (!def) continue;
+    const days = [];
+    for (let n = lo; n < lo + 7; n++) {
+      if (byN.has(n)) continue;
+      const i = dayInfo(n, s); if (i.type !== 'off' || i.nextDay) continue;
+      const nx = byN.get(n + 1);
+      days.push({ iso: isoOf(n), n, ok: i.ok, beforeHard: !!nx && LEG.test(nx.kind || '') });
+    }
+    const a = R.assignWeek(w, slots.filter(x => x.week === w), days);
+    R.KEYS.forEach((key, k) => {
+      const t = a[key], d = def.runs?.[k]; if (!t || !d) return;
+      const est = R.estMin(d, def.block, race), run = { key, week: R.runWeekOf(w), block: def.block, ...d, estMin: est };
+      if (t.slot) {
+        if (key === 'C' && d.type === 'test') { run.first = true; run.text = (run.text ? run.text + ' ' : '') + 'Do the time trial first, fresh. Then do a short lift: 2 sets per exercise.'; t.slot.sets = 2; }
+        else if (d.type === 'long') run.text = (run.text ? run.text + ' ' : '') + 'Run after lifting, easy pace.';
+        t.slot.run = run; t.slot.cardio = est; return;
+      }
+      const i = dayInfo(t.day.n, s);
+      out.push({ ...run, iso: t.day.iso, n: t.day.n, gymWeek: w, standalone: true, loc: i.loc, start: fmt(i.a), end: fmt(i.a + Math.max(1, est)), len: i.b - i.a });
+    });
+  }
+  return out;
 }
 
 // All planned sessions from the gym start date to ~200 days ahead. Memoised; cheap to call often.
@@ -191,11 +231,11 @@ export function planAll(s, untilIso = null) {
   const today = currentRd(s), { pv: p } = sig();
   const base = Math.max(dayNum(today), dayNum(s.gym.start)) + 200;
   const want = untilIso ? Math.max(base, dayNum(untilIso) + 30) : base;
-  const key = settingsKey(s) + '|' + today + '|' + p;
+  const key = settingsKey(s) + '|' + today + '|' + p + '|' + R.planVersion();
   if (memo.key === key && memo.until >= (untilIso ? dayNum(untilIso) : base)) return memo.list;
   const until = Math.max(want, memo.key === key ? memo.until : 0);
   const r = build(s, today, until);
-  memo = { key, until, list: r.list, byIso: new Map(r.list.map(x => [x.iso, x])), five: r.five };
+  memo = { key, until, list: r.list, byIso: new Map(r.list.map(x => [x.iso, x])), runs: new Map(r.runs.map(x => [x.iso, x])) };
   return memo.list;
 }
 export function sessionFor(iso, s) {
@@ -203,13 +243,60 @@ export function sessionFor(iso, s) {
   planAll(s, iso);
   return memo.byIso.get(iso) || null;
 }
+// ---------- running ----------
+export const setRunData = d => { R.setRunPlan(d); };
+export const hasRunData = () => R.hasPlan();
+// The run on a date: attached to its gym session, or standalone. { ...run, iso, standalone, slot? } or null.
+export function runOn(iso, s) {
+  if (!ISO.test(iso || '') || iso < s.gym.start) return null;
+  const slot = sessionFor(iso, s);
+  if (slot?.run) return { ...slot.run, iso, standalone: false, slot };
+  return memo.runs.get(iso) || null;
+}
+// Provider for plan.dayPlan: the standalone run of a date, or null.
+export function runFor(iso, s) {
+  if (!ISO.test(iso || '') || iso < s.gym.start) return null;
+  planAll(s, iso);
+  const r = memo.runs.get(iso);
+  return r ? { title: r.title, start: r.start, end: r.end, km: r.km ?? null, key: r.key, estMin: r.estMin } : null;
+}
+// This gym week's runs: [{ key, def, iso|null, standalone, done }] for A, B, C.
+export function weekRuns(w, s) {
+  const def = R.weekDef(w); if (!def) return [];
+  const list = planAll(s), runs = gymData().runs || {}, lo = addDays(s.gym.start, 7 * (w - 1)), hi = addDays(lo, 6);
+  const got = {};
+  for (const x of list) if (x.week === w && x.run) got[x.run.key] = { iso: x.iso, standalone: false, kind: x.kind };
+  for (const r of memo.runs.values()) if (r.gymWeek === w) got[r.key] = { iso: r.iso, standalone: true };
+  return R.KEYS.map((key, k) => {
+    const g = got[key], d = def.runs?.[k]; if (!d) return null;
+    const done = !!((g && runs[g.iso]) || Object.entries(runs).some(([iso, r]) => iso >= lo && iso <= hi && r?.key === key && !r.free));
+    return { key, def: d, iso: g?.iso || null, standalone: !!g?.standalone, kind: g?.kind || null, done };
+  }).filter(Boolean);
+}
+// Log (or edit) the run planned on a date. { ok } or { ok:false, error }.
+// opts.free = { type: 'easy'|'long'|'test', today }: the "Log a run" form. A date with a planned run fills that one;
+// any other date (not in the future) stores a free run of the chosen type.
+const FREE = { easy: 'Easy run', long: 'Long run', test: 'Time trial' };
+export function logRun(iso, km, min, s, now = Date.now(), opts = {}) {
+  const r = ISO.test(iso || '') ? runOn(iso, s) : null, free = opts.free;
+  if (!r && !free) return { ok: false, error: 'No run is planned on that day.' };
+  if (!r && !FREE[free.type]) return { ok: false, error: 'Pick a run type.' };
+  if (!r && !ISO.test(iso || '')) return { ok: false, error: 'Pick a valid date.' };
+  if (free?.today && iso > free.today) return { ok: false, error: 'The date cannot be in the future.' };
+  const err = R.validateRun(km, min); if (err) return { ok: false, error: err };
+  const e = r ? { key: r.key, type: r.type, title: r.title } : { key: null, type: free.type, title: FREE[free.type], free: true };
+  saveGym(g => { g.runs ||= {}; g.runs[iso] = { ...e, km: R.round2(km), min: R.round2(min), at: now }; }, true);
+  return { ok: true };
+}
+export function deleteRun(iso) { return saveGym(g => { if (g.runs) delete g.runs[iso]; }, true); }
+export const loggedRuns = () => gymData().runs || {};
+export const racePace = () => R.racePaceOf(R.latestTest(loggedRuns()));
+
 export const nextSession = (iso, s, inclusive = true) => planAll(s).find(x => inclusive ? x.iso >= iso : x.iso > iso) || null;
 export function missedOn(iso, s, today = currentRd(s)) {
   const x = sessionFor(iso, s);
   return !!(x && !x.done && iso < today && !gymData().skips?.[iso]);
 }
-// Phase 3 gate for a date: true when 5 sessions are allowed.
-export function fiveAllowed(iso, s) { planAll(s, iso); return memo.five.get(dayNum(iso)) ?? false; }
 
 // Valid days for "Move to…": the next 7 days (from today, not before), no session already, rules kept.
 export function moveTargets(iso, s, today = currentRd(s)) {
@@ -218,17 +305,7 @@ export function moveTargets(iso, s, today = currentRd(s)) {
   const out = [];
   for (let n = Math.max(T, from - 6, start); n <= from + 7; n++) {
     if (n === from || occ.has(n)) continue;
-    const i = dayInfo(n, s), w = Math.floor((n - start) / 7) + 1, ph = phaseOf(w);
-    if (!i.ok || (i.type === 'work' && ph === 1)) continue;
-    const f5 = ph === 3 && (memo.five.get(n) ?? false), cap = ph === 1 ? 3 : ph === 2 ? 4 : f5 ? 5 : 4;
-    let bad = false;
-    for (let k = 0; k < 7 && !bad; k++) {
-      let c = 1, wc = i.type === 'work' ? 1 : 0;
-      for (let m = n - 6 + k; m <= n + k; m++) if (occ.has(m)) { c++; if (dayInfo(m, s).type === 'work') wc++; }
-      if (c > cap || c > 6 || wc > (ph === 3 && f5 ? 2 : 1)) bad = true;
-    }
-    let l = 0, r = 0; while (occ.has(n - 1 - l)) l++; while (occ.has(n + 1 + r)) r++;
-    if (!bad && l + r + 1 <= 3) out.push(isoOf(n));
+    if (allowed(n, dayInfo(n, s), s, m => occ.has(m))) out.push(isoOf(n));
   }
   return out;
 }
@@ -386,7 +463,7 @@ export function weekVolume(mondayIso) {
 // ---------- session building and length ----------
 export const restLeft = (rest, now = Date.now()) => !rest || !fin(rest.startedAt) ? 0 : Math.max(0, Math.ceil(((rest.startedAt + (rest.sec || 0) * 1000) - now) / 1000));
 
-// Exercises and planned sets for a planned session. opts.short: 2 sets, first 4 exercises, no cardio.
+// Exercises and planned sets for a planned session. opts.short: 2 sets, first 4 exercises.
 export function buildExercises(slot, s, opts = {}) {
   const ids = templateFor(slot.kind).slice(0, opts.short ? 4 : undefined);
   const nSets = opts.short ? 2 : slot.sets, dbs = dumbbellsAt(slot.loc, s);
@@ -417,7 +494,7 @@ export function buildExercises(slot, s, opts = {}) {
     return { id, ...(id !== tid ? { from: tid } : {}), sets };
   });
 }
-// Session length in minutes = sets × (work + rest) + warm-up + cardio (addendum B16).
+// Session length in minutes = sets × (work + rest) + warm-up + the attached run's minutes (addendum B16).
 export function estimateMin(exList, cardio = 0, warm = 5) {
   let sec = 0;
   for (const e of exList) {
@@ -436,8 +513,9 @@ export function planFor(slot, s) {
 }
 
 // ---------- shared bits of UI ----------
-export const locName = loc => loc === 'work' ? 'Work gym' : 'Home gym';
-export const cardioText = (min, m) => `Easy cardio, ${min} min ${m === 'walk' ? 'brisk outdoor walk' : 'on the ' + m}. Keep a pace where you can still talk in full sentences.`;
+export const locName = loc => loc === 'work' ? 'Gym near work' : 'Gym near home';
+// Session time for the UI: the slot after a night shift is on the next calendar morning.
+export const whenText = x => x.nextDay ? `Next morning ${x.time}, after the night shift` : x.time;
 export function fmtDone(d, id) {
   if (!d) return '';
   const ex = EX(id) || {}, two = fin(d.rl) || fin(d.rr);
@@ -453,11 +531,10 @@ export function fmtPlan(p, id) {
   return `${p.w ? kg(p.w) + ' kg' : 'choose weight'} × ${p.r}${side}`;
 }
 function weekLine(x, s) {
-  let t = `Week ${x.week} · Phase ${x.phase}`;
+  let t = `Week ${x.week}`;
   if (x.light) t += ' · Light week: same moves, 2 sets, about 80% of your last weights. This is planned recovery.';
   else if (x.week === 1) t += ' · First week: 2 sets per move, 90 s rest.';
   else if (x.week <= 2) t += ' · Keep it easy: effort 6–7 out of 10.';
-  if (x.phase === 3 && !x.five) t += ' ' + GATE_NOTE;
   return t;
 }
 const moveChips = (iso, s) => {
@@ -473,6 +550,15 @@ export function activeSession() {
   return x && !x.endedAt ? x : null;
 }
 
+// ---------- running UI bits ----------
+const runDoneText = iso => { const l = loggedRuns()[iso]; return l ? R.fmtResult(l) : ''; };
+const runLine = x => { const d = runDoneText(x.iso); return `<p class="muted">Plus run: ${esc(x.run.title)}, about ${x.run.estMin} min. ${d ? 'Logged: ' + esc(d) + '.' : ''} <a href="#/gym/run/${x.iso}">${d ? 'See run' : 'Run details'}</a></p>`; };
+function standaloneRun(r) {
+  const d = runDoneText(r.iso);
+  return `<p><b>Run</b> · ${esc(r.title)} · <span class="num">${r.start}–${r.end}</span></p><p class="muted">${esc(r.text || '')}</p>${d ? `<p class="note calm">Logged: ${esc(d)}</p>` : ''}
+  <div class="row"><a class="btn primary" href="#/gym/run/${r.iso}">${d ? 'See run' : 'Open run and log it'}</a></div>`;
+}
+
 // ---------- Today card ----------
 export function todayCard(ctx) {
   const s = ctx.s, act = activeSession();
@@ -481,14 +567,16 @@ export function todayCard(ctx) {
   if (ctx.rd < s.gym.start) return `<p>Rest day.</p><p class="muted">Your gym plan starts ${esc(dayLabel(s.gym.start))}.</p>`;
   const x = sessionFor(ctx.rd, s);
   if (!x) {
+    const sr = runOn(ctx.rd, s);
+    if (sr) return standaloneRun(sr);
     const nx = nextSession(ctx.rd, s, false);
-    return `<p>Rest day.</p>${nx ? `<p class="muted">Next session: ${esc(dayLabel(nx.iso))}, ${esc(nx.kind)} at the ${esc(locName(nx.loc).toLowerCase())}, ${nx.time}.</p>` : ''}`;
+    return `<p>Rest day.</p>${nx ? `<p class="muted">Next session: ${esc(dayLabel(nx.iso))}, ${esc(nx.kind)} (${esc(locName(nx.loc).toLowerCase())}), ${whenText(nx)}.</p>` : ''}`;
   }
-  if (x.done) return `<p><b>${esc(x.kind)}</b> done.</p>${x.sessionId ? `<a class="btn small" href="#/gym/summary/${esc(x.sessionId)}">See summary</a>` : ''}`;
-  return `<p><b>${esc(x.kind)}</b> · ${locName(x.loc)} · <span class="num">${x.time}</span></p>
+  if (x.done) return `<p><b>${esc(x.kind)}</b> done.</p>${x.run ? runLine(x) : ''}${x.sessionId ? `<a class="btn small" href="#/gym/summary/${esc(x.sessionId)}">See summary</a>` : ''}`;
+  return `<p><b>${esc(x.kind)}</b> · ${locName(x.loc)} · <span class="num">${whenText(x)}</span></p>
   <p class="muted">${esc(weekLine(x, s))}</p>
   ${x.tight ? '<p class="muted">Tight day: the work gym slot is short. The session screen offers a shorter version if it won\'t fit.</p>' : ''}
-  ${x.cardio ? `<p class="muted">Then ${x.cardio} min easy cardio.</p>` : ''}
+  ${x.run ? runLine(x) : ''}
   <div class="row"><a class="btn primary" href="#/gym/session">Start session</a><a class="btn small ghost" href="#/gym/day/${x.iso}">Preview</a></div>`;
 }
 
@@ -499,32 +587,54 @@ function overview(ctx) {
   const today = sessionFor(rd, s), up = list.filter(x => x.iso > rd).slice(0, 8);
   const skipped = Object.keys(gymData().skips || {}).filter(d => d >= addDays(rd, -1)).sort();
   const missed = list.filter(x => x.missed && x.iso >= addDays(rd, -7));
-  const p3 = started && phaseOf(w) === 3 && !fiveAllowed(rd, s);
-  let head = started ? `Week ${w} · Phase ${phaseOf(w)}${isLightWeek(w, s) ? ' · Light week' : ''}` : `Starts ${dayLabel(s.gym.start)}`;
+  let head = started ? `Week ${w}${isLightWeek(w, s) ? ' · Light week' : ''}` : `Starts ${dayLabel(s.gym.start)}`;
   let main = '';
   if (act) main = `<section class="tile gym-now"><h2>Session in progress</h2><p>${esc(act.kind || 'Session')} · ${locName(act.loc)}</p><a class="btn primary wide" href="#/gym/session">Resume session</a></section>`;
-  else if (today && !today.done) main = `<section class="tile gym-now"><h2>Today: ${esc(today.kind)}</h2><p>${locName(today.loc)} · <span class="num">${today.time}</span>${today.cardio ? ` · then ${today.cardio} min cardio` : ''}</p>
+  else if (today && !today.done) main = `<section class="tile gym-now"><h2>Today: ${esc(today.kind)}</h2><p>${locName(today.loc)} · <span class="num">${whenText(today)}</span>${today.run ? ` · plus run ${today.run.estMin} min` : ''}</p>
     <p class="muted">${esc(weekLine(today, s))}</p><div class="row"><a class="btn primary" href="#/gym/session">Start session</a><a class="btn ghost" href="#/gym/day/${today.iso}">Preview</a></div>${actions(today, s)}</section>`;
+  else if (!today && runOn(rd, s)) main = `<section class="tile gym-now"><h2>Today: run</h2>${standaloneRun(runOn(rd, s))}</section>`;
   else {
     const nx = nextSession(rd, s, false);
-    main = `<section class="gym-now"><h2>${today?.done ? `Today's ${esc(today.kind)} is done` : 'Rest day today'}</h2>${nx ? `<p>Next: <b>${esc(nx.kind)}</b>, ${esc(dayLabel(nx.iso))} · ${locName(nx.loc)} · <span class="num">${nx.time}</span></p>
+    main = `<section class="gym-now"><h2>${today?.done ? `Today's ${esc(today.kind)} is done` : 'Rest day today'}</h2>${nx ? `<p>Next: <b>${esc(nx.kind)}</b>, ${esc(dayLabel(nx.iso))} · ${locName(nx.loc)} · <span class="num">${whenText(nx)}</span></p>
       <div class="row"><a class="btn small" href="#/gym/day/${nx.iso}">Preview</a>${moveTargets(nx.iso, s).includes(rd) ? `<button type="button" class="btn small" data-act="gym-move-to" data-from="${nx.iso}" data-to="${rd}">Do it today instead</button>` : ''}</div>` : ''}</section>`;
   }
   return `<h1 class="page-title">Gym</h1><p class="muted">${esc(head)}</p>
-  ${p3 ? `<p class="note calm">${GATE_NOTE} Phase 3 adds a fifth session once every planned session in the last 14 days is done.</p>` : ''}
   ${main}
   ${missed.length ? `<p class="note calm">Missed: ${missed.map(x => esc(dayLabel(x.iso))).join(', ')}. The order waits for you, so the next session is the same workout.</p>` : ''}
   <section aria-labelledby="gy-up"><h2 id="gy-up">Coming up</h2>
   ${up.length ? `<ul class="rules gym-up">${up.map(x => `<li><a class="go" href="#/gym/day/${x.iso}"><span class="grow"><b>${esc(dayLabel(x.iso))}</b> · ${esc(x.kind)}
-    <span class="muted">${locName(x.loc)}${x.light ? ' · light week' : ''}${x.cardio ? ` · ${x.cardio} min cardio` : ''}${x.tight ? ' · tight day' : ''}${x.movedFrom ? ` · moved from ${esc(dayLabel(x.movedFrom))}` : ''}</span></span><span class="muted num">${x.time}</span></a></li>`).join('')}</ul>
+    <span class="muted">${locName(x.loc)}${x.light ? ' · light week' : ''}${x.run ? ` · plus run ${x.run.estMin} min` : ''}${x.tight ? ' · tight day' : ''}${x.movedFrom ? ` · moved from ${esc(dayLabel(x.movedFrom))}` : ''}${x.nextDay ? ' · next morning, after the night shift' : ''}</span></span><span class="muted num">${x.time}</span></a></li>`).join('')}</ul>
     <p class="muted">Tap a session to preview, move or skip it.</p>` : '<p class="muted">Nothing planned yet.</p>'}
   ${skipped.length ? `<h3>Skipped</h3><ul class="rules">${skipped.map(d => `<li class="row"><span class="grow">${esc(dayLabel(d))}</span><button type="button" class="btn small ghost" data-act="gym-restore" data-iso="${d}">Restore</button></li>`).join('')}</ul>` : ''}
   </section>
+  ${runningCard(ctx)}
   <section><h2>More</h2><div class="row"><a class="btn" href="#/gym/ex">Exercises and how-to</a><a class="btn" href="#/gym/history">Past sessions</a></div></section>
   <details class="fold"><summary>How the plan works</summary>
-  <p>Weeks 1–4: 3 full-body sessions in any 7 days, off days only. Weeks 5–8: 4 upper/lower sessions, one can be on a work day. From week 9: up to 5 when every planned session in the last 14 days is done.</p>
-  <p>Never more than 3 training days in a row, at least one full rest day in any 7, and never between a night shift and the sleep after it.</p>
+  <p>Five workouts in a rotation from week 1: Upper, Lower, Push, Pull, Legs. Up to 5 sessions in any 7 days, off days first. Work days can take up to 3 of them, and at most 2 of those on the short evening slot after a morning shift.</p>
+  <p>After a night shift the session is the next morning, once you are home and showered. Never more than 3 training days in a row, and at least 20 hours between two session starts.</p>
   <p>Skipping keeps your place in the order and rolls the session to the next valid day. Every 8 weeks from week 9 there's a planned light week.</p></details>`;
+}
+
+function runningCard(ctx) {
+  const s = ctx.s;
+  if (!R.hasPlan()) return '';
+  const g = R.goal(), started = ctx.rd >= s.gym.start, w = Math.max(1, weekOf(ctx.rd, s)), rw = R.runWeekOf(w), block = R.blockOf(w);
+  const runs = loggedRuns(), test = R.latestTest(runs), race = R.racePaceOf(test), nt = R.nextTest(w);
+  const b5 = R.bestOver(runs, 5), b10 = R.bestOver(runs, 10);
+  const items = started ? weekRuns(w, s) : [];
+  const li = r => {
+    const when = r.done ? 'done' : r.iso ? `${dayLabel(r.iso)}${r.standalone ? '' : ' with ' + (r.kind || 'gym')}` : 'not scheduled this week';
+    const inner = `<span class="grow"><b>${esc(r.def.title)}</b> <span class="muted">${esc(when)}</span></span>`;
+    return r.iso ? `<li><a class="go" href="#/gym/run/${r.iso}">${inner}</a></li>` : `<li class="row">${inner}</li>`;
+  };
+  return `<section class="gym-running" aria-labelledby="gy-run"><h2 id="gy-run">Running</h2>
+  <p><b>${esc(block)}</b> · week ${rw}${w > 52 ? ' (repeat)' : ''} <span class="muted">· goal ${g.km} km under ${g.min} min</span></p>
+  <p class="muted">${esc(R.blockText(block))}</p>
+  ${items.length ? `<ul class="rules">${items.map(li).join('')}</ul>` : started ? '' : `<p class="muted">Runs start with the gym plan on ${esc(dayLabel(s.gym.start))}.</p>`}
+  <p>${test ? `Latest test: <b class="num">${esc(R.fmtResult(test))}</b> <span class="muted">${esc(dayLabel(test.iso))}. Race pace ${R.fmtPace(race)}/km.</span>` : 'No test yet. Your first test run sets your paces.'}</p>
+  ${nt ? `<p class="muted">Next test: week ${nt.gymWeek}, ${esc(nt.def.title)}${nt.def.goal ? ', goal under ' + nt.def.goal + ' min' : ''}.</p>` : ''}
+  <p class="muted num">Best 5 km: ${b5 ? R.fmtTime(b5.min) : '–'} · Best 10 km: ${b10 ? R.fmtTime(b10.min) : '–'}</p>
+  ${S.freeRunForm(ctx.rd)}</section>`;
 }
 
 function exList(ex, opts = {}) {
@@ -541,22 +651,22 @@ export function preview(ctx, iso, withStart = false) {
   if (!x) return `<p class="note calm">No gym session planned on ${esc(dayLabel(iso))}.</p>`;
   const p = planFor(x, s);
   const fit = x.tight || !p.fits ? (p.fits ? `<p class="muted">About ${p.est} min. Fits the ${x.len}-minute slot.</p>`
-    : `<p class="note">About ${p.est} min, longer than the ${x.len}-minute slot. A shorter version (2 sets, fewer accessories, no cardio) takes about ${p.shortEst} min.</p>`) : `<p class="muted">About ${p.est} min including warm-up${x.cardio ? ' and cardio' : ''}.</p>`;
+    : `<p class="note">About ${p.est} min, longer than the ${x.len}-minute slot. A shorter version (2 sets, fewer accessories, no run) takes about ${p.shortEst} min.</p>`) : `<p class="muted">About ${p.est} min including warm-up${x.run ? ' and the run' : ''}.</p>`;
   const start = withStart ? `<div class="row"><button type="button" class="btn primary" data-act="gym-start" data-iso="${iso}">Start session</button>${!p.fits ? `<button type="button" class="btn" data-act="gym-start" data-iso="${iso}" data-short="1">Start shorter version</button>` : ''}</div>` : '';
-  return `<p>${locName(x.loc)} · <span class="num">${x.time}</span>${x.tight ? ' · tight day' : ''}</p>
+  return `<p>${locName(x.loc)} · <span class="num">${whenText(x)}</span>${x.tight ? ' · tight day' : ''}</p>
   <p class="muted">${esc(weekLine(x, s))}</p>${fit}
   <p class="note calm">${esc(PRE_GYM)}</p>
   <p><b>Warm-up.</b> ${esc(WARMUP)}</p>
   ${exList(p.ex, { tips: true, loc: x.loc, s })}
-  ${x.cardio ? `<p><b>Cardio.</b> ${esc(cardioText(x.cardio, x.cardioWith))}</p>` : ''}
+  ${x.run ? `<section class="gym-run"><p><b>Run.</b> ${esc(x.run.title)} · about ${x.run.estMin} min</p>${S.runBody(x.run, racePace())}<p><a href="#/gym/run/${x.iso}">Log this run</a></p></section>` : ''}
   <p class="note alert">${esc(SAFETY)}</p>${start}`;
 }
 
 function dayView(ctx, iso) {
   if (!ISO.test(iso)) return `<h1 class="page-title">Gym</h1><p class="note">That date isn't valid. <a href="#/gym">Back to gym</a></p>`;
   const x = sessionFor(iso, ctx.s);
-  return `<a class="back" href="#/gym">Gym</a><h1 class="page-title">${esc(x ? x.kind : 'Rest day')}</h1><p class="muted">${esc(dayLabel(iso))}${x?.done ? ' · done' : x?.missed ? ' · missed' : ''}</p>
-  ${preview(ctx, iso, !!x && iso === ctx.rd && !x.done && !activeSession())}
+  return `<a class="back" href="#/gym">Gym</a><h1 class="page-title">${esc(x ? x.kind : runOn(iso, ctx.s) ? 'Run' : 'Rest day')}</h1><p class="muted">${esc(dayLabel(iso))}${x?.done ? ' · done' : x?.missed ? ' · missed' : ''}</p>
+  ${!x && runOn(iso, ctx.s) ? standaloneRun(runOn(iso, ctx.s)) : preview(ctx, iso, !!x && iso === ctx.rd && !x.done && !activeSession())}
   ${x && iso > ctx.rd && !x.done ? actions(x, ctx.s) : ''}`;
 }
 
@@ -622,12 +732,15 @@ export default {
   async init() {
     try { const r = await fetch('data/exercises.json'); setExerciseData(await r.json()); }
     catch { /* view shows a message */ }
+    try { const r = await fetch('data/run-plan.json'); setRunData(await r.json()); }
+    catch { /* no running plan: no runs */ }
   },
   view(ctx, arg = '') {
     if (!hasData()) return '<h1 class="page-title">Gym</h1><p class="note">Exercise data did not load. Reload the app to try again.</p>';
     const [page, sub] = String(arg || '').split('/');
     if (page === 'session') return S.sessionView(ctx);
     if (page === 'summary') return S.summaryView(ctx, sub);
+    if (page === 'run') return S.runView(ctx, sub);
     if (page === 'day') return dayView(ctx, sub);
     if (page === 'ex') return exView(ctx, sub);
     if (page === 'history') return historyView();
@@ -640,6 +753,7 @@ export default {
     if (act === 'gym-skip') { if (await ask('It keeps its place in the order and rolls to the next valid day.', { title: 'Skip this session?', ok: 'Skip' })) { skipSession(d.iso); ctx.notify('Skipped'); } return true; }
     if (act === 'gym-restore') { restoreSession(d.iso); ctx.notify('Restored'); return true; }
     if (act === 'gym-pref-inc') { saveGym(g => { g.prefs[d.id] = { ...prefsFor(d.id), inc: +d.v }; }); return true; }
+    if (act.startsWith('gym-run-')) return S.runClick(act, el, ctx);
     return S.sessionClick(act, el, ctx);
   },
   change(act, el) {

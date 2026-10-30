@@ -6,35 +6,93 @@ start screen), `#/gym/summary/<id>`, `#/gym/ex` and `#/gym/ex/<id>` (how-to, cha
 owns the active session (guided and list logging, rest timer, wake lock, sound, finish, summary).
 
 ### Planner (`planAll(s)`, `sessionFor(iso, s)`)
-- Start `s.gym.start` (default Fri 30 Oct 2026). Week n = whole 7-day blocks from the start; phase 1 = weeks 1-4,
-  2 = 5-8, 3 = 9+. Planning is a greedy walk over days (`build`), memoised on settings + today + a plan version
-  that is bumped by start, finish, skip, move and restore (`saveGym(fn, true)`).
-- Day facts (`dayInfo`): the slot comes from `s.gymSlots[gymSlotKey(iso)]`; a day is usable only when the slot is
-  inside wake-bed, does not overlap the shift, and is not the nap day after a night block. Morning-block work days
-  use 19:10-19:55 at the work gym and are flagged `tight`; night-block work days use 15:30-16:30 at home.
-- Caps per rolling 7 days: 3 (phase 1), 4 (phase 2), 4 or 5 (phase 3), never more than 3 training days in a row,
-  never 7. Phase 1 uses off days only. Work-day sessions: at most 1 per rolling 7 days (2 when phase 3 allows 5).
-- Phase 3 gate (`fiveAllowed`): 5 sessions only when every planned session in the 14 days before was done.
-  Future sessions count as done, skipped sessions are not planned sessions. Otherwise phase 3 plans Upper/Lower
-  and shows "4 solid sessions beat 5 tired ones."
+- Start `s.gym.start` (default Sat 31 Oct 2026). Week n = whole 7-day blocks from the start. Same 5-day rotation
+  from week 1. Planning is a greedy walk over days (`build`), memoised on settings + today +
+  plan version (bumped by start, finish, skip, move, restore via `saveGym(fn, true)`) + run-plan version.
+- Day facts (`dayInfo`): slot from `s.gymSlots[gymSlotKey(iso)]`. A slot that starts before that date's wake is
+  on the NEXT calendar morning (`nextDay`, minutes +1440). `abs = n*1440 + a` (absolute start minute). Usable only
+  when it ends by bed; on a work day a `nextDay` slot also needs start >= shift end + drive (`s.drive`), a same-day
+  slot must not overlap the shift; off-day same-day slots start at or after wake. Morning-block work days use
+  19:15-20:00 at the work gym, flagged `tight`. Night-block work days: `nightWork` slot 07:50-08:50 = the morning
+  after the night shift, at the home gym (flagged `nextDay`, belongs to the work day's plan).
+- Caps (`allowed(n, i, s, has)`, constants at the top of `gym.js`): `MAX_WEEK` 5 sessions per rolling 7 days;
+  `MAX_RUN` 3 training days in a row; `MAX_WORK_WEEK` 3 on work days per rolling 7; `MAX_TIGHT_WEEK` 2 tight
+  sessions per rolling 7; `MIN_GAP` 20 h between two session starts (compares `abs`). `moveTargets` uses the same
+  `allowed`.
+- Off days take sessions freely. A work day only tops up (`prefer`): used when the 3 days before + off days in the
+  next 3 that can still take a session (slot ok, 20 h gap kept) + itself fit under the weekly cap.
+- Sets per exercise: 2 in weeks 1-2, in light weeks, and in sessions with an attached test run; else 3.
 - Light week (`isLightWeek`): week 9, 17, 25, ... when `s.gym.lightWeek`. 2 sets, weights about 80% of the last
   non-light working weight, rounded to the nearest real dumbbell. Light sessions never feed progression.
-- A/B order only moves forward when a session is logged. A planned day in the past that was not done is `missed`
-  and does not advance the counter, so the next session is the same workout. Future sessions project the order.
-  Order restarts at each phase change. Phase 1: Full Body A/B, phase 2: Upper/Lower, phase 3 (gate open):
-  Upper, Lower, Push, Pull, Legs.
+- Order: Upper, Lower, Push, Pull, Legs (`KINDS`). It only moves forward when a session is logged. A planned day in
+  the past that was not done is `missed` and does not advance the counter, so the next session is the same
+  workout. Future sessions project the order. A logged session with an unknown old kind advances the
+  counter by one. Templates in `data/exercises.json` (machines + free weights): Upper (machine chest press, cable
+  row, DB shoulder press, lat pulldown, lateral raise, triceps pushdown), Lower (leg press, DB RDL, leg curl, leg
+  extension, hip abduction, machine calf raise), Push (DB bench, machine shoulder press, incline DB press, pec
+  deck, lateral raise, triceps pushdown), Pull (lat pulldown, cable row, DB row, face pull, cable curl, hammer
+  curl), Legs (barbell squat, barbell RDL, split squat, hip adduction, machine calf raise, cable crunch). Old
+  templates stay in the data for old logs. Exercises needing unticked equipment swap to their alt.
 - Skip: `skips[iso]=true`; the day is excluded and the session rolls to the next valid day. Skipping a moved
   session skips its original day. Move: `moves[from]=to` (forced onto `to`, `from` excluded); `moveTargets` only
   offers days (today to +7) that keep all rules. `restoreSession` clears both. Moving back to the original day
   clears the move.
-- Cardio: 10 min in weeks 1-2, +5 per week, capped at 30, on at most 3 sessions per rolling 7 days, never on a
-  tight day. Machine is the first ticked of treadmill, bike, rower, else a brisk outdoor walk.
-- The `.ics` export and `dayPlan` use `sessionFor` through the provider the app registers:
-  `setProviders({ gymFor: gym.sessionFor })`. The slot object has `kind, loc, start, end, cardio` as the provider
-  contract needs.
+- Slot object: `{ iso, kind, loc, start, end, time, nextDay, run, cardio, light, done, week, tight, ... }`.
+  `cardio` is the attached run's estimated minutes (0 when none), kept for the provider contract. `locName(loc)` =
+  "Gym near home" / "Gym near work"; `whenText(x)` = "Tomorrow morning HH:MM-HH:MM (after the shift)" for
+  `nextDay`, else `x.time`. Week, Day and Today screens use both.
+- The `.ics` export and `dayPlan` use the providers the app registers:
+  `setProviders({ gymFor: G.sessionFor, runFor: G.runFor })`.
+
+### Running plan (`js/run.js`, `data/run-plan.json`, `tests/run.test.js`)
+`run.js` is pure (no DOM, no storage). `gym.js` calls it from the planner; `gym-session.js` renders the cards.
+`gym.js` fetches `data/run-plan.json` in `init` (`setRunData`); no file = no runs.
+- Shape: `{ goal:{km,min}, blocks:{Base,Build,Strength,Speed}: text, paceOffset:{easy:75,tempo:15,interval:-15,race:0},
+  easyPace:{block: s/km before any test}, weeks:[52 x { w, block, runs:[A,B,C] }] }`. A run def:
+  `{ type: walkrun|easy|long|tempo|interval|test, title, text, min? | km?, goal?, pace? }`. `pace` names the offset.
+  Blocks: Base wk 1-12 (walk/run, then easy), Build 13-24, Strength 25-36, Speed 37-52. Time trials (`test`) in
+  weeks 12, 24, 36, 52. Goal 10 km under 45 min.
+- Run week = gym week. `runWeekOf(w)`: after week 52 the plan repeats weeks 41-52. Only complete weeks are planned.
+- Assignment (`assignWeek(w, sessions, days)`): each week has runs A, B, C. Candidates are the week's non-leg
+  sessions (Upper/Push/Pull, never Lower/Legs), not tight. Runs go after the lift on the same day (attached,
+  `slot.run`, `slot.cardio = estMin`) or on a free off day (standalone). Standalone runs and attached runs never
+  count toward gym caps.
+  - Weeks 1-11: A, B, C attach in date order; extras are dropped from the end.
+  - Week 12 on: C (long run / time trial) is placed first and is not dropped while any non-leg session or free day
+    exists, then B, then A (A drops first, then B). C fallback chain: standalone on a free off day with a usable
+    slot (prefers one not before a leg day) > off-day Upper/Push/Pull > any non-tight session (`nextDay` last) >
+    standalone on any other free off day > the last non-leg session of the week even if tight. Rank for B/A:
+    off-day session, then same-day, then `nextDay`.
+  - `first` flag: a test attached to a session is done first, fresh (run card shown before the exercises); that
+    session gets 2 sets and a short lift. Other runs come after the exercises.
+- Paces: `riegel10k(sec, km) = sec * (10/km)^1.06`; race pace = Riegel of the latest logged test, per km
+  (`racePaceOf`). Target = race + offset (easy +75, tempo +15, interval -15, race 0 s/km). Before a test: easy runs
+  use `easyPace[block]`, others show "Log a test run to get exact paces". `paceText` =
+  `m:ss/km · treadmill X.X km/h · incline 1%`. Walk/run text: run 7.5-8.5 km/h, walk 5.5-6 km/h, incline 1%.
+- Estimate (`estMin`): `def.min`, else `km x easy pace / 60` (+10 min warm-up and cool-down for tests). It feeds
+  session length and the calendar.
+- Logging: Run card (time as `47.5` or `47:30`, distance in km; `parseMin`/`parseKm`/`validateRun`: 0.1-60 km,
+  1-600 min) on the session screen, the run screen `#/gym/run/<iso>` and standalone days. Edit and Delete
+  supported. `logRun(iso, km, min, s, now, opts)` fills the planned run of that date. Free "Log a run" form on the
+  gym overview (`opts.free = { type: easy|long|test, today }`): any date up to today, run of the chosen type; a
+  date with a planned run fills that one instead. A logged test sets paces at once.
+- `gym.runs` (in the gym area): `{ [iso]: { key:'A'|'B'|'C'|null, type, title, km, min, at, free? } }`. One run per
+  date. Written only through `saveGym`.
+- Provider `runFor(iso, s)` -> `{ title, start, end, km, key, estMin }` for a standalone run, else null.
+  Standalone start = the day's gym slot start, length = estimate. `runOn(iso, s)` = attached or standalone;
+  `weekRuns(w, s)` = this week's A/B/C with day and done flag.
+- Planner output: attached `x.run = { key, week, block, ...def, estMin, first? }`; `planAll` also keeps the
+  standalone runs (`memo.runs`).
+- `dayPlan`: a `run` block `Run: <title>` (standalone, after the day's meals; `settle` treats `run` as busy so meals
+  move off it). Gym block label gains " + run N min" and reads "Gym: Upper (gym near home)". `ics.js` exports
+  `run` blocks (kinds: shift, gym, run, study, weigh). Week and Day screens show the run line; Today tile shows
+  "Tomorrow HH:MM" for a `nextDay` session and the run title on a standalone day.
+- Running card (gym overview, `runningCard`): block + run week (+ "repeat" after 52), goal, block text, this week's
+  runs (when, done), latest test and race pace, next test week, best 5 km and best 10 km (`bestOver`, +-0.1 km),
+  and the free "Log a run" form.
 
 ### Data shape (`gym` area; see docs/contract.md)
-`{ sessions, active, rest, skips, moves, prefs }`. A session holds `ex:[{ id, from?, sets:[{ type, plan, done }] }]`.
+`{ sessions, active, rest, skips, moves, prefs, runs }` (`runs`: see Running plan). A session holds `ex:[{ id, from?, sets:[{ type, plan, done }] }]`.
 `done` is `{ w?, r?, rl?, rr?, sec?, rpe?, at }`; `skip:true` on a set means skipped. Warm-up sets (`type:'warm'`)
 never count to volume, records, history or progression. One-sided moves log `rl`/`rr`; reps for records = the weaker
 side, volume = both sides. Only `saveGym` writes this area. A session belongs to the routine day it started on (`rd`)
@@ -50,9 +108,9 @@ and keeps `planIso` (the plan day it fills, which differs after a move).
   most bodyweight reps, longest hold. `checkPR` flags nothing the first time an exercise is logged.
 - Warm-up sets: before the first big lift only (`big:true` in the data), about 50% then 75% of the working weight,
   rounded down to real dumbbells, only when the weight is above the lightest dumbbell. They use 60 s rest.
-- Session length (`estimateMin`) = sets x (work + rest) + 5 min warm-up + cardio; work is 40 s per set, 80 s for
+- Session length (`estimateMin`) = sets x (work + rest) + 5 min warm-up + the attached run's minutes; work is 40 s per set, 80 s for
   one-sided moves, or the timed seconds. `planFor` compares it to the slot and offers a shorter version (first 4
-  exercises, 2 sets, no cardio). Week 1 rests 90 s; later weeks 90 s for big lifts, 60 s otherwise.
+  exercises, 2 sets, no run). Week 1 rests 90 s; later weeks 90 s for big lifts, 60 s otherwise.
 
 ### Rest timer
 `gym.rest = { startedAt, sec }` is written when a set is logged (only if more sets remain). The clock is always

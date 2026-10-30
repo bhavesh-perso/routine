@@ -1,0 +1,1454 @@
+{
+ "goal": {
+  "km": 10,
+  "min": 45
+ },
+ "blocks": {
+  "Base": "Weeks 1–12: build up to 30 minutes of running without stopping. Every run is easy.",
+  "Build": "Weeks 13–24: one easy run, one faster session and one long run a week. Goal: 10 km under 60 min.",
+  "Strength": "Weeks 25–36: longer tempo runs and intervals. Goal: 10 km under 50 min.",
+  "Speed": "Weeks 37–52: faster intervals at goal pace. Goal: 10 km under 45 min."
+ },
+ "paceOffset": {
+  "easy": 75,
+  "tempo": 15,
+  "interval": -15,
+  "race": 0
+ },
+ "easyPace": {
+  "Base": 450,
+  "Build": 420,
+  "Strength": 375,
+  "Speed": 345
+ },
+ "weeks": [
+  {
+   "w": 1,
+   "block": "Base",
+   "runs": [
+    {
+     "type": "walkrun",
+     "title": "Run 1 min, walk 2 min × 8",
+     "text": "Run at a pace where you can still talk, walk to recover. Repeat 8 times.",
+     "min": 24
+    },
+    {
+     "type": "walkrun",
+     "title": "Run 1 min, walk 2 min × 8",
+     "text": "Run at a pace where you can still talk, walk to recover. Repeat 8 times.",
+     "min": 24
+    },
+    {
+     "type": "walkrun",
+     "title": "Run 1 min, walk 2 min × 8",
+     "text": "Run at a pace where you can still talk, walk to recover. Repeat 8 times.",
+     "min": 24
+    }
+   ]
+  },
+  {
+   "w": 2,
+   "block": "Base",
+   "runs": [
+    {
+     "type": "walkrun",
+     "title": "Run 1.5 min, walk 2 min × 7",
+     "text": "Run at a pace where you can still talk, walk to recover. Repeat 7 times.",
+     "min": 25
+    },
+    {
+     "type": "walkrun",
+     "title": "Run 1.5 min, walk 2 min × 7",
+     "text": "Run at a pace where you can still talk, walk to recover. Repeat 7 times.",
+     "min": 25
+    },
+    {
+     "type": "walkrun",
+     "title": "Run 1.5 min, walk 2 min × 7",
+     "text": "Run at a pace where you can still talk, walk to recover. Repeat 7 times.",
+     "min": 25
+    }
+   ]
+  },
+  {
+   "w": 3,
+   "block": "Base",
+   "runs": [
+    {
+     "type": "walkrun",
+     "title": "Run 2 min, walk 2 min × 6",
+     "text": "Run at a pace where you can still talk, walk to recover. Repeat 6 times.",
+     "min": 24
+    },
+    {
+     "type": "walkrun",
+     "title": "Run 2 min, walk 2 min × 6",
+     "text": "Run at a pace where you can still talk, walk to recover. Repeat 6 times.",
+     "min": 24
+    },
+    {
+     "type": "walkrun",
+     "title": "Run 2 min, walk 2 min × 6",
+     "text": "Run at a pace where you can still talk, walk to recover. Repeat 6 times.",
+     "min": 24
+    }
+   ]
+  },
+  {
+   "w": 4,
+   "block": "Base",
+   "runs": [
+    {
+     "type": "walkrun",
+     "title": "Run 3 min, walk 2 min × 5",
+     "text": "Run at a pace where you can still talk, walk to recover. Repeat 5 times.",
+     "min": 25
+    },
+    {
+     "type": "walkrun",
+     "title": "Run 3 min, walk 2 min × 5",
+     "text": "Run at a pace where you can still talk, walk to recover. Repeat 5 times.",
+     "min": 25
+    },
+    {
+     "type": "walkrun",
+     "title": "Run 3 min, walk 2 min × 5",
+     "text": "Run at a pace where you can still talk, walk to recover. Repeat 5 times.",
+     "min": 25
+    }
+   ]
+  },
+  {
+   "w": 5,
+   "block": "Base",
+   "runs": [
+    {
+     "type": "walkrun",
+     "title": "Run 4 min, walk 2 min × 4",
+     "text": "Run at a pace where you can still talk, walk to recover. Repeat 4 times.",
+     "min": 24
+    },
+    {
+     "type": "walkrun",
+     "title": "Run 4 min, walk 2 min × 4",
+     "text": "Run at a pace where you can still talk, walk to recover. Repeat 4 times.",
+     "min": 24
+    },
+    {
+     "type": "walkrun",
+     "title": "Run 4 min, walk 2 min × 4",
+     "text": "Run at a pace where you can still talk, walk to recover. Repeat 4 times.",
+     "min": 24
+    }
+   ]
+  },
+  {
+   "w": 6,
+   "block": "Base",
+   "runs": [
+    {
+     "type": "walkrun",
+     "title": "Run 5 min, walk 2 min × 4",
+     "text": "Run at a pace where you can still talk, walk to recover. Repeat 4 times.",
+     "min": 28
+    },
+    {
+     "type": "walkrun",
+     "title": "Run 5 min, walk 2 min × 4",
+     "text": "Run at a pace where you can still talk, walk to recover. Repeat 4 times.",
+     "min": 28
+    },
+    {
+     "type": "walkrun",
+     "title": "Run 5 min, walk 2 min × 4",
+     "text": "Run at a pace where you can still talk, walk to recover. Repeat 4 times.",
+     "min": 28
+    }
+   ]
+  },
+  {
+   "w": 7,
+   "block": "Base",
+   "runs": [
+    {
+     "type": "walkrun",
+     "title": "Run 8 min, walk 2 min × 3",
+     "text": "Run at a pace where you can still talk, walk to recover. Repeat 3 times.",
+     "min": 30
+    },
+    {
+     "type": "walkrun",
+     "title": "Run 8 min, walk 2 min × 3",
+     "text": "Run at a pace where you can still talk, walk to recover. Repeat 3 times.",
+     "min": 30
+    },
+    {
+     "type": "walkrun",
+     "title": "Run 8 min, walk 2 min × 3",
+     "text": "Run at a pace where you can still talk, walk to recover. Repeat 3 times.",
+     "min": 30
+    }
+   ]
+  },
+  {
+   "w": 8,
+   "block": "Base",
+   "runs": [
+    {
+     "type": "walkrun",
+     "title": "Run 10, walk 2, run 10, walk 2, run 5",
+     "text": "Easy pace the whole way. You should be able to talk in full sentences. Walk a minute if you need to, then carry on.",
+     "min": 29
+    },
+    {
+     "type": "walkrun",
+     "title": "Run 10, walk 2, run 10, walk 2, run 5",
+     "text": "Easy pace the whole way. You should be able to talk in full sentences. Walk a minute if you need to, then carry on.",
+     "min": 29
+    },
+    {
+     "type": "walkrun",
+     "title": "Run 10, walk 2, run 10, walk 2, run 5",
+     "text": "Easy pace the whole way. You should be able to talk in full sentences. Walk a minute if you need to, then carry on.",
+     "min": 29
+    }
+   ]
+  },
+  {
+   "w": 9,
+   "block": "Base",
+   "runs": [
+    {
+     "type": "walkrun",
+     "title": "Run 15, walk 2, run 10",
+     "text": "Easy pace the whole way. You should be able to talk in full sentences. Walk a minute if you need to, then carry on.",
+     "min": 27
+    },
+    {
+     "type": "walkrun",
+     "title": "Run 15, walk 2, run 10",
+     "text": "Easy pace the whole way. You should be able to talk in full sentences. Walk a minute if you need to, then carry on.",
+     "min": 27
+    },
+    {
+     "type": "walkrun",
+     "title": "Run 15, walk 2, run 10",
+     "text": "Easy pace the whole way. You should be able to talk in full sentences. Walk a minute if you need to, then carry on.",
+     "min": 27
+    }
+   ]
+  },
+  {
+   "w": 10,
+   "block": "Base",
+   "runs": [
+    {
+     "type": "walkrun",
+     "title": "Run 20 min, walk 2, run 5",
+     "text": "Easy pace the whole way. You should be able to talk in full sentences. Walk a minute if you need to, then carry on.",
+     "min": 27
+    },
+    {
+     "type": "walkrun",
+     "title": "Run 20 min, walk 2, run 5",
+     "text": "Easy pace the whole way. You should be able to talk in full sentences. Walk a minute if you need to, then carry on.",
+     "min": 27
+    },
+    {
+     "type": "walkrun",
+     "title": "Run 20 min, walk 2, run 5",
+     "text": "Easy pace the whole way. You should be able to talk in full sentences. Walk a minute if you need to, then carry on.",
+     "min": 27
+    }
+   ]
+  },
+  {
+   "w": 11,
+   "block": "Base",
+   "runs": [
+    {
+     "type": "walkrun",
+     "title": "Run 25 min nonstop",
+     "text": "Easy pace the whole way. You should be able to talk in full sentences. Walk a minute if you need to, then carry on.",
+     "min": 25
+    },
+    {
+     "type": "walkrun",
+     "title": "Run 25 min nonstop",
+     "text": "Easy pace the whole way. You should be able to talk in full sentences. Walk a minute if you need to, then carry on.",
+     "min": 25
+    },
+    {
+     "type": "walkrun",
+     "title": "Run 25 min nonstop",
+     "text": "Easy pace the whole way. You should be able to talk in full sentences. Walk a minute if you need to, then carry on.",
+     "min": 25
+    }
+   ]
+  },
+  {
+   "w": 12,
+   "block": "Base",
+   "runs": [
+    {
+     "type": "walkrun",
+     "title": "Run 20 min nonstop",
+     "text": "Easy pace the whole way. You should be able to talk in full sentences. Walk a minute if you need to, then carry on.",
+     "min": 20
+    },
+    {
+     "type": "walkrun",
+     "title": "Run 25 min nonstop",
+     "text": "Easy pace the whole way. You should be able to talk in full sentences. Walk a minute if you need to, then carry on.",
+     "min": 25
+    },
+    {
+     "type": "test",
+     "title": "5 km time trial",
+     "text": "Warm up 10 min easy and 3 strides. Then run 5 km as fast as you can hold evenly. Log your time. This sets your training paces.",
+     "km": 5,
+     "goal": null,
+     "pace": "race"
+    }
+   ]
+  },
+  {
+   "w": 13,
+   "block": "Build",
+   "runs": [
+    {
+     "type": "easy",
+     "title": "Easy run 25 min",
+     "text": "Easy pace: you can talk in full sentences.",
+     "min": 25,
+     "pace": "easy"
+    },
+    {
+     "type": "interval",
+     "title": "6 × 200 m",
+     "text": "Warm up 10 min easy, finish with 5 min easy. Run each 200 m fast but controlled, then 200 m easy jog or walk.",
+     "min": 30,
+     "pace": "interval",
+     "reps": 6,
+     "m": 200
+    },
+    {
+     "type": "long",
+     "title": "Long run 5 km",
+     "text": "Slow and steady. Easy pace the whole way, slower is fine. This builds your engine.",
+     "km": 5,
+     "pace": "easy"
+    }
+   ]
+  },
+  {
+   "w": 14,
+   "block": "Build",
+   "runs": [
+    {
+     "type": "easy",
+     "title": "Easy run 25 min",
+     "text": "Easy pace: you can talk in full sentences.",
+     "min": 25,
+     "pace": "easy"
+    },
+    {
+     "type": "tempo",
+     "title": "Tempo 10 min",
+     "text": "Warm up 10 min easy, finish with 5 min easy. Run 10 min at a \"comfortably hard\" pace: you can say a few words, not sentences.",
+     "min": 25,
+     "pace": "tempo"
+    },
+    {
+     "type": "long",
+     "title": "Long run 5.5 km",
+     "text": "Slow and steady. Easy pace the whole way, slower is fine. This builds your engine.",
+     "km": 5.5,
+     "pace": "easy"
+    }
+   ]
+  },
+  {
+   "w": 15,
+   "block": "Build",
+   "runs": [
+    {
+     "type": "easy",
+     "title": "Easy run 30 min",
+     "text": "Easy pace: you can talk in full sentences.",
+     "min": 30,
+     "pace": "easy"
+    },
+    {
+     "type": "interval",
+     "title": "6 × 400 m",
+     "text": "Warm up 10 min easy, finish with 5 min easy. Run each 400 m fast but controlled, then 2 min easy jog or walk.",
+     "min": 36,
+     "pace": "interval",
+     "reps": 6,
+     "m": 400
+    },
+    {
+     "type": "long",
+     "title": "Long run 6 km",
+     "text": "Slow and steady. Easy pace the whole way, slower is fine. This builds your engine.",
+     "km": 6,
+     "pace": "easy"
+    }
+   ]
+  },
+  {
+   "w": 16,
+   "block": "Build",
+   "runs": [
+    {
+     "type": "easy",
+     "title": "Easy run 30 min",
+     "text": "Easy pace: you can talk in full sentences.",
+     "min": 30,
+     "pace": "easy"
+    },
+    {
+     "type": "tempo",
+     "title": "Tempo 15 min",
+     "text": "Warm up 10 min easy, finish with 5 min easy. Run 15 min at a \"comfortably hard\" pace: you can say a few words, not sentences.",
+     "min": 30,
+     "pace": "tempo"
+    },
+    {
+     "type": "long",
+     "title": "Long run 6.5 km",
+     "text": "Slow and steady. Easy pace the whole way, slower is fine. This builds your engine.",
+     "km": 6.5,
+     "pace": "easy"
+    }
+   ]
+  },
+  {
+   "w": 17,
+   "block": "Build",
+   "easyWeek": true,
+   "runs": [
+    {
+     "type": "easy",
+     "title": "Easy run 20 min",
+     "text": "Easy pace: you can talk in full sentences.",
+     "min": 20,
+     "pace": "easy"
+    },
+    {
+     "type": "interval",
+     "title": "4 × 400 m",
+     "text": "Warm up 10 min easy, finish with 5 min easy. Run each 400 m fast but controlled, then 2 min easy jog or walk.",
+     "min": 29,
+     "pace": "interval",
+     "reps": 4,
+     "m": 400
+    },
+    {
+     "type": "long",
+     "title": "Long run 5 km",
+     "text": "Slow and steady. Easy pace the whole way, slower is fine. This builds your engine.",
+     "km": 5,
+     "pace": "easy"
+    }
+   ]
+  },
+  {
+   "w": 18,
+   "block": "Build",
+   "runs": [
+    {
+     "type": "easy",
+     "title": "Easy run 30 min",
+     "text": "Easy pace: you can talk in full sentences.",
+     "min": 30,
+     "pace": "easy"
+    },
+    {
+     "type": "interval",
+     "title": "8 × 400 m",
+     "text": "Warm up 10 min easy, finish with 5 min easy. Run each 400 m fast but controlled, then 2 min easy jog or walk.",
+     "min": 43,
+     "pace": "interval",
+     "reps": 8,
+     "m": 400
+    },
+    {
+     "type": "long",
+     "title": "Long run 7 km",
+     "text": "Slow and steady. Easy pace the whole way, slower is fine. This builds your engine.",
+     "km": 7,
+     "pace": "easy"
+    }
+   ]
+  },
+  {
+   "w": 19,
+   "block": "Build",
+   "runs": [
+    {
+     "type": "easy",
+     "title": "Easy run 30 min",
+     "text": "Easy pace: you can talk in full sentences.",
+     "min": 30,
+     "pace": "easy"
+    },
+    {
+     "type": "tempo",
+     "title": "Tempo 20 min",
+     "text": "Warm up 10 min easy, finish with 5 min easy. Run 20 min at a \"comfortably hard\" pace: you can say a few words, not sentences.",
+     "min": 35,
+     "pace": "tempo"
+    },
+    {
+     "type": "long",
+     "title": "Long run 7.5 km",
+     "text": "Slow and steady. Easy pace the whole way, slower is fine. This builds your engine.",
+     "km": 7.5,
+     "pace": "easy"
+    }
+   ]
+  },
+  {
+   "w": 20,
+   "block": "Build",
+   "runs": [
+    {
+     "type": "easy",
+     "title": "Easy run 35 min",
+     "text": "Easy pace: you can talk in full sentences.",
+     "min": 35,
+     "pace": "easy"
+    },
+    {
+     "type": "interval",
+     "title": "5 × 800 m",
+     "text": "Warm up 10 min easy, finish with 5 min easy. Run each 800 m fast but controlled, then 2 min easy jog or walk.",
+     "min": 45,
+     "pace": "interval",
+     "reps": 5,
+     "m": 800
+    },
+    {
+     "type": "long",
+     "title": "Long run 8 km",
+     "text": "Slow and steady. Easy pace the whole way, slower is fine. This builds your engine.",
+     "km": 8,
+     "pace": "easy"
+    }
+   ]
+  },
+  {
+   "w": 21,
+   "block": "Build",
+   "runs": [
+    {
+     "type": "easy",
+     "title": "Easy run 35 min",
+     "text": "Easy pace: you can talk in full sentences.",
+     "min": 35,
+     "pace": "easy"
+    },
+    {
+     "type": "tempo",
+     "title": "Tempo 20 min",
+     "text": "Warm up 10 min easy, finish with 5 min easy. Run 20 min at a \"comfortably hard\" pace: you can say a few words, not sentences.",
+     "min": 35,
+     "pace": "tempo"
+    },
+    {
+     "type": "long",
+     "title": "Long run 9 km",
+     "text": "Slow and steady. Easy pace the whole way, slower is fine. This builds your engine.",
+     "km": 9,
+     "pace": "easy"
+    }
+   ]
+  },
+  {
+   "w": 22,
+   "block": "Build",
+   "runs": [
+    {
+     "type": "easy",
+     "title": "Easy run 35 min",
+     "text": "Easy pace: you can talk in full sentences.",
+     "min": 35,
+     "pace": "easy"
+    },
+    {
+     "type": "interval",
+     "title": "6 × 800 m",
+     "text": "Warm up 10 min easy, finish with 5 min easy. Run each 800 m fast but controlled, then 2 min easy jog or walk.",
+     "min": 51,
+     "pace": "interval",
+     "reps": 6,
+     "m": 800
+    },
+    {
+     "type": "long",
+     "title": "Long run 10 km",
+     "text": "Slow and steady. Easy pace the whole way, slower is fine. This builds your engine.",
+     "km": 10,
+     "pace": "easy"
+    }
+   ]
+  },
+  {
+   "w": 23,
+   "block": "Build",
+   "runs": [
+    {
+     "type": "easy",
+     "title": "Easy run 25 min",
+     "text": "Easy pace: you can talk in full sentences.",
+     "min": 25,
+     "pace": "easy"
+    },
+    {
+     "type": "interval",
+     "title": "4 × 400 m",
+     "text": "Warm up 10 min easy, finish with 5 min easy. Run each 400 m fast but controlled, then 2 min easy jog or walk.",
+     "min": 29,
+     "pace": "interval",
+     "reps": 4,
+     "m": 400
+    },
+    {
+     "type": "long",
+     "title": "Long run 6 km",
+     "text": "Slow and steady. Easy pace the whole way, slower is fine. This builds your engine.",
+     "km": 6,
+     "pace": "easy"
+    }
+   ]
+  },
+  {
+   "w": 24,
+   "block": "Build",
+   "runs": [
+    {
+     "type": "easy",
+     "title": "Easy 15 min + 4 strides",
+     "text": "Easy 15 min, then 4 × 20 s quick strides with a walk back. Keep your legs fresh for the test.",
+     "min": 20,
+     "pace": "easy"
+    },
+    {
+     "type": "easy",
+     "title": "Easy 15 min + 4 strides",
+     "text": "Easy 15 min, then 4 × 20 s quick strides with a walk back. Keep your legs fresh for the test.",
+     "min": 20,
+     "pace": "easy"
+    },
+    {
+     "type": "test",
+     "title": "10 km time trial",
+     "text": "Warm up 10 min easy and 3 strides. Then run 10 km as fast as you can hold evenly. Log your time. Goal: under 60 min.",
+     "km": 10,
+     "goal": 60,
+     "pace": "race"
+    }
+   ]
+  },
+  {
+   "w": 25,
+   "block": "Strength",
+   "easyWeek": true,
+   "runs": [
+    {
+     "type": "easy",
+     "title": "Easy run 25 min",
+     "text": "Easy pace: you can talk in full sentences.",
+     "min": 25,
+     "pace": "easy"
+    },
+    {
+     "type": "interval",
+     "title": "4 × 400 m",
+     "text": "Warm up 10 min easy, finish with 5 min easy. Run each 400 m fast but controlled, then 2 min easy jog or walk.",
+     "min": 29,
+     "pace": "interval",
+     "reps": 4,
+     "m": 400
+    },
+    {
+     "type": "long",
+     "title": "Long run 6 km",
+     "text": "Slow and steady. Easy pace the whole way, slower is fine. This builds your engine.",
+     "km": 6,
+     "pace": "easy"
+    }
+   ]
+  },
+  {
+   "w": 26,
+   "block": "Strength",
+   "runs": [
+    {
+     "type": "easy",
+     "title": "Easy run 35 min",
+     "text": "Easy pace: you can talk in full sentences.",
+     "min": 35,
+     "pace": "easy"
+    },
+    {
+     "type": "interval",
+     "title": "6 × 800 m",
+     "text": "Warm up 10 min easy, finish with 5 min easy. Run each 800 m fast but controlled, then 2 min easy jog or walk.",
+     "min": 51,
+     "pace": "interval",
+     "reps": 6,
+     "m": 800
+    },
+    {
+     "type": "long",
+     "title": "Long run 8 km",
+     "text": "Slow and steady. Easy pace the whole way, slower is fine. This builds your engine.",
+     "km": 8,
+     "pace": "easy"
+    }
+   ]
+  },
+  {
+   "w": 27,
+   "block": "Strength",
+   "runs": [
+    {
+     "type": "easy",
+     "title": "Easy run 35 min",
+     "text": "Easy pace: you can talk in full sentences.",
+     "min": 35,
+     "pace": "easy"
+    },
+    {
+     "type": "tempo",
+     "title": "Tempo 20 min",
+     "text": "Warm up 10 min easy, finish with 5 min easy. Run 20 min at a \"comfortably hard\" pace: you can say a few words, not sentences.",
+     "min": 35,
+     "pace": "tempo"
+    },
+    {
+     "type": "long",
+     "title": "Long run 9 km",
+     "text": "Slow and steady. Easy pace the whole way, slower is fine. This builds your engine.",
+     "km": 9,
+     "pace": "easy"
+    }
+   ]
+  },
+  {
+   "w": 28,
+   "block": "Strength",
+   "runs": [
+    {
+     "type": "easy",
+     "title": "Easy run 40 min",
+     "text": "Easy pace: you can talk in full sentences.",
+     "min": 40,
+     "pace": "easy"
+    },
+    {
+     "type": "interval",
+     "title": "8 × 400 m",
+     "text": "Warm up 10 min easy, finish with 5 min easy. Run each 400 m fast but controlled, then 90 s easy jog or walk.",
+     "min": 43,
+     "pace": "interval",
+     "reps": 8,
+     "m": 400
+    },
+    {
+     "type": "long",
+     "title": "Long run 10 km",
+     "text": "Slow and steady. Easy pace the whole way, slower is fine. This builds your engine.",
+     "km": 10,
+     "pace": "easy"
+    }
+   ]
+  },
+  {
+   "w": 29,
+   "block": "Strength",
+   "runs": [
+    {
+     "type": "easy",
+     "title": "Easy run 40 min",
+     "text": "Easy pace: you can talk in full sentences.",
+     "min": 40,
+     "pace": "easy"
+    },
+    {
+     "type": "tempo",
+     "title": "Tempo 25 min",
+     "text": "Warm up 10 min easy, finish with 5 min easy. Run 25 min at a \"comfortably hard\" pace: you can say a few words, not sentences.",
+     "min": 40,
+     "pace": "tempo"
+    },
+    {
+     "type": "long",
+     "title": "Long run 10 km",
+     "text": "Slow and steady. Easy pace the whole way, slower is fine. This builds your engine.",
+     "km": 10,
+     "pace": "easy"
+    }
+   ]
+  },
+  {
+   "w": 30,
+   "block": "Strength",
+   "runs": [
+    {
+     "type": "easy",
+     "title": "Easy run 40 min",
+     "text": "Easy pace: you can talk in full sentences.",
+     "min": 40,
+     "pace": "easy"
+    },
+    {
+     "type": "interval",
+     "title": "4 × 1 km",
+     "text": "Warm up 10 min easy, finish with 5 min easy. Run each 1 km fast but controlled, then 2 min easy jog or walk.",
+     "min": 45,
+     "pace": "interval",
+     "reps": 4,
+     "m": 1000
+    },
+    {
+     "type": "long",
+     "title": "Long run 11 km",
+     "text": "Slow and steady. Easy pace the whole way, slower is fine. This builds your engine.",
+     "km": 11,
+     "pace": "easy"
+    }
+   ]
+  },
+  {
+   "w": 31,
+   "block": "Strength",
+   "runs": [
+    {
+     "type": "easy",
+     "title": "Easy run 40 min",
+     "text": "Easy pace: you can talk in full sentences.",
+     "min": 40,
+     "pace": "easy"
+    },
+    {
+     "type": "tempo",
+     "title": "Tempo 25 min",
+     "text": "Warm up 10 min easy, finish with 5 min easy. Run 25 min at a \"comfortably hard\" pace: you can say a few words, not sentences.",
+     "min": 40,
+     "pace": "tempo"
+    },
+    {
+     "type": "long",
+     "title": "Long run 11 km",
+     "text": "Slow and steady. Easy pace the whole way, slower is fine. This builds your engine.",
+     "km": 11,
+     "pace": "easy"
+    }
+   ]
+  },
+  {
+   "w": 32,
+   "block": "Strength",
+   "runs": [
+    {
+     "type": "easy",
+     "title": "Easy run 40 min",
+     "text": "Easy pace: you can talk in full sentences.",
+     "min": 40,
+     "pace": "easy"
+    },
+    {
+     "type": "interval",
+     "title": "5 × 1 km",
+     "text": "Warm up 10 min easy, finish with 5 min easy. Run each 1 km fast but controlled, then 2 min easy jog or walk.",
+     "min": 53,
+     "pace": "interval",
+     "reps": 5,
+     "m": 1000
+    },
+    {
+     "type": "long",
+     "title": "Long run 12 km",
+     "text": "Slow and steady. Easy pace the whole way, slower is fine. This builds your engine.",
+     "km": 12,
+     "pace": "easy"
+    }
+   ]
+  },
+  {
+   "w": 33,
+   "block": "Strength",
+   "easyWeek": true,
+   "runs": [
+    {
+     "type": "easy",
+     "title": "Easy run 30 min",
+     "text": "Easy pace: you can talk in full sentences.",
+     "min": 30,
+     "pace": "easy"
+    },
+    {
+     "type": "interval",
+     "title": "6 × 400 m",
+     "text": "Warm up 10 min easy, finish with 5 min easy. Run each 400 m fast but controlled, then 2 min easy jog or walk.",
+     "min": 36,
+     "pace": "interval",
+     "reps": 6,
+     "m": 400
+    },
+    {
+     "type": "long",
+     "title": "Long run 8 km",
+     "text": "Slow and steady. Easy pace the whole way, slower is fine. This builds your engine.",
+     "km": 8,
+     "pace": "easy"
+    }
+   ]
+  },
+  {
+   "w": 34,
+   "block": "Strength",
+   "runs": [
+    {
+     "type": "easy",
+     "title": "Easy run 40 min",
+     "text": "Easy pace: you can talk in full sentences.",
+     "min": 40,
+     "pace": "easy"
+    },
+    {
+     "type": "tempo",
+     "title": "Tempo 30 min",
+     "text": "Warm up 10 min easy, finish with 5 min easy. Run 30 min at a \"comfortably hard\" pace: you can say a few words, not sentences.",
+     "min": 45,
+     "pace": "tempo"
+    },
+    {
+     "type": "long",
+     "title": "Long run 12 km",
+     "text": "Slow and steady. Easy pace the whole way, slower is fine. This builds your engine.",
+     "km": 12,
+     "pace": "easy"
+    }
+   ]
+  },
+  {
+   "w": 35,
+   "block": "Strength",
+   "runs": [
+    {
+     "type": "easy",
+     "title": "Easy run 30 min",
+     "text": "Easy pace: you can talk in full sentences.",
+     "min": 30,
+     "pace": "easy"
+    },
+    {
+     "type": "interval",
+     "title": "4 × 800 m",
+     "text": "Warm up 10 min easy, finish with 5 min easy. Run each 800 m fast but controlled, then 2 min easy jog or walk.",
+     "min": 39,
+     "pace": "interval",
+     "reps": 4,
+     "m": 800
+    },
+    {
+     "type": "long",
+     "title": "Long run 7 km",
+     "text": "Slow and steady. Easy pace the whole way, slower is fine. This builds your engine.",
+     "km": 7,
+     "pace": "easy"
+    }
+   ]
+  },
+  {
+   "w": 36,
+   "block": "Strength",
+   "runs": [
+    {
+     "type": "easy",
+     "title": "Easy 15 min + 4 strides",
+     "text": "Easy 15 min, then 4 × 20 s quick strides with a walk back. Keep your legs fresh for the test.",
+     "min": 20,
+     "pace": "easy"
+    },
+    {
+     "type": "easy",
+     "title": "Easy 15 min + 4 strides",
+     "text": "Easy 15 min, then 4 × 20 s quick strides with a walk back. Keep your legs fresh for the test.",
+     "min": 20,
+     "pace": "easy"
+    },
+    {
+     "type": "test",
+     "title": "10 km time trial",
+     "text": "Warm up 10 min easy and 3 strides. Then run 10 km as fast as you can hold evenly. Log your time. Goal: under 50 min.",
+     "km": 10,
+     "goal": 50,
+     "pace": "race"
+    }
+   ]
+  },
+  {
+   "w": 37,
+   "block": "Speed",
+   "runs": [
+    {
+     "type": "easy",
+     "title": "Easy run 35 min",
+     "text": "Easy pace: you can talk in full sentences.",
+     "min": 35,
+     "pace": "easy"
+    },
+    {
+     "type": "interval",
+     "title": "8 × 400 m",
+     "text": "Warm up 10 min easy, finish with 5 min easy. Run each 400 m fast but controlled, then 90 s easy jog or walk.",
+     "min": 43,
+     "pace": "interval",
+     "reps": 8,
+     "m": 400
+    },
+    {
+     "type": "long",
+     "title": "Long run 10 km",
+     "text": "Slow and steady. Easy pace the whole way, slower is fine. This builds your engine.",
+     "km": 10,
+     "pace": "easy"
+    }
+   ]
+  },
+  {
+   "w": 38,
+   "block": "Speed",
+   "runs": [
+    {
+     "type": "easy",
+     "title": "Easy run 40 min",
+     "text": "Easy pace: you can talk in full sentences.",
+     "min": 40,
+     "pace": "easy"
+    },
+    {
+     "type": "tempo",
+     "title": "Tempo 25 min",
+     "text": "Warm up 10 min easy, finish with 5 min easy. Run 25 min at a \"comfortably hard\" pace: you can say a few words, not sentences.",
+     "min": 40,
+     "pace": "tempo"
+    },
+    {
+     "type": "long",
+     "title": "Long run 11 km",
+     "text": "Slow and steady. Easy pace the whole way, slower is fine. This builds your engine.",
+     "km": 11,
+     "pace": "easy"
+    }
+   ]
+  },
+  {
+   "w": 39,
+   "block": "Speed",
+   "runs": [
+    {
+     "type": "easy",
+     "title": "Easy run 40 min",
+     "text": "Easy pace: you can talk in full sentences.",
+     "min": 40,
+     "pace": "easy"
+    },
+    {
+     "type": "interval",
+     "title": "5 × 1 km",
+     "text": "Warm up 10 min easy, finish with 5 min easy. Run each 1 km fast but controlled, then 2 min easy jog or walk.",
+     "min": 53,
+     "pace": "interval",
+     "reps": 5,
+     "m": 1000
+    },
+    {
+     "type": "long",
+     "title": "Long run 12 km",
+     "text": "Slow and steady. Easy pace the whole way, slower is fine. This builds your engine.",
+     "km": 12,
+     "pace": "easy"
+    }
+   ]
+  },
+  {
+   "w": 40,
+   "block": "Speed",
+   "runs": [
+    {
+     "type": "easy",
+     "title": "Easy run 45 min",
+     "text": "Easy pace: you can talk in full sentences.",
+     "min": 45,
+     "pace": "easy"
+    },
+    {
+     "type": "tempo",
+     "title": "Tempo 30 min",
+     "text": "Warm up 10 min easy, finish with 5 min easy. Run 30 min at a \"comfortably hard\" pace: you can say a few words, not sentences.",
+     "min": 45,
+     "pace": "tempo"
+    },
+    {
+     "type": "long",
+     "title": "Long run 12 km",
+     "text": "Slow and steady. Easy pace the whole way, slower is fine. This builds your engine.",
+     "km": 12,
+     "pace": "easy"
+    }
+   ]
+  },
+  {
+   "w": 41,
+   "block": "Speed",
+   "easyWeek": true,
+   "runs": [
+    {
+     "type": "easy",
+     "title": "Easy run 30 min",
+     "text": "Easy pace: you can talk in full sentences.",
+     "min": 30,
+     "pace": "easy"
+    },
+    {
+     "type": "interval",
+     "title": "6 × 400 m",
+     "text": "Warm up 10 min easy, finish with 5 min easy. Run each 400 m fast but controlled, then 2 min easy jog or walk.",
+     "min": 36,
+     "pace": "interval",
+     "reps": 6,
+     "m": 400
+    },
+    {
+     "type": "long",
+     "title": "Long run 8 km",
+     "text": "Slow and steady. Easy pace the whole way, slower is fine. This builds your engine.",
+     "km": 8,
+     "pace": "easy"
+    }
+   ]
+  },
+  {
+   "w": 42,
+   "block": "Speed",
+   "runs": [
+    {
+     "type": "easy",
+     "title": "Easy run 45 min",
+     "text": "Easy pace: you can talk in full sentences.",
+     "min": 45,
+     "pace": "easy"
+    },
+    {
+     "type": "interval",
+     "title": "3 × 2 km",
+     "text": "Warm up 10 min easy, finish with 5 min easy. Run each 2 km fast but controlled, then 3 min easy jog or walk.",
+     "min": 53,
+     "pace": "interval",
+     "reps": 3,
+     "m": 2000
+    },
+    {
+     "type": "long",
+     "title": "Long run 13 km",
+     "text": "Slow and steady. Easy pace the whole way, slower is fine. This builds your engine.",
+     "km": 13,
+     "pace": "easy"
+    }
+   ]
+  },
+  {
+   "w": 43,
+   "block": "Speed",
+   "runs": [
+    {
+     "type": "easy",
+     "title": "Easy run 45 min",
+     "text": "Easy pace: you can talk in full sentences.",
+     "min": 45,
+     "pace": "easy"
+    },
+    {
+     "type": "interval",
+     "title": "10 × 400 m",
+     "text": "Warm up 10 min easy, finish with 5 min easy. Run each 400 m fast but controlled, then 90 s easy jog or walk.",
+     "min": 50,
+     "pace": "interval",
+     "reps": 10,
+     "m": 400
+    },
+    {
+     "type": "long",
+     "title": "Long run 13 km",
+     "text": "Slow and steady. Easy pace the whole way, slower is fine. This builds your engine.",
+     "km": 13,
+     "pace": "easy"
+    }
+   ]
+  },
+  {
+   "w": 44,
+   "block": "Speed",
+   "runs": [
+    {
+     "type": "easy",
+     "title": "Easy run 45 min",
+     "text": "Easy pace: you can talk in full sentences.",
+     "min": 45,
+     "pace": "easy"
+    },
+    {
+     "type": "tempo",
+     "title": "Tempo 35 min",
+     "text": "Warm up 10 min easy, finish with 5 min easy. Run 35 min at a \"comfortably hard\" pace: you can say a few words, not sentences.",
+     "min": 50,
+     "pace": "tempo"
+    },
+    {
+     "type": "long",
+     "title": "Long run 14 km",
+     "text": "Slow and steady. Easy pace the whole way, slower is fine. This builds your engine.",
+     "km": 14,
+     "pace": "easy"
+    }
+   ]
+  },
+  {
+   "w": 45,
+   "block": "Speed",
+   "runs": [
+    {
+     "type": "easy",
+     "title": "Easy run 45 min",
+     "text": "Easy pace: you can talk in full sentences.",
+     "min": 45,
+     "pace": "easy"
+    },
+    {
+     "type": "interval",
+     "title": "6 × 1 km",
+     "text": "Warm up 10 min easy, finish with 5 min easy. Run each 1 km fast but controlled, then 2 min easy jog or walk.",
+     "min": 60,
+     "pace": "interval",
+     "reps": 6,
+     "m": 1000
+    },
+    {
+     "type": "long",
+     "title": "Long run 12 km",
+     "text": "Slow and steady. Easy pace the whole way, slower is fine. This builds your engine.",
+     "km": 12,
+     "pace": "easy"
+    }
+   ]
+  },
+  {
+   "w": 46,
+   "block": "Speed",
+   "runs": [
+    {
+     "type": "easy",
+     "title": "Easy run 45 min",
+     "text": "Easy pace: you can talk in full sentences.",
+     "min": 45,
+     "pace": "easy"
+    },
+    {
+     "type": "interval",
+     "title": "3 × 2 km",
+     "text": "Warm up 10 min easy, finish with 5 min easy. Run each 2 km fast but controlled, then 3 min easy jog or walk.",
+     "min": 53,
+     "pace": "interval",
+     "reps": 3,
+     "m": 2000
+    },
+    {
+     "type": "long",
+     "title": "Long run 14 km",
+     "text": "Slow and steady. Easy pace the whole way, slower is fine. This builds your engine.",
+     "km": 14,
+     "pace": "easy"
+    }
+   ]
+  },
+  {
+   "w": 47,
+   "block": "Speed",
+   "runs": [
+    {
+     "type": "easy",
+     "title": "Easy run 45 min",
+     "text": "Easy pace: you can talk in full sentences.",
+     "min": 45,
+     "pace": "easy"
+    },
+    {
+     "type": "tempo",
+     "title": "Tempo 35 min",
+     "text": "Warm up 10 min easy, finish with 5 min easy. Run 35 min at a \"comfortably hard\" pace: you can say a few words, not sentences.",
+     "min": 50,
+     "pace": "tempo"
+    },
+    {
+     "type": "long",
+     "title": "Long run 12 km",
+     "text": "Slow and steady. Easy pace the whole way, slower is fine. This builds your engine.",
+     "km": 12,
+     "pace": "easy"
+    }
+   ]
+  },
+  {
+   "w": 48,
+   "block": "Speed",
+   "runs": [
+    {
+     "type": "easy",
+     "title": "Easy run 45 min",
+     "text": "Easy pace: you can talk in full sentences.",
+     "min": 45,
+     "pace": "easy"
+    },
+    {
+     "type": "interval",
+     "title": "2 × 3 km",
+     "text": "Warm up 10 min easy, finish with 5 min easy. Run each 3 km fast but controlled, then 3 min easy jog or walk. Run these at tempo pace, not faster.",
+     "min": 50,
+     "pace": "interval",
+     "reps": 2,
+     "m": 3000
+    },
+    {
+     "type": "long",
+     "title": "Long run 14 km",
+     "text": "Slow and steady. Easy pace the whole way, slower is fine. This builds your engine.",
+     "km": 14,
+     "pace": "easy"
+    }
+   ]
+  },
+  {
+   "w": 49,
+   "block": "Speed",
+   "easyWeek": true,
+   "runs": [
+    {
+     "type": "easy",
+     "title": "Easy run 30 min",
+     "text": "Easy pace: you can talk in full sentences.",
+     "min": 30,
+     "pace": "easy"
+    },
+    {
+     "type": "interval",
+     "title": "6 × 400 m",
+     "text": "Warm up 10 min easy, finish with 5 min easy. Run each 400 m fast but controlled, then 2 min easy jog or walk.",
+     "min": 36,
+     "pace": "interval",
+     "reps": 6,
+     "m": 400
+    },
+    {
+     "type": "long",
+     "title": "Long run 8 km",
+     "text": "Slow and steady. Easy pace the whole way, slower is fine. This builds your engine.",
+     "km": 8,
+     "pace": "easy"
+    }
+   ]
+  },
+  {
+   "w": 50,
+   "block": "Speed",
+   "runs": [
+    {
+     "type": "easy",
+     "title": "Easy run 40 min",
+     "text": "Easy pace: you can talk in full sentences.",
+     "min": 40,
+     "pace": "easy"
+    },
+    {
+     "type": "interval",
+     "title": "5 × 1 km",
+     "text": "Warm up 10 min easy, finish with 5 min easy. Run each 1 km fast but controlled, then 2 min easy jog or walk. Run these at your goal race pace.",
+     "min": 53,
+     "pace": "interval",
+     "reps": 5,
+     "m": 1000
+    },
+    {
+     "type": "long",
+     "title": "Long run 10 km",
+     "text": "Slow and steady. Easy pace the whole way, slower is fine. This builds your engine.",
+     "km": 10,
+     "pace": "easy"
+    }
+   ]
+  },
+  {
+   "w": 51,
+   "block": "Speed",
+   "runs": [
+    {
+     "type": "easy",
+     "title": "Easy run 30 min",
+     "text": "Easy pace: you can talk in full sentences.",
+     "min": 30,
+     "pace": "easy"
+    },
+    {
+     "type": "interval",
+     "title": "4 × 1 km",
+     "text": "Warm up 10 min easy, finish with 5 min easy. Run each 1 km fast but controlled, then 2 min easy jog or walk. Goal race pace. Short week: rest up.",
+     "min": 45,
+     "pace": "interval",
+     "reps": 4,
+     "m": 1000
+    },
+    {
+     "type": "long",
+     "title": "Long run 6 km",
+     "text": "Slow and steady. Easy pace the whole way, slower is fine. This builds your engine.",
+     "km": 6,
+     "pace": "easy"
+    }
+   ]
+  },
+  {
+   "w": 52,
+   "block": "Speed",
+   "runs": [
+    {
+     "type": "easy",
+     "title": "Easy 15 min + 4 strides",
+     "text": "Easy 15 min, then 4 × 20 s quick strides with a walk back. Keep your legs fresh for the test.",
+     "min": 20,
+     "pace": "easy"
+    },
+    {
+     "type": "easy",
+     "title": "Easy 15 min + 4 strides",
+     "text": "Easy 15 min, then 4 × 20 s quick strides with a walk back. Keep your legs fresh for the test.",
+     "min": 20,
+     "pace": "easy"
+    },
+    {
+     "type": "test",
+     "title": "10 km time trial",
+     "text": "Warm up 10 min easy and 3 strides. Then run 10 km as fast as you can hold evenly. Log your time. Goal: under 45 min.",
+     "km": 10,
+     "goal": 45,
+     "pace": "race"
+    }
+   ]
+  }
+ ]
+}

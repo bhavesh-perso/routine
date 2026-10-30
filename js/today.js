@@ -118,6 +118,7 @@ function tiles(rd, ctx) {
   const s = ctx.s, log = getDayLog(rd), wt = waterTarget(rd, s);
   const nDone = HABITS.filter(h => habitDone(rd, h, s)).length;
   let g = null; try { g = gym.sessionFor(rd, s); } catch { /* none */ }
+  let sr = null; try { sr = g ? null : gym.runFor(rd, s); } catch { /* none */ }
   let tot = { k: 0, p: 0 }; try { tot = food.totals(rd) || tot; } catch { /* none */ }
   let sf = null; try { sf = study.studyFor(rd, s); } catch { /* none */ }
   const sl = (get('study').log || {})[rd] || {};
@@ -126,7 +127,7 @@ function tiles(rd, ctx) {
   const studySmall = sf ? (awsDone ? 'AWS done' : 'AWS') + (mand ? ' · Mandarin done' : ` + Mandarin`) : '';
   return `<div class="tiles">
     ${tile('checklist', 'check', 'Checklist', `${nDone} of 3`, `Water ${log.water} / ${wt} ml`, nDone === 3)}
-    ${tile('gym', 'gym', 'Gym', g ? (g.done ? 'Done' : g.start) : 'Rest', g ? esc(g.kind) : 'No session today', g && g.done)}
+    ${tile('gym', 'gym', 'Gym', g ? (g.done ? 'Done' : g.nextDay ? 'Tomorrow ' + g.start : g.start) : sr ? sr.start : 'Rest', g ? esc(g.kind) + (g.run ? ' + run' : '') : sr ? esc(sr.title) : 'No session today', g ? g.done : !!(sr && gym.loggedRuns()[rd]))}
     ${tile('food', 'food', 'Food', `${tot.p} g`, `protein · ${tot.k} kcal so far`, false)}
     ${tile('study', 'study', 'Study', studyBig, studySmall, awsDone)}
   </div>

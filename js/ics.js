@@ -4,7 +4,7 @@ import { dayPlan } from './plan.js';
 import { addDays } from './util.js';
 
 export const TZID = 'Indian/Mauritius';
-const KINDS = ['shift', 'gym', 'study', 'weigh'];
+const KINDS = ['shift', 'gym', 'run', 'study', 'weigh'];
 const MIN_LEN = { weigh: 10 }; // calendar entries shorter than this look broken; give them some room
 
 const pad = n => String(n).padStart(2, '0');

@@ -3,9 +3,10 @@
 import * as G from './gym.js';
 import { esc, dayLabel, fmt, nowLocal } from './util.js';
 import { ask } from './sheet.js';
+import * as R from './run.js';
 
 const fin = v => typeof v === 'number' && Number.isFinite(v);
-const ui = { mode: 'guided', rpe: null, flash: '', swapFor: null, edit: null, feel: null };
+const ui = { mode: 'guided', rpe: null, flash: '', swapFor: null, edit: null, feel: null, runEdit: null };
 let audio = null, beepedFor = null, wakeLock = null, tick = null, visHooked = false;
 
 // ---------- pure helpers (tested) ----------
@@ -212,10 +213,10 @@ const workIdx = (e, si) => si - e.sets.filter((o, k) => k < si && o.type === 'wa
 
 function guided(x, s) {
   const pos = nextSet(x);
-  if (!pos) return finishBlock(x, s);
+  if (!pos) return runAfter(s, x) + finishBlock(x, s);
   const { ei, si } = pos, e = x.ex[ei], st = e.sets[si], t = targetFor(x, ei, si), ex = G.EX(e.id) || {};
   const after = (() => { const c = structuredCloneSafe(x); c.ex[ei].sets[si].done = {}; return nextSet(c); })();
-  const upNext = !after ? (G.sessionFor(x.planIso, s)?.cardio && !x.short ? 'Cardio, then finish' : 'Finish the session')
+  const upNext = !after ? (G.sessionFor(x.planIso, s)?.run ? 'Run, then finish' : 'Finish the session')
     : after.ei === ei ? `${setLabel(e, after.si)} · ${G.fmtPlan(targetFor(x, after.ei, after.si), e.id)}` : `${G.exerciseName(x.ex[after.ei].id)}`;
   const alts = (G.EX(e.from || e.id)?.alts || []).concat(e.from ? [e.from] : []).filter(a => a !== e.id && G.EX(a));
   return `<section class="gym-guided" aria-labelledby="gs-ex">
@@ -252,10 +253,9 @@ function listView(x) {
 }
 
 function finishBlock(x, s) {
-  const slot = G.sessionFor(x.planIso, s), cardio = slot?.cardio && !x.short ? slot.cardio : 0, t = sessionTotals(x);
+  const t = sessionTotals(x);
   const feel = ui.feel ?? x.feel;
   return `<section class="gym-finish" aria-labelledby="gs-fin"><h2 id="gs-fin">${nextSet(x) ? 'Finish early' : 'Lifting done'}</h2>
-  ${cardio ? `<p><b>Now:</b> ${esc(G.cardioText(cardio, slot.cardioWith))}</p>` : ''}
   <p class="muted num">${t.sets} working sets · ${t.kg} kg volume so far</p>
   <p>How did it feel?</p><div class="chips" role="group" aria-label="How did it feel">${['bad', 'ok', 'good'].map(f => `<button type="button" class="btn small" data-act="gym-feel" data-v="${f}" aria-pressed="${feel === f}">${f[0].toUpperCase() + f.slice(1)}</button>`).join('')}</div>
   <label class="field"><span>Notes (optional)</span><textarea id="gym-notes" rows="3">${esc(x.notes || '')}</textarea></label>
@@ -269,7 +269,7 @@ export function sessionView(ctx) {
     if (today && !today.done) return `<a class="back" href="#/gym">Gym</a><h1 class="page-title">${esc(today.kind)}</h1><p class="muted">${esc(dayLabel(ctx.rd))}</p>${G.preview(ctx, ctx.rd, true)}`;
     const nx = G.nextSession(ctx.rd, s, false);
     return `<a class="back" href="#/gym">Gym</a><h1 class="page-title">No session today</h1>
-    <p>${today?.done ? "Today's session is done." : 'Today is a rest day.'}${nx ? ` Next: ${esc(nx.kind)} on ${esc(dayLabel(nx.iso))} at <span class="num">${nx.time}</span>.` : ''}</p><p><a class="btn" href="#/gym">Go to the gym overview</a></p>`;
+    <p>${today?.done ? "Today's session is done." : 'Today is a rest day.'}${nx ? ` Next: ${esc(nx.kind)} on ${esc(dayLabel(nx.iso))} at <span class="num">${esc(G.whenText(nx))}</span>.` : ''}</p><p><a class="btn" href="#/gym">Go to the gym overview</a></p>`;
   }
   const slot = G.sessionFor(x.planIso, s), n = x.ex.reduce((a, e) => a + e.sets.length, 0), d = x.ex.reduce((a, e) => a + e.sets.filter(st => st.done || st.skip).length, 0);
   const pct = n ? Math.round(d / n * 100) : 0;
@@ -281,10 +281,75 @@ export function sessionView(ctx) {
   ${d === 0 ? `<p class="note calm">${esc(G.PRE_GYM)}</p><p><b>Start with the warm-up.</b> ${esc(G.WARMUP)}</p>${slot?.week <= 2 ? '<p class="muted">First weeks: keep the effort around 6–7 out of 10. You should finish each set feeling you could do 3–4 more.</p>' : ''}` : ''}
   ${restBlock()}
   <div class="seg" role="group" aria-label="View"><button type="button" data-act="gym-mode" data-v="guided" aria-pressed="${ui.mode === 'guided'}">One set at a time</button><button type="button" data-act="gym-mode" data-v="list" aria-pressed="${ui.mode === 'list'}">All sets</button></div>
-  ${ui.mode === 'list' ? listView(x) + (nextSet(x) ? '' : finishBlock(x, s)) : guided(x, s)}
-  ${ui.mode === 'list' && nextSet(x) ? finishBlock(x, s) : ''}
+  ${runFirst(s, x)}
+  ${ui.mode === 'list' ? listView(x) + runAfter(s, x) + finishBlock(x, s) : guided(x, s)}
   ${ui.mode === 'guided' && nextSet(x) ? `<details class="fold"><summary>Finish early or discard</summary>${finishBlock(x, s)}<button type="button" class="btn small ghost" data-act="gym-discard">Discard this session</button></details>` : ''}
   </div>`;
+}
+
+// ---------- running ----------
+// Plan text and targets for one run def. race = 10 km race pace in s/km, or null before any test.
+export function runBody(def, race) {
+  const lines = R.targetLines(def, race);
+  return `<p>${esc(def.text || '')}</p>${lines.map(l => `<p class="gym-target muted num">${esc(l)}</p>`).join('')}${race == null && def.pace ? '<p class="muted">Log a test run to get exact paces.</p>' : ''}`;
+}
+const runInput = (id, label, mode, value) => `<label class="field gym-in"><span>${label}</span><input id="${id}" type="text" inputmode="${mode}" autocomplete="off" value="${esc(value)}"></label>`;
+// The Run card: plan, targets, and time + distance inputs (or the logged result with Edit and Delete).
+export function runCard(s, iso) {
+  const r = G.runOn(iso, s); if (!r) return '';
+  const logged = G.loggedRuns()[iso], editing = ui.runEdit === iso, race = G.racePace();
+  const form = `<div class="row gym-inputs">${runInput('gym-run-min', 'Time (min)', 'decimal', logged ? logged.min : '')}${runInput('gym-run-km', 'Distance (km)', 'decimal', logged ? logged.km : r.km ?? '')}</div>
+    <div class="row"><button type="button" class="btn primary" data-act="gym-run-log" data-iso="${iso}">${logged ? 'Save run' : 'Log run'}</button>${editing ? `<button type="button" class="btn ghost" data-act="gym-run-cancel" data-iso="${iso}">Cancel</button>` : ''}</div>
+    <p class="muted">Time as minutes (47.5) or 47:30. ${r.type === 'test' ? 'A logged test sets your training paces straight away.' : (r.standalone ? 'Log it when you are done.' : 'Optional: finishing the session without it is fine.')}</p>`;
+  return `<section class="gym-run" aria-labelledby="gr-h"><h2 id="gr-h">Run</h2>
+  <p><b>${esc(r.title)}</b> <span class="muted num">about ${r.estMin} min</span></p>${runBody(r, race)}
+  ${logged && !editing ? `<p class="note calm">Logged: ${esc(R.fmtResult(logged))}</p><div class="row"><button type="button" class="btn small" data-act="gym-run-edit" data-iso="${iso}">Edit</button><button type="button" class="btn small ghost" data-act="gym-run-del" data-iso="${iso}">Delete</button></div>` : form}
+  </section>`;
+}
+// A time trial attached to a session comes first (run.first); every other run comes after the exercises.
+const runFirst = (s, x) => G.runOn(x.planIso, s)?.first ? runCard(s, x.planIso) : '';
+const runAfter = (s, x) => G.runOn(x.planIso, s)?.first ? '' : runCard(s, x.planIso);
+// "Log a run" form for the gym overview: any date up to today, type, distance, time.
+export function freeRunForm(rd) {
+  return `<details class="fold gym-free"><summary>Log a run</summary>
+  <p class="muted">For a run that was not on the plan. If that date has a planned run, this fills it in. A time trial sets your paces.</p>
+  <label class="field gym-in"><span>Date</span><input id="gym-runf-date" type="date" value="${esc(rd)}" max="${esc(rd)}"></label>
+  <label class="field gym-in"><span>Type</span><select id="gym-runf-type"><option value="easy">Easy</option><option value="long">Long</option><option value="test">Time trial</option></select></label>
+  <div class="row gym-inputs">${runInput('gym-runf-min', 'Time (min)', 'decimal', '')}${runInput('gym-runf-km', 'Distance (km)', 'decimal', '')}</div>
+  <button type="button" class="btn primary" data-act="gym-run-free">Log run</button></details>`;
+}
+// #/gym/run/<iso>: a standalone run, or the run of a gym day, without an active session.
+export function runView(ctx, iso) {
+  const ok = /^\d{4}-\d{2}-\d{2}$/.test(iso || ''), r = ok ? G.runOn(iso, ctx.s) : null;
+  if (!r) return `<a class="back" href="#/gym">Gym</a><h1 class="page-title">Run</h1><p class="note calm">No run is planned on that day.</p>`;
+  const when = r.standalone ? `${r.start}–${r.end}` : G.whenText(r.slot);
+  return `<a class="back" href="#/gym">Gym</a><h1 class="page-title">Run</h1><p class="muted">${esc(dayLabel(iso))} · <span class="num">${esc(when)}</span>${r.standalone ? '' : ` · after ${esc(r.slot.kind)}`} · week ${r.week}, ${esc(r.block)}</p>
+  ${runCard(ctx.s, iso)}`;
+}
+export async function runClick(act, el, ctx) {
+  const iso = el.dataset.iso;
+  if (act === 'gym-run-edit') { ui.runEdit = iso; return true; }
+  if (act === 'gym-run-cancel') { ui.runEdit = null; return true; }
+  if (act === 'gym-run-del') {
+    if (!(await ask('The logged time and distance are removed.', { title: 'Delete this run?', ok: 'Delete', danger: true }))) return false;
+    G.deleteRun(iso); ui.runEdit = null; ctx.notify('Run deleted'); return true;
+  }
+  if (act === 'gym-run-free') {
+    const g = id => document.getElementById(id)?.value, iso = g('gym-runf-date'), type = g('gym-runf-type');
+    const min = R.parseMin(g('gym-runf-min')), km = R.parseKm(g('gym-runf-km'));
+    if (min === null || km === null) { ctx.notify('Enter both the time and the distance'); return false; }
+    const r = G.logRun(iso, km, min, ctx.s, ctx.ms ?? Date.now(), { free: { type, today: ctx.rd } });
+    if (!r.ok) { ctx.notify(r.error); return false; }
+    ctx.notify('Run logged'); return true;
+  }
+  if (act === 'gym-run-log') {
+    const min = R.parseMin(document.getElementById('gym-run-min')?.value), km = R.parseKm(document.getElementById('gym-run-km')?.value);
+    if (min === null || km === null) { ctx.notify('Enter both the time and the distance'); return false; }
+    const r = G.logRun(iso, km, min, ctx.s, ctx.ms ?? Date.now());
+    if (!r.ok) { ctx.notify(r.error); return false; }
+    ui.runEdit = null; ctx.notify('Run logged'); return true;
+  }
+  return false;
 }
 
 export function summaryView(ctx, id) {

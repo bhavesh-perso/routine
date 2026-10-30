@@ -48,3 +48,12 @@ Durable "why" behind the app. Newest last. The full brief is the build prompt pl
 - Prices added per food; Settings → Food has the monthly budget. With real 2026 prices the plan comes to about Rs 5,400–6,300 a month at 2,500 kcal / 120 g; the planner leans on cheap dishes (twice in the rotation) and cheap quick meals but does not drop variety or targets to force 5,000.
 - Fixed: rejected meal combinations were being added to the shopping list.
 - Follow-up: kept as is (no dishes dropped, targets unchanged). Budget card simply shows the plan runs over; raise the budget in Settings if wanted.
+
+## 2026-10-30 — 5-day gym, running plan, sleep moved
+- Why: user joined a commercial gym. Wants 5+ days a week, machines + free weights, gym after night shifts at the gym near home. Goal: fat to muscle, plus 10 km under 45 min in a year.
+- Coach chose 5-day Upper/Lower/Push/Pull/Legs from week 1 (phases and five-day gate dropped). Each muscle 2x/week. Recovery fits 12 h shifts. Caps: 5 per rolling 7, max 3 in a row, 20 h between starts, work days max 3 (tight max 2).
+- Night shift: gym = next morning after drive home, before bed. Sleep moved to 09:30 so it fits (nightWork 09:30-16:00, nightOff 09:30-16:30).
+- Running: 52-week plan (base / build / strength / speed), time trials wk 12/24/36/52. Runs only after non-leg days (or standalone on a free off day). Paces from Riegel on latest test. Runs do not count toward gym caps. See `docs/reference.md` → Gym.
+- Food: protein 130 g at 70 kg (about 1.85 g/kg). kcal kept 2500.
+- Old default values reset once (`meta.defaults2`) so new defaults apply.
+- Open: morning-shift gym location undecided. Default gym near work 19:15-20:00. Change in Settings.

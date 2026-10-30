@@ -5,8 +5,11 @@ import { getDay } from './schedule.js';
 import { toMin, fmt, addDays, dow } from './util.js';
 
 // Other modules register themselves here so plan.js never imports them (no cycles).
-// gymFor(iso, s) -> { kind, loc, cardio, start:'HH:MM', end:'HH:MM' } | null
-const providers = { gymFor: () => null };
+// gymFor(iso, s) -> { kind, loc, cardio, start:'HH:MM', end:'HH:MM', nextDay? } | null
+// nextDay: true means the slot is on the next calendar morning (after a night shift); add 1440 to its minutes.
+// A gym slot may carry run: { title, estMin } (a run done after the session).
+// runFor(iso, s) -> { title, start:'HH:MM', end:'HH:MM', km? } | null: a standalone run on an off day.
+const providers = { gymFor: () => null, runFor: () => null };
 export const setProviders = p => Object.assign(providers, p);
 
 const keyOf = d => d.block + (d.type === 'work' ? 'Work' : 'Off');
@@ -92,19 +95,19 @@ const meal = (t, slot, note = '') => blk(t, t + 20, 'meal', SLOT_LABEL[slot] + n
 export function dayPlan(iso, s) {
   const d = getDay(iso, s), sw = switchInfo(iso, s), wake = wakeFor(iso, s), sl = sleepFor(iso, s);
   const bed = bedFor(iso, s), tomorrowWork = getDay(addDays(iso, 1), s).type === 'work';
-  const g = providers.gymFor(iso, s), st = studyMinutes(iso, s), studyLen = st.aws + st.mandarin;
+  const g = providers.gymFor(iso, s), rn = providers.runFor(iso, s), st = studyMinutes(iso, s), studyLen = st.aws + st.mandarin;
   const studyLabel = st.aws ? `Study: AWS ${st.aws} min + Mandarin ${st.mandarin} min` : `Mandarin ${st.mandarin} min`;
   const out = [blk(sl.start, sl.end, 'sleep', sl.nap ? 'Nap after the shift' : 'Sleep')];
   if (dow(iso) === s.weighDay) out.push(blk(wake, wake + 5, 'weigh', 'Weigh-in'));
-  const gymBlk = (a, b, extra) => blk(a, b, 'gym', `Gym: ${g.kind} at the ${g.loc} gym`, { loc: g.loc, ...extra });
+  const gymBlk = (a, b, extra) => blk(a, b, 'gym', `Gym: ${g.kind} (${g.loc === 'work' ? 'gym near work' : 'gym near home'})${g.run ? ` + run ${g.run.estMin} min` : ''}`, { loc: g.loc, ...extra });
+  const gymMin = () => { const o = g.nextDay ? 1440 : 0; return [toMin(g.start) + o, toMin(g.end) + o]; };
   const pack = t => out.push(blk(t, t, 'reminder', d.type === 'work' && d.block === 'night' ? 'Pack shift food and gym bag' : "Pack tomorrow's food and gym bag"));
 
   if (d.type === 'work') {
     const S = toMin(d.shiftStart); let E = toMin(d.shiftEnd); if (E <= S) E += 1440;
     if (d.block === 'night') {
       out.push(meal(wake, 'm1'));
-      let studyAt = wake + 45;
-      if (g) { const a = toMin(g.start), b = toMin(g.end); out.push(gymBlk(a, b, { note: 'Shower at home after' })); studyAt = b + 15; }
+      const studyAt = wake + 45;
       if (studyLen) out.push(blk(studyAt, studyAt + studyLen, 'study', studyLabel));
       out.push(blk(S - 90, S - 80, 'walk', '10-minute walk'));
       pack(S - 75);
@@ -115,7 +118,13 @@ export function dayPlan(iso, s) {
       out.push(blk(S + 360, S + 360, 'reminder', 'Caffeine cutoff'));
       out.push(meal(S + 540, 'snack'));
       out.push(blk(E, E + s.drive, 'drive', 'Drive home. Wear sunglasses', { drowsy: true }));
-      out.push(blk(E + s.drive, E + s.drive + 30, 'meal', 'Shower, then a small light Meal 3', { slot: 'm3' }));
+      if (g) {
+        // The session is the morning after the shift: home, gym, then shower and the meal, then sleep.
+        const [a, b] = gymMin();
+        out.push(gymBlk(a, b, { note: 'After the shift' }));
+        // Bed can be only minutes after the gym (09:00 before an off day), so the meal is cut to fit and kept.
+        out.push(blk(b, Math.max(b + 1, Math.min(b + 30, bed)), 'meal', 'Shower, then Meal 3 (protein)', { slot: 'm3', keep: true }));
+      } else out.push(blk(E + s.drive, E + s.drive + 30, 'meal', 'Shower, then a small light Meal 3', { slot: 'm3' }));
     } else {
       out.push(meal(wake + 15, 'm1', ' (quick breakfast)'));
       const leave = S - s.leaveEarly.morning;
@@ -125,7 +134,7 @@ export function dayPlan(iso, s) {
       out.push(blk(S + 330, S + 340, 'walk', '10-minute walk on your break'));
       out.push(meal(S + 510, 'snack'));
       if (g) {
-        const a = toMin(g.start), b = toMin(g.end);
+        const [a, b] = gymMin();
         out.push(gymBlk(a, b, { tight: true }));
         out.push(blk(b + 5, b + 5 + s.drive, 'drive', 'Drive home'));
         out.push(meal(b + 50, 'm3'));
@@ -146,7 +155,7 @@ export function dayPlan(iso, s) {
     if (nightStyle) {
       out.push(meal(wake + 15, 'm1'));
       out.push(blk(wake + 60, wake + 70, 'walk', '10-minute walk'));
-      if (g) { const a = toMin(g.start), b = toMin(g.end); out.push(gymBlk(a, b)); cookAt = b + 15; } else cookAt = wake + 120;
+      if (g) { const [a, b] = gymMin(); out.push(gymBlk(a, b)); cookAt = b + 15; } else cookAt = wake + 120;
       if (isPrepDay(iso, s)) out.push(blk(cookAt, cookAt + 75, 'cook', 'Batch cook for the work days'));
       out.push(meal(isPrepDay(iso, s) && g ? cookAt + 75 : wake + 240, 'm2'));
       if (studyLen) out.push(blk(wake + 300, wake + 300 + studyLen, 'study', studyLabel));
@@ -160,9 +169,10 @@ export function dayPlan(iso, s) {
       out.push(meal(at(375), 'm2'));
       out.push(blk(at(405), at(405) + 10, 'walk', '10-minute walk after lunch'));
       out.push(meal(at(585), 'snack'));
-      if (g) out.push(gymBlk(toMin(g.start), toMin(g.end)));
+      if (g) out.push(gymBlk(...gymMin()));
       out.push(meal(at(795), 'm3'));
     }
+    if (rn) out.push(blk(toMin(rn.start), Math.max(toMin(rn.start) + 1, toMin(rn.end)), 'run', `Run: ${rn.title}`, { km: rn.km ?? null }));
     if (tomorrowWork) pack(bed - 30);
   }
   out.push(blk(bed, bed + 1, 'sleep', 'Sleep', { bedtime: true }));
@@ -172,7 +182,7 @@ export function dayPlan(iso, s) {
 // Moves meals, snacks and walks that land inside gym, cooking or study to just after it,
 // and drops anything that would fall after bedtime.
 function settle(list, wake, bed) {
-  const busy = list.filter(b => ['gym', 'cook', 'study', 'shift'].includes(b.kind));
+  const busy = list.filter(b => ['gym', 'run', 'cook', 'study', 'shift'].includes(b.kind));
   for (const b of list) {
     if (!['meal', 'walk'].includes(b.kind)) continue;
     for (let i = 0; i < 4; i++) {
@@ -187,7 +197,7 @@ function settle(list, wake, bed) {
     const p = soft[i - 1], b = soft[i];
     if (b.start < p.end + 5) { const len = b.end - b.start; b.start = p.end + 5; b.end = b.start + len; }
   }
-  return list.filter(b => b.kind === 'sleep' || b.start < bed - 10).sort((a, b) => a.start - b.start || (a.kind === 'sleep' ? -1 : 1));
+  return list.filter(b => b.kind === 'sleep' || b.keep || b.start < bed - 10).sort((a, b) => a.start - b.start || (a.kind === 'sleep' ? -1 : 1));
 }
 
 // "08:15" or "07:00 tomorrow" style label for a minute offset relative to the day's date.

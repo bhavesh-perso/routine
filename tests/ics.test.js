@@ -22,6 +22,12 @@ const ics = buildIcs(s, FROM, DAYS, { now: NOW });
 const lines = ics.split('\r\n');
 const unfolded = ics.replace(/\r\n /g, '');
 
+{
+  setProviders({ runFor: iso => iso === '2026-10-31' ? { title: 'Long run 5 km', start: '18:00', end: '18:35', km: 5 } : null });
+  const ev = icsEvents(s, FROM, DAYS).filter(e => e.kind === 'run');
+  ok('ics export includes a run event for a standalone run', ev.length === 1 && ev[0].summary === 'Run: Long run 5 km' && ev[0].start.endsWith('T180000') && ev[0].end.endsWith('T183500'));
+  setProviders({ runFor: () => null });
+}
 ok('starts with BEGIN:VCALENDAR and ends with END:VCALENDAR + CRLF', ics.startsWith('BEGIN:VCALENDAR\r\n') && ics.endsWith('END:VCALENDAR\r\n'));
 ok('VERSION and PRODID present', /\r\nVERSION:2\.0\r\n/.test(ics) && /\r\nPRODID:/.test(ics));
 ok('VTIMEZONE for Indian/Mauritius, +0400, no DAYLIGHT', /BEGIN:VTIMEZONE\r\nTZID:Indian\/Mauritius\r\nBEGIN:STANDARD/.test(ics) && /TZOFFSETFROM:\+0400\r\nTZOFFSETTO:\+0400/.test(ics) && !ics.includes('DAYLIGHT'));
@@ -45,7 +51,7 @@ ok('BEGIN/END balanced', (unfolded.match(/BEGIN:VEVENT/g) || []).length === (unf
 const shift28 = vevents.find(v => v.includes('UID:20261028-shift@routine.bhavesh-perso'));
 ok('night shift 28 Oct 19:00 → 29 Oct 07:00 in Mauritius time', !!shift28 && shift28.includes('DTSTART;TZID=Indian/Mauritius:20261028T190000') && shift28.includes('DTEND;TZID=Indian/Mauritius:20261029T070000'));
 ok('gym 30 Oct 18:00–19:15', vevents.some(v => v.includes('UID:20261030-gym@routine.bhavesh-perso') && v.includes(':20261030T180000') && v.includes(':20261030T191500')));
-ok('weigh-in on Sunday 1 Nov at wake, at least 10 min long', vevents.some(v => v.includes('UID:20261101-weigh@') && v.includes('DTSTART;TZID=Indian/Mauritius:20261101T160000') && v.includes('DTEND;TZID=Indian/Mauritius:20261101T161000')));
+ok('weigh-in on Sunday 1 Nov at wake, at least 10 min long', vevents.some(v => v.includes('UID:20261101-weigh@') && v.includes('DTSTART;TZID=Indian/Mauritius:20261101T163000') && v.includes('DTEND;TZID=Indian/Mauritius:20261101T164000')));
 ok('DTSTAMP is UTC', vevents.every(v => v.includes('DTSTAMP:20261026T060000Z')));
 const uids = vevents.map(v => v.match(/UID:([^\r]+)/)[1]);
 ok('UIDs are unique', new Set(uids).size === uids.length);
@@ -57,6 +63,12 @@ const overlap = buildIcs(s, '2026-10-28', 3, { now: NOW }).replace(/\r\n /g, '')
 ok('UIDs stable when the range starts on a different day', overlap.includes('UID:20261028-shift@routine.bhavesh-perso') && overlap.includes('UID:20261030-gym@routine.bhavesh-perso'));
 
 ok('default range is 56 days', new Set(icsEvents(s, FROM).map(e => e.iso)).size === 56);
+
+// The morning after a night shift: nextDay slot lands on the next calendar date.
+setProviders({ gymFor: iso => iso === '2026-10-29' ? { kind: 'Upper', loc: 'home', start: '07:50', end: '08:50', nextDay: true } : null });
+const nd = icsEvents(s, '2026-10-29', 1).find(e => e.kind === 'gym');
+ok('next-morning gym session exports on the next calendar day (07:50-08:50)', nd.iso === '2026-10-29' && nd.start === '20261030T075000' && nd.end === '20261030T085000' && nd.summary === 'Gym: Upper (gym near home)');
+ok('its UID stays on the plan day', nd.uid === '20261029-gym@routine.bhavesh-perso');
 
 // Helpers
 ok('localStamp: ≥1440 rolls to the next day', localStamp('2026-10-31', 1860) === '20261101T070000');

@@ -10,6 +10,7 @@ export const EQUIPMENT = ['barbell', 'rack', 'machines', 'dumbbells', 'cables', 
 const EQUIP_LABEL = { barbell: 'Barbell', rack: 'Squat rack', machines: 'Machines', dumbbells: 'Dumbbells', cables: 'Cables', bands: 'Bands', bench: 'Bench', treadmill: 'Treadmill', bike: 'Exercise bike', rower: 'Rower' };
 const DAY_TYPES = [['nightWork', 'Night block, work day'], ['nightOff', 'Night block, off day'], ['morningWork', 'Morning block, work day'], ['morningOff', 'Morning block, off day']];
 const WEEKDAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const GYM_DAY_TYPES = [['nightWork', 'After a night shift (next morning)'], ['nightOff', 'Night-block off day'], ['morningWork', 'After a morning shift'], ['morningOff', 'Morning-block off day']];
 const SECTIONS = [['shifts', 'Shifts'], ['overrides', 'Changed days'], ['sleep', 'Sleep'], ['gym', 'Gym'], ['food', 'Food and water'], ['study', 'Study'], ['progress', 'Progress'], ['data', 'Backup and data']];
 const BACKUP_DAYS = 14;
 
@@ -214,23 +215,23 @@ function gymSection(s) {
     const [a, b] = String(s.gymSlots[k] || '').split('-');
     return `<h3>${name}</h3>${pair(input('From', `gymSlots.${k}#0`, a, 'time'), input('To', `gymSlots.${k}#1`, b, 'time'))}${errFor('gymSlots.' + k)}`;
   };
-  const loc = ([k, name]) => select(name, `gymLoc.${k}`, s.gymLoc[k], [['home', 'Home gym'], ['work', 'Work gym']]);
-  const equip = g => `<fieldset class="set-equip"><legend>${g === 'home' ? 'Home gym' : 'Work gym'}</legend>
+  const loc = ([k, name]) => select(name, `gymLoc.${k}`, s.gymLoc[k], [['home', 'Gym near home'], ['work', 'Gym near work']]);
+  const equip = g => `<fieldset class="set-equip"><legend>${g === 'home' ? 'Gym near home' : 'Gym near work'}</legend>
     ${EQUIPMENT.map(x => `<label class="toggle"><input type="checkbox" data-act="set-equip" data-gym="${g}" data-item="${x}"${(s.equipment[g] || []).includes(x) ? ' checked' : ''}><span>${EQUIP_LABEL[x]}</span></label>`).join('')}</fieldset>`;
-  const bells = g => input(`${g === 'home' ? 'Home gym' : 'Work gym'} dumbbells (kg)`, `dumbbells.${g}`, (s.dumbbells[g] || []).join(', '), 'text', { type: 'text', hint: 'Separate weights with commas, for example 2, 4, 6, 8.' });
-  return `${input('Phase 1 starts on', 'gym.start', s.gym.start, 'date')}
-  ${toggle('Plan a light week every 8 weeks', 'gym.lightWeek', s.gym.lightWeek, 'At each phase change: same exercises, 2 sets, about 80% of your working weights.')}
+  const bells = g => input(`${g === 'home' ? 'Gym near home' : 'Gym near work'} dumbbells (kg)`, `dumbbells.${g}`, (s.dumbbells[g] || []).join(', '), 'text', { type: 'text', hint: 'Separate weights with commas, for example 2, 4, 6, 8.' });
+  return `${input('Gym plan starts on', 'gym.start', s.gym.start, 'date')}
+  ${toggle('Plan a light week every 8 weeks', 'gym.lightWeek', s.gym.lightWeek, 'Weeks 9, 17, 25 and so on: same exercises, 2 sets, about 80% of your working weights.')}
   <h2 class="set-sub">Session times</h2>
-  <p class="muted">Night block work days only get a pre-shift session from phase 2.</p>
-  ${DAY_TYPES.map(slot).join('')}
-  <h2 class="set-sub">Which gym</h2>${DAY_TYPES.map(loc).join('')}
+  <p class="muted">On night shifts the session is the next morning, after the drive home and before sleep.</p>
+  ${GYM_DAY_TYPES.map(slot).join('')}
+  <h2 class="set-sub">Which gym</h2>${GYM_DAY_TYPES.map(loc).join('')}
   <h2 class="set-sub">Equipment</h2>
-  <p class="muted">Exercises that need something you haven't ticked switch to their alternative. With no cardio machine ticked, cardio is a brisk outdoor walk.</p>
+  <p class="muted">Exercises that need something you haven't ticked switch to their alternative. Runs work on a treadmill or outside.</p>
   ${equip('home')}${equip('work')}
   <h2 class="set-sub">Dumbbells</h2>
   <p class="muted">Weight suggestions round up to the next dumbbell you actually have.</p>
   ${bells('home')}${bells('work')}
-  ${select('Work gym showers', 'workShowers', s.workShowers, [['unknown', "Don't know yet"], ['yes', 'Yes'], ['no', 'No']])}
+  ${select('Showers at the gym near work', 'workShowers', s.workShowers, [['unknown', "Don't know yet"], ['yes', 'Yes'], ['no', 'No']])}
   ${toggle('Play a short sound when rest ends', 'restSound', s.restSound, 'Only while the app is open on screen.')}`;
 }
 
