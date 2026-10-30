@@ -46,6 +46,7 @@ function bannerHtml() {
 function render(changed = false) {
   const r = state.route, name = r.name === 'day' ? 'week' : r.name, mod = MODS[name] || today;
   const arg = r.name === 'day' ? 'day/' + r.arg : r.arg, c = ctx();
+  clock.rd = c.rd; clock.at = Date.now();
   let html;
   try { html = mod.view(c, arg); }
   catch (e) { html = `<h1 class="page-title">Something went wrong</h1><p class="note alert">${esc(e.message)}</p><p><a href="#/today">Back to Today</a></p>`; console.error(e); }
@@ -88,8 +89,20 @@ for (const box of [main, fabBox]) {
 }
 
 const typing = () => /^(INPUT|SELECT|TEXTAREA)$/.test(document.activeElement?.tagName || '');
-setInterval(() => { if (state.route.name === 'today' && !typing()) render(); }, 60000);
-document.addEventListener('visibilitychange', () => { if (!document.hidden && !typing()) render(); });
+// Clock: Today redraws on every minute, other screens when the routine day rolls over. Phones freeze
+// timers in the background, so coming back (visible, pageshow, focus) redraws at once.
+const clock = { rd: null, at: 0, t: 0 };
+function tick(force = false) {
+  if (document.hidden || typing()) return;
+  const { iso, min } = nowLocal();
+  if (force || state.route.name === 'today' || routineDayAt(iso, min, getSettings()) !== clock.rd) render();
+}
+function nextMinute() { clearTimeout(clock.t); clock.t = setTimeout(() => { tick(); nextMinute(); }, 60050 - Date.now() % 60000); }
+const resume = () => { if (Date.now() - clock.at > 1000) tick(true); nextMinute(); };
+document.addEventListener('visibilitychange', () => { if (!document.hidden) resume(); });
+addEventListener('pageshow', resume);
+addEventListener('focus', resume);
+nextMinute();
 
 async function boot() {
   setErrorHandler(msg => { state.error = msg; if (main) render(); });
